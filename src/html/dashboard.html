@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soft Master | Trang Quản Trị</title>
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="../assets/images/logos/favicon.png"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <!--  Body Wrapper -->
+    <div
+      class="page-wrapper"
+      id="main-wrapper"
+      data-layout="vertical"
+      data-navbarbg="skin6"
+      data-sidebartype="full"
+      data-sidebar-position="fixed"
+      data-header-position="fixed"
+    >
+      <!-- Sidebar Start -->
+      <aside class="left-sidebar">
+        <!-- Sidebar scroll-->
+        <div>
+          <div
+            class="brand-logo d-flex align-items-center justify-content-between"
+          >
+            <a href="./dashboard.html" class="text-nowrap logo-img">
+              <h2>
+                <strong class="text-primary">Soft</strong>
+                <strong class="" style="color: #202224">Master</strong>
+              </h2>
+            </a>
+            <div
+              class="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
+              id="sidebarCollapse"
+            >
+              <i class="ti ti-x fs-8"></i>
+            </div>
+          </div>
+          <!-- Sidebar navigation-->
+          <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+            <ul id="sidebarnav">
+              <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                <span class="hide-menu">Trang quản trị</span>
+              </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./dashboard.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="ti ti-layout-dashboard"></i>
+                  </span>
+                  <span class="hide-menu">Trang tổng quan</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./list-student.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="fa-solid fa-user-group"></i>
+                  </span>
+                  <span class="hide-menu">Xem danh sách học sinh</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./list-teacher.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="fa-solid fa-user-group"></i>
+                  </span>
+                  <span class="hide-menu">Xem danh sách giảng viên</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./list-admin.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="fa-solid fa-calendar"></i>
+                  </span>
+                  <span class="hide-menu">Quản lý Admin</span>
+                </a>
+              </li>
+              <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                <span class="hide-menu">Chi tiết</span>
+              </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./add-teacher.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="fa-solid fa-plus"></i>
+                  </span>
+                  <span class="hide-menu">Thêm giảng viên</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <!-- End Sidebar navigation -->
+        </div>
+        <!-- End Sidebar scroll-->
+      </aside>
+      <!--  Sidebar End -->
+      <!--  Main wrapper -->
+      <div class="body-wrapper">
+        <!--  Header Start -->
+        <header class="app-header">
+          <nav class="navbar navbar-expand-lg navbar-light">
+            <ul class="navbar-nav">
+              <li class="nav-item d-block d-xl-none">
+                <a
+                  class="nav-link sidebartoggler nav-icon-hover"
+                  id="headerCollapse"
+                  href="javascript:void(0)"
+                >
+                  <i class="ti ti-menu-2"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0">
+                    <i class="fas fa-search"></i>
+                  </span>
+                  <input
+                    style="width: 388px; background-color: #f5f6fa"
+                    type="text"
+                    class="form-control rounded-5"
+                    placeholder="Tìm kiếm"
+                  />
+                </div>
+              </li>
+            </ul>
+            <div
+              class="navbar-collapse justify-content-end px-0"
+              id="navbarNav"
+            >
+              <ul
+                class="navbar-nav flex-row ms-auto align-items-center justify-content-end"
+              >
+                <!-- Thông báo -->
+                <li class="nav-item mx-2">
+                  <a class="nav-link" href="javascript:void(0)">
+                    <i class="ti ti-bell-ringing"></i>
+                    <div class="notification bg-primary rounded-circle"></div>
+                  </a>
+                </li>
+                <!-- Ngôn ngữ -->
+                <li class="nav-item mx-2 dropdown">
+                  <a
+                    class="nav-link dropdown-toggle d-flex align-items-center"
+                    href="#"
+                    id="languageDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <img
+                      src="https://flagcdn.com/w20/vn.png"
+                      alt="Vietnamese Flag"
+                      class="me-2 rounded-2"
+                      style="width: 45px; height: 35px"
+                    />
+                    <span class="d-none d-sm-inline">Việt Nam</span>
+                  </a>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="languageDropdown"
+                  >
+                    <li>
+                      <a class="dropdown-item" href="#"
+                        ><img
+                          src="https://flagcdn.com/w20/us.png"
+                          alt="English Flag"
+                          class="me-2"
+                          style="width: 20px; height: 15px"
+                        />
+                        English</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#"
+                        ><img
+                          src="https://flagcdn.com/w20/fr.png"
+                          alt="French Flag"
+                          class="me-2"
+                          style="width: 20px; height: 15px"
+                        />
+                        Français</a
+                      >
+                    </li>
+                    <!-- Thêm các ngôn ngữ khác tại đây -->
+                  </ul>
+                </li>
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link nav-icon-hover"
+                    href="javascript:void(0)"
+                    id="drop2"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <img
+                      src="../assets/images/profile/user-1.png"
+                      alt=""
+                      width="35"
+                      height="35"
+                      class="rounded-circle"
+                    />
+                  </a>
+                  <div
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
+                    aria-labelledby="drop2"
+                  >
+                    <div class="message-body">
+                      <a
+                        href="javascript:void(0)"
+                        class="d-flex align-items-center gap-2 dropdown-item"
+                      >
+                        <i class="ti ti-user fs-6"></i>
+                        <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
+                      </a>
+                      <a
+                        href="javascript:void(0)"
+                        class="d-flex align-items-center gap-2 dropdown-item"
+                      >
+                        <i class="ti ti-mail fs-6"></i>
+                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
+                      </a>
+                      <a
+                        id="logoutButton"
+                        href="./index.html"
+                        class="btn btn-outline-primary mx-3 mt-2 d-block"
+                        >Đăng Xuất</a
+                      >
+                      <script>
+                        function logout() {
+                          localStorage.removeItem("admin");
+
+                          window.location.href = "./index.html";
+                        }
+
+                        document
+                          .getElementById("logoutButton")
+                          .addEventListener("click", logout);
+
+                        window.onload = function () {
+                          const admin = localStorage.getItem("admin");
+                          if (!admin) {
+                            window.location.href = "./index.html";
+                          }
+                        };
+                      </script>
+                      <script>
+                        function logout() {
+                          localStorage.removeItem("admin");
+
+                          window.location.href = "./index.html";
+                        }
+
+                        document
+                          .getElementById("logoutButton")
+                          .addEventListener("click", logout);
+
+                        window.onload = function () {
+                          const admin = localStorage.getItem("admin");
+                          if (!admin) {
+                            window.location.href = "./index.html";
+                          }
+                        };
+                      </script>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </header>
+        <!--  Header End -->
+        <div class="container-fluid">
+          <!--  Row 1 -->
+          <div class="row">
+            <div class="col-lg-8 d-flex align-items-strech">
+              <div class="card w-100">
+                <div class="card-body">
+                  <div
+                    class="d-sm-flex d-block align-items-center justify-content-between mb-9"
+                  >
+                    <div class="mb-3 mb-sm-0">
+                      <h5 class="card-title fw-semibold">Thống kê</h5>
+                    </div>
+                    <div class="mb-3">
+                      <div class="d-flex">
+                        <select
+                          id="daySelect"
+                          class="form-select me-2"
+                          style="width: 33%"
+                        >
+                          <option value="">Ngày</option>
+                        </select>
+
+                        <select
+                          id="monthSelect"
+                          class="form-select me-2"
+                          style="width: 33%"
+                        >
+                          <option value="">Tháng</option>
+                        </select>
+
+                        <select
+                          id="yearSelect"
+                          class="form-select"
+                          style="width: 33%"
+                        >
+                          <option value="">Năm</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <script>
+                      // Tạo ngày
+                      const daySelect = document.getElementById("daySelect");
+                      for (let i = 1; i <= 31; i++) {
+                        daySelect.innerHTML += `<option value="${i}">${i}</option>`;
+                      }
+
+                      // Tạo tháng
+                      const monthSelect =
+                        document.getElementById("monthSelect");
+                      for (let i = 1; i <= 12; i++) {
+                        monthSelect.innerHTML += `<option value="${i}">Tháng ${i}</option>`;
+                      }
+
+                      // Tạo năm
+                      const yearSelect = document.getElementById("yearSelect");
+                      const currentYear = new Date().getFullYear();
+                      for (let i = currentYear; i >= currentYear - 5; i--) {
+                        yearSelect.innerHTML += `<option value="${i}">Năm ${i}</option>`;
+                      }
+                    </script>
+                  </div>
+                  <div id="chart"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="row">
+                <div class="col-lg-12">
+                  <!-- Yearly Breakup -->
+                  <div class="card overflow-hidden">
+                    <div class="card-body p-4">
+                      <h5 class="card-title mb-9 fw-semibold">
+                        Thống kê hàng năm
+                      </h5>
+                      <div class="row align-items-center">
+                        <div class="col-8">
+                          <h4 class="fw-semibold mb-3">$36,358</h4>
+                          <div class="d-flex align-items-center mb-3">
+                            <span
+                              class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center"
+                            >
+                              <i class="ti ti-arrow-up-left text-success"></i>
+                            </span>
+                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
+                            <p class="fs-3 mb-0">so với năm trước</p>
+                          </div>
+                          <div class="d-flex align-items-center">
+                            <div class="me-4">
+                              <span
+                                class="round-8 bg-primary rounded-circle me-2 d-inline-block"
+                              ></span>
+                              <span class="fs-2">2023</span>
+                            </div>
+                            <div>
+                              <span
+                                class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"
+                              ></span>
+                              <span class="fs-2">2022</span>
+                              <!-- Thay đổi năm cho chính xác -->
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-4">
+                          <div class="d-flex justify-content-center">
+                            <div id="breakup"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <!-- Monthly Earnings -->
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row alig n-items-start">
+                        <div class="col-8">
+                          <h5 class="card-title mb-9 fw-semibold">
+                            Doanh thu hàng tháng
+                          </h5>
+                          <h4 class="fw-semibold mb-3">$6,820</h4>
+                          <div class="d-flex align-items-center pb-1">
+                            <span
+                              class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
+                            >
+                              <i class="ti ti-arrow-down-right text-danger"></i>
+                            </span>
+                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
+                            <p class="fs-3 mb-0">so với năm trước</p>
+                          </div>
+                        </div>
+
+                        <div class="col-4">
+                          <div class="d-flex justify-content-end">
+                            <div
+                              class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center"
+                            >
+                              <i class="ti ti-currency-dollar fs-6"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="earning"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 d-flex align-items-stretch">
+              <div class="card w-100">
+                <div class="card-body p-4">
+                  <div class="mb-4">
+                    <h5 class="card-title fw-semibold">Giao dịch gần đây</h5>
+                  </div>
+                  <ul
+                    class="timeline-widget mb-0 position-relative mb-n5"
+                    style="max-height: 420px; overflow: hidden"
+                  >
+                    <li
+                      class="timeline-item d-flex position-relative overflow-hidden"
+                    >
+                      <div
+                        class="timeline-time text-dark flex-shrink-0 text-end"
+                      >
+                        09:30
+                      </div>
+                      <div
+                        class="timeline-badge-wrap d-flex flex-column align-items-center"
+                      >
+                        <span
+                          class="timeline-badge border-2 border border-success flex-shrink-0 my-8"
+                        ></span>
+                        <span
+                          class="timeline-badge-border d-block flex-shrink-0"
+                        ></span>
+                      </div>
+                      <div class="timeline-desc fs-3 text-dark mt-n1">
+                        Đã nhận thanh toán từ Nguyễn Văn A là $385.90
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <script>
+                const timelineWidget =
+                  document.querySelector(".timeline-widget");
+                let scrollPosition = 0;
+
+                const transactions = [
+                  "Đã nhận thanh toán từ ",
+                  "Đã ghi nhận giao dịch bán hàng mới từ ",
+                  "Đã thanh toán từ ",
+                  "Đã hoàn tất thanh toán từ ",
+                  "Đã hoàn tất thanh toán luôn nha từ ",
+                ];
+
+                const names = [
+                  "Nguyễn Văn A",
+                  "Trần Thị B",
+                  "Lê Văn C",
+                  "Phạm Thị D",
+                  "Nguyễn Minh E",
+                  "Đỗ Thị F",
+                  "Nguyễn Văn G",
+                  "Vũ Thị H",
+                ];
+
+                function addTransaction() {
+                  const newTransaction = document.createElement("li");
+                  newTransaction.className =
+                    "timeline-item d-flex position-relative overflow-hidden";
+
+                  const time = new Date();
+                  const hours = time.getHours().toString().padStart(2, "0");
+                  const minutes = time.getMinutes().toString().padStart(2, "0");
+
+                  const randomTransactionIndex = Math.floor(
+                    Math.random() * transactions.length
+                  );
+                  const randomNameIndex = Math.floor(
+                    Math.random() * names.length
+                  );
+                  const randomTransaction =
+                    transactions[randomTransactionIndex] +
+                    names[randomNameIndex] +
+                    " là $" +
+                    (Math.random() * 1000).toFixed(2);
+
+                  const colors = [
+                    "border-success",
+                    "border-info",
+                    "border-warning",
+                    "border-danger",
+                  ];
+                  const randomColorIndex = Math.floor(
+                    Math.random() * colors.length
+                  );
+                  const randomColor = colors[randomColorIndex];
+
+                  newTransaction.innerHTML = `
+                    <div class="timeline-time text-dark flex-shrink-0 text-end">${hours}:${minutes}</div>
+                    <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                      <span class="timeline-badge border-2 ${randomColor} flex-shrink-0 my-8"></span>
+                      <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                    </div>
+                    <div class="timeline-desc fs-3 text-dark mt-n1">${randomTransaction}</div>
+                  `;
+
+                  timelineWidget.appendChild(newTransaction);
+                }
+
+                function autoScroll() {
+                  if (
+                    scrollPosition <
+                    timelineWidget.scrollHeight - timelineWidget.clientHeight
+                  ) {
+                    scrollPosition += 1;
+                  } else {
+                    scrollPosition = 0;
+                  }
+                  timelineWidget.scrollTo(0, scrollPosition);
+                }
+
+                // Thêm giao dịch mới
+                setInterval(addTransaction, 1);
+                // Thực hiện cuộn tự động
+                setInterval(autoScroll, 30);
+              </script>
+            </div>
+
+            <div class="col-lg-8 d-flex align-items-stretch">
+              <div class="card w-100">
+                <div class="card-body p-4">
+                  <h5 class="card-title fw-semibold mb-4">Giao dịch gần đây</h5>
+                  <div class="table-responsive">
+                    <table class="table text-nowrap mb-0 align-middle">
+                      <thead class="text-dark fs-4">
+                        <tr>
+                          <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Id</h6>
+                          </th>
+                          <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Người phụ trách</h6>
+                          </th>
+                          <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Tên</h6>
+                          </th>
+                          <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Độ ưu tiên</h6>
+                          </th>
+                          <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Ngân sách</h6>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">1</h6>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
+                            <span class="fw-normal">Nhà thiết kế web</span>
+                          </td>
+                          <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal">Quản trị viên Elite</p>
+                          </td>
+                          <td class="border-bottom-0">
+                            <div class="d-flex align-items-center gap-2">
+                              <span
+                                class="badge bg-primary rounded-3 fw-semibold"
+                                >Thấp</span
+                              >
+                            </div>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">2</h6>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
+                            <span class="fw-normal">Quản lý dự án</span>
+                          </td>
+                          <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal">
+                              Giao diện Real Homes WP
+                            </p>
+                          </td>
+                          <td class="border-bottom-0">
+                            <div class="d-flex align-items-center gap-2">
+                              <span
+                                class="badge bg-secondary rounded-3 fw-semibold"
+                                >Trung bình</span
+                              >
+                            </div>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0 fs-4">$24.5k</h6>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">3</h6>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">Christopher Jamil</h6>
+                            <span class="fw-normal">Quản lý dự án</span>
+                          </td>
+                          <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal">
+                              Giao diện MedicalPro WP
+                            </p>
+                          </td>
+                          <td class="border-bottom-0">
+                            <div class="d-flex align-items-center gap-2">
+                              <span
+                                class="badge bg-danger rounded-3 fw-semibold"
+                                >Cao</span
+                              >
+                            </div>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0 fs-4">$12.8k</h6>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">4</h6>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">Nirav Joshi</h6>
+                            <span class="fw-normal">Kỹ sư Frontend</span>
+                          </td>
+                          <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal">
+                              Giao diện Hosting Press HTML
+                            </p>
+                          </td>
+                          <td class="border-bottom-0">
+                            <div class="d-flex align-items-center gap-2">
+                              <span
+                                class="badge bg-secondary rounded-3 fw-semibold"
+                                >Trung bình</span
+                              >
+                            </div>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0 fs-4">$32.6k</h6>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">5</h6>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
+                            <span class="fw-normal">Nhà phát triển</span>
+                          </td>
+                          <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal">Giao diện App Landing</p>
+                          </td>
+                          <td class="border-bottom-0">
+                            <div class="d-flex align-items-center gap-2">
+                              <span
+                                class="badge bg-success rounded-3 fw-semibold"
+                                >Thấp</span
+                              >
+                            </div>
+                          </td>
+                          <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0 fs-4">$9.5k</h6>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 col-xl-3">
+              <div class="card overflow-hidden rounded-2">
+                <div class="position-relative">
+                  <a href="javascript:void(0)">
+                    <img
+                      src="../assets/images/products/s4.jpg"
+                      class="card-img-top rounded-0"
+                      alt="Tai nghe Boat"
+                    />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Thêm vào giỏ hàng"
+                  >
+                    <i class="ti ti-basket fs-4"></i>
+                  </a>
+                </div>
+                <div class="card-body pt-3 p-4">
+                  <h6 class="fw-semibold fs-4">Tai nghe Boat</h6>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="fw-semibold fs-4 mb-0">
+                      $50
+                      <span class="ms-2 fw-normal text-muted fs-3"
+                        ><del>$65</del></span
+                      >
+                    </h6>
+                    <ul class="list-unstyled d-flex align-items-center mb-0">
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card overflow-hidden rounded-2">
+                <div class="position-relative">
+                  <a href="javascript:void(0)">
+                    <img
+                      src="../assets/images/products/s5.jpg"
+                      class="card-img-top rounded-0"
+                      alt="MacBook Air Pro"
+                    />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Thêm vào giỏ hàng"
+                  >
+                    <i class="ti ti-basket fs-4"></i>
+                  </a>
+                </div>
+                <div class="card-body pt-3 p-4">
+                  <h6 class="fw-semibold fs-4">MacBook Air Pro</h6>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="fw-semibold fs-4 mb-0">
+                      $650
+                      <span class="ms-2 fw-normal text-muted fs-3"
+                        ><del>$900</del></span
+                      >
+                    </h6>
+                    <ul class="list-unstyled d-flex align-items-center mb-0">
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card overflow-hidden rounded-2">
+                <div class="position-relative">
+                  <a href="javascript:void(0)">
+                    <img
+                      src="../assets/images/products/s7.jpg"
+                      class="card-img-top rounded-0"
+                      alt="Đầm nhung đỏ"
+                    />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Thêm vào giỏ hàng"
+                  >
+                    <i class="ti ti-basket fs-4"></i>
+                  </a>
+                </div>
+                <div class="card-body pt-3 p-4">
+                  <h6 class="fw-semibold fs-4">Đầm nhung đỏ</h6>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="fw-semibold fs-4 mb-0">
+                      $150
+                      <span class="ms-2 fw-normal text-muted fs-3"
+                        ><del>$200</del></span
+                      >
+                    </h6>
+                    <ul class="list-unstyled d-flex align-items-center mb-0">
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card overflow-hidden rounded-2">
+                <div class="position-relative">
+                  <a href="javascript:void(0)">
+                    <img
+                      src="../assets/images/products/s11.jpg"
+                      class="card-img-top rounded-0"
+                      alt="Gấu teddy dễ thương"
+                    />
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Thêm vào giỏ hàng"
+                  >
+                    <i class="ti ti-basket fs-4"></i>
+                  </a>
+                </div>
+                <div class="card-body pt-3 p-4">
+                  <h6 class="fw-semibold fs-4">Gấu teddy dễ thương</h6>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="fw-semibold fs-4 mb-0">
+                      $285
+                      <span class="ms-2 fw-normal text-muted fs-3"
+                        ><del>$345</del></span
+                      >
+                    </h6>
+                    <ul class="list-unstyled d-flex align-items-center mb-0">
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="me-1" href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">
+                          <i class="ti ti-star text-warning"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+  </body>
+</html>
