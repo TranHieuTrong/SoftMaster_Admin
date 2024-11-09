@@ -13,8 +13,9 @@ The Softmaster admin page project is created and updated by [HChong](https://www
 ## How to use
 
 ```sh
-git clone https://github.com/twbs/examples.git
-cd examples/vite/
-npm install
-npm start
+git clone https://github.com/TranHieuTrong/SoftMaster_Admin.git
+```
+
+```sh
+cd SoftMaster_Admin
 ```
