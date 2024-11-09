@@ -109,30 +109,6 @@
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                 <span class="hide-menu">Chi tiết</span>
               </li>
-              <!-- <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./add-danhmucbaihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span class="hide-menu">Thêm danh mục bài học</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-danhmucbaihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem danh mục bài học</span>
-                </a>
-              </li> -->
               <li class="sidebar-item">
                 <a
                   class="sidebar-link"
@@ -145,42 +121,6 @@
                   <span class="hide-menu">Thêm giảng viên</span>
                 </a>
               </li>
-              <!-- <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-noidungbaitap.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem nội dung bài tập</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./add-baihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span class="hide-menu">Thêm bài học</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-baihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem bài học</span>
-                </a>
-              </li> -->
             </ul>
           </nav>
           <!-- End Sidebar navigation -->
@@ -365,371 +305,374 @@
                     />
                   </div>
                   <div class="card mb-4">
-                    <div class="card-body">
-                      <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                          <thead style="background-color: #f1f4f9">
-                            <tr>
-                              <th
-                                style="color: #202224"
-                                class="text-center text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Tên Admin
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Email
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Số điện thoại
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Chức Vụ
-                              </th>
-                              <!-- <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Slogan
-                              </th> -->
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Giới tính
-                              </th>
-                              <th class="text-secondary opacity-7"></th>
-                            </tr>
-                          </thead>
-                          <tbody id="userTableBody">
-                            <!-- Dữ liệu từ API sẽ được thêm vào đây -->
-                          </tbody>
-                        </table>
-                        <!-- Popup HTML -->
-                        <div id="editPopup" class="popup">
-                          <div class="popup-content">
-                            <h3>Chỉnh sửa thông tin Admin</h3>
-                            <form id="editForm">
-                              <div class="mb-3">
-                                <label for="name" class="form-label"
-                                  >Tên Admin</label
+                    <div
+                      class="table-responsive p-0"
+                      style="max-height: 75vh; overflow-y: auto"
+                    >
+                      <div class="card-body">
+                        <div class="table-responsive p-0">
+                          <table class="table align-items-center mb-0">
+                            <thead style="background-color: #f1f4f9">
+                              <tr>
+                                <th
+                                  style="color: #202224"
+                                  class="text-center text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                <input
-                                  style="border-radius: 15px"
-                                  type="text"
-                                  class="form-control"
-                                  id="name"
-                                  name="name"
-                                />
-                              </div>
-                              <div class="mb-3">
-                                <label for="phone" class="form-label"
-                                  >Số điện thoại</label
+                                  Tên Admin
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                <input
-                                  style="border-radius: 15px"
-                                  type="text"
-                                  class="form-control"
-                                  id="phone"
-                                  name="phone"
-                                />
-                              </div>
-                              <div class="mb-3">
-                                <label for="avatar" class="form-label"
-                                  >Ảnh đại diện</label
+                                  Email
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                <input
-                                  style="border-radius: 15px"
-                                  type="text"
-                                  class="form-control"
-                                  id="avatar"
-                                  name="avatar"
-                                />
-                              </div>
-                              <div class="mb-3">
-                                <label for="position" class="form-label"
-                                  >Chức vụ</label
+                                  Số điện thoại
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                <input
-                                  style="border-radius: 15px"
-                                  type="text"
-                                  class="form-control"
-                                  id="position"
-                                  name="position"
-                                />
-                              </div>
-                              <div class="mb-3">
-                                <label for="password" class="form-label"
-                                  >Mật khẩu</label
+                                  Chức Vụ
+                                </th>
+                                <!-- <th
+                              style="color: #202224"
+                              class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                            >
+                              Slogan
+                            </th> -->
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                <input
-                                  style="border-radius: 15px"
-                                  type="text"
-                                  class="form-control"
-                                  id="password"
-                                  name="password"
-                                />
-                              </div>
+                                  Giới tính
+                                </th>
+                                <th class="text-secondary opacity-7"></th>
+                              </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                              <!-- Dữ liệu từ API sẽ được thêm vào đây -->
+                            </tbody>
+                          </table>
+                          <!-- Popup HTML -->
+                          <div id="editPopup" class="popup">
+                            <div class="popup-content">
+                              <h3>Chỉnh sửa thông tin Admin</h3>
+                              <form id="editForm">
+                                <div class="mb-3">
+                                  <label for="name" class="form-label"
+                                    >Tên Admin</label
+                                  >
+                                  <input
+                                    style="border-radius: 15px"
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    name="name"
+                                  />
+                                </div>
+                                <div class="mb-3">
+                                  <label for="phone" class="form-label"
+                                    >Số điện thoại</label
+                                  >
+                                  <input
+                                    style="border-radius: 15px"
+                                    type="text"
+                                    class="form-control"
+                                    id="phone"
+                                    name="phone"
+                                  />
+                                </div>
+                                <div class="mb-3">
+                                  <label for="avatar" class="form-label"
+                                    >Ảnh đại diện</label
+                                  >
+                                  <input
+                                    style="border-radius: 15px"
+                                    type="text"
+                                    class="form-control"
+                                    id="avatar"
+                                    name="avatar"
+                                  />
+                                </div>
+                                <div class="mb-3">
+                                  <label for="position" class="form-label"
+                                    >Chức vụ</label
+                                  >
+                                  <input
+                                    style="border-radius: 15px"
+                                    type="text"
+                                    class="form-control"
+                                    id="position"
+                                    name="position"
+                                  />
+                                </div>
+                                <div class="mb-3">
+                                  <label for="password" class="form-label"
+                                    >Mật khẩu</label
+                                  >
+                                  <input
+                                    style="border-radius: 15px"
+                                    type="text"
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                  />
+                                </div>
 
-                              <div>
-                                <label for="gender">Giới tính</label>
-                                <select
-                                  id="gender"
-                                  name="gender"
-                                  class="form-select form-select-lg mb-3"
-                                  aria-label=".form-select-lg example"
-                                >
-                                  <option value="Nam">Nam</option>
-                                  <option value="Nữ">Nữ</option>
-                                </select>
-                              </div>
-                              <div class="text-center mt-4">
-                                <!-- Nút Lưu -->
-                                <button
-                                  type="submit"
-                                  class="btn btn-primary rounded-2"
-                                  style="
-                                    background-color: #0961f5;
-                                    border: none;
-                                    color: white;
-                                    width: 110px;
-                                    height: 40px;
-                                    font-weight: 700;
-                                  "
-                                >
-                                  Lưu
-                                </button>
-                                <!-- Nút Hủy -->
-                                <button
-                                  type="button"
-                                  class="btn btn-secondary rounded-2"
-                                  id="cancelBtn"
-                                  style="
-                                    background-color: #f5f5f5;
-                                    border: none;
-                                    color: black;
-                                    width: 110px;
-                                    height: 40px;
-                                    font-weight: 700;
-                                    margin-left: 10px;
-                                  "
-                                >
-                                  Hủy
-                                </button>
-                              </div>
-                            </form>
+                                <div>
+                                  <label for="gender">Giới tính</label>
+                                  <select
+                                    id="gender"
+                                    name="gender"
+                                    class="form-select form-select-lg mb-3"
+                                    aria-label=".form-select-lg example"
+                                  >
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                  </select>
+                                </div>
+                                <div class="text-center mt-4">
+                                  <!-- Nút Lưu -->
+                                  <button
+                                    type="submit"
+                                    class="btn btn-primary rounded-2"
+                                    style="
+                                      background-color: #0961f5;
+                                      border: none;
+                                      color: white;
+                                      width: 110px;
+                                      height: 40px;
+                                      font-weight: 700;
+                                    "
+                                  >
+                                    Lưu
+                                  </button>
+                                  <!-- Nút Hủy -->
+                                  <button
+                                    type="button"
+                                    class="btn btn-secondary rounded-2"
+                                    id="cancelBtn"
+                                    style="
+                                      background-color: #f5f5f5;
+                                      border: none;
+                                      color: black;
+                                      width: 110px;
+                                      height: 40px;
+                                      font-weight: 700;
+                                      margin-left: 10px;
+                                    "
+                                  >
+                                    Hủy
+                                  </button>
+                                </div>
+                              </form>
+                            </div>
                           </div>
-                        </div>
-                        <!-- Popup CSS -->
-                        <style>
-                          .popup {
-                            display: none;
-                            position: fixed;
-                            z-index: 1000;
-                            left: 0;
-                            top: 0;
-                            width: 100%;
-                            height: 100%;
-                            background-color: rgba(0, 0, 0, 0.5);
-                            justify-content: center;
-                            align-items: center;
-                          }
-
-                          .popup-content {
-                            background-color: white;
-                            padding: 20px;
-                            border-radius: 10px;
-                            width: 400px;
-                            position: relative;
-                          }
-
-                          .close-btn {
-                            position: absolute;
-                            top: 10px;
-                            right: 20px;
-                            font-size: 24px;
-                            cursor: pointer;
-                          }
-                        </style>
-                        <script>
-                          document.addEventListener("DOMContentLoaded", () => {
-                            fetch("http://localhost:3000/admin/getAll")
-                              .then((response) => response.json())
-                              .then((data) => {
-                                const tableBody =
-                                  document.getElementById("userTableBody");
-                                tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
-                                data.forEach((admin) => {
-                                  const row = document.createElement("tr");
-                                  // Tạo các ô dữ liệu
-                                  const nameAdmin =
-                                    document.createElement("td");
-                                  const emailAdmin =
-                                    document.createElement("td");
-                                  const phoneAdmin =
-                                    document.createElement("td");
-                                  const positionAdmin =
-                                    document.createElement("td");
-                                  const genderAdmin =
-                                    document.createElement("td");
-                                  const actionCell =
-                                    document.createElement("td");
-                                  // Nội dung các ô
-                                  nameAdmin.innerHTML = `
-                            <div class="d-flex align-items-center px-2 py-1">
-          <div class="form-check me-3">
-            <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckDefault"></label>
-          </div>
-          <div>
-            <img src="${admin.avatar || "../assets/images/profile/user-1.png"}"
-                 class="avatar avatar-sm me-2"
-                 alt="avatar"
-                 style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;" />
-          </div>
-          <div class="d-flex flex-column justify-content-center">
-            <h6 class="mb-0 text-sm">${admin.name || ""}</h6>
-          </div>
-        </div>
-        `;
-                                  emailAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    admin.email || ""
-                                  }</span>`;
-                                  phoneAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    admin.phone || ""
-                                  }</span>`;
-                                  positionAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    admin.position || ""
-                                  }</span>`;
-                                  // sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                  //   teacher.slogan || ""
-                                  // }</span>`;
-                                  genderAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    admin.gender || ""
-                                  }</span>`;
-                                  // Thêm các nút hành động
-                                  actionCell.innerHTML = `
-          <div class="d-flex justify-content-start">
-            <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
-            <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
-          </div>
-        `;
-                                  // Thêm các ô vào hàng
-                                  row.appendChild(nameAdmin);
-                                  row.appendChild(emailAdmin);
-                                  row.appendChild(phoneAdmin);
-                                  row.appendChild(positionAdmin);
-                                  // row.appendChild(sloganTeacher);
-                                  row.appendChild(genderAdmin);
-                                  row.appendChild(actionCell);
-                                  // Thêm hàng vào bảng
-                                  tableBody.appendChild(row);
-                                  // Sự kiện click cho nút sửa
-                                  const editBtn =
-                                    actionCell.querySelector(".edit-btn");
-                                  editBtn.addEventListener("click", () =>
-                                    openEditPopup(admin)
-                                  );
-                                  // Sự kiện click cho nút xóa
-                                  const deleteBtn =
-                                    actionCell.querySelector(".delete-btn");
-                                  deleteBtn.addEventListener("click", () =>
-                                    deleteAdmin(admin._id)
-                                  );
-                                });
-                              })
-                              .catch((error) =>
-                                console.error("Error fetching data:", error)
-                              );
-                          });
-
-                          function deleteAdmin(adminID) {
-                            if (
-                              confirm(
-                                "Bạn có chắc chắn muốn xóa admin này không?"
-                              )
-                            ) {
-                              fetch(
-                                `http://localhost:3001/admin/delete/${adminID}`,
-                                {
-                                  method: "DELETE",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
-                                }
-                              )
-                                .then((response) => response.json())
-                                .then((result) => {
-                                  alert("Xóa thành công!");
-                                  location.reload(); // Tải lại trang sau khi xóa thành công
-                                })
-                                .catch((error) => {
-                                  console.error("Error deleting admin:", error);
-                                });
+                          <!-- Popup CSS -->
+                          <style>
+                            .popup {
+                              display: none;
+                              position: fixed;
+                              z-index: 1000;
+                              left: 0;
+                              top: 0;
+                              width: 100%;
+                              height: 100%;
+                              background-color: rgba(0, 0, 0, 0.5);
+                              justify-content: center;
+                              align-items: center;
                             }
-                          }
 
-                          function openEditPopup(admin) {
-                            const popup = document.getElementById("editPopup");
-                            const form = document.getElementById("editForm");
-                            // Điền thông tin hiện tại của giáo viên vào form
-                            form.name.value = admin.name || "";
-                            form.phone.value = admin.phone || "";
-                            form.avatar.value = admin.avatar || "";
-                            form.position.value = admin.position || "";
-                            // form.slogan.value = admin.slogan || "";
-                            form.gender.value = admin.gender || "Nam";
-                            // Hiển thị popup
-                            popup.style.display = "flex"; // Sử dụng display: flex để căn giữa
-                            // Gán sự kiện "Hủy" để đóng popup khi nhấn nút "Hủy"
-                            const cancelBtn =
-                              document.getElementById("cancelBtn");
-                            cancelBtn.onclick = function () {
-                              popup.style.display = "none"; // Đóng popup khi nhấn nút Hủy
-                            };
-                            // Xử lý sự kiện submit form
-                            form.onsubmit = (e) => {
-                              e.preventDefault();
-                              const updatedData = {
-                                name: form.name.value,
-                                phone: form.phone.value,
-                                avatar: form.avatar.value,
-                                position: form.position.value,
-                                password: form.password.value,
-                                // slogan: form.slogan.value,
-                                gender: form.gender.value,
+                            .popup-content {
+                              background-color: white;
+                              padding: 20px;
+                              border-radius: 10px;
+                              width: 400px;
+                              position: relative;
+                            }
+
+                            .close-btn {
+                              position: absolute;
+                              top: 10px;
+                              right: 20px;
+                              font-size: 24px;
+                              cursor: pointer;
+                            }
+                          </style>
+                          <script>
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                fetch("http://localhost:3000/admin/getAll")
+                                  .then((response) => response.json())
+                                  .then((data) => {
+                                    const tableBody =
+                                      document.getElementById("userTableBody");
+                                    tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+                                    data.forEach((admin) => {
+                                      const row = document.createElement("tr");
+                                      // Tạo các ô dữ liệu
+                                      const nameAdmin =
+                                        document.createElement("td");
+                                      const emailAdmin =
+                                        document.createElement("td");
+                                      const phoneAdmin =
+                                        document.createElement("td");
+                                      const positionAdmin =
+                                        document.createElement("td");
+                                      const genderAdmin =
+                                        document.createElement("td");
+                                      const actionCell =
+                                        document.createElement("td");
+                                      // Nội dung các ô
+                                      nameAdmin.innerHTML = `
+                          <div class="d-flex align-items-center px-2 py-1">
+        <div class="form-check me-3">
+          <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
+          <label class="form-check-label" for="flexCheckDefault"></label>
+        </div>
+        <div>
+          <img src="${admin.avatar || "../assets/images/profile/user-1.png"}"
+               class="avatar avatar-sm me-2"
+               alt="avatar"
+               style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;" />
+        </div>
+        <div class="d-flex flex-column justify-content-center">
+          <h6 class="mb-0 text-sm">${admin.name || ""}</h6>
+        </div>
+      </div>
+      `;
+                                      emailAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        admin.email || ""
+                                      }</span>`;
+                                      phoneAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        admin.phone || ""
+                                      }</span>`;
+                                      positionAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        admin.position || ""
+                                      }</span>`;
+                                      // sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                      //   teacher.slogan || ""
+                                      // }</span>`;
+                                      genderAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        admin.gender || ""
+                                      }</span>`;
+                                      // Thêm các nút hành động
+                                      actionCell.innerHTML = `
+        <div class="d-flex justify-content-start">
+          <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
+          <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
+        </div>
+      `;
+                                      row.appendChild(nameAdmin);
+                                      row.appendChild(emailAdmin);
+                                      row.appendChild(phoneAdmin);
+                                      row.appendChild(positionAdmin);
+                                      row.appendChild(genderAdmin);
+                                      row.appendChild(actionCell);
+                                      tableBody.appendChild(row);
+                                      const editBtn =
+                                        actionCell.querySelector(".edit-btn");
+                                      editBtn.addEventListener("click", () =>
+                                        openEditPopup(admin)
+                                      );
+                                      const deleteBtn =
+                                        actionCell.querySelector(".delete-btn");
+                                      deleteBtn.addEventListener("click", () =>
+                                        deleteAdmin(admin._id)
+                                      );
+                                    });
+                                  })
+                                  .catch((error) =>
+                                    console.error("Error fetching data:", error)
+                                  );
+                              }
+                            );
+
+                            function deleteAdmin(adminID) {
+                              if (
+                                confirm(
+                                  "Bạn có chắc chắn muốn xóa admin này không?"
+                                )
+                              ) {
+                                fetch(
+                                  `http://localhost:3001/admin/delete/${adminID}`,
+                                  {
+                                    method: "DELETE",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                  }
+                                )
+                                  .then((response) => response.json())
+                                  .then((result) => {
+                                    alert("Xóa thành công!");
+                                    location.reload();
+                                  })
+                                  .catch((error) => {
+                                    console.error(
+                                      "Error deleting admin:",
+                                      error
+                                    );
+                                  });
+                              }
+                            }
+
+                            function openEditPopup(admin) {
+                              const popup =
+                                document.getElementById("editPopup");
+                              const form = document.getElementById("editForm");
+                              form.name.value = admin.name || "";
+                              form.phone.value = admin.phone || "";
+                              form.avatar.value = admin.avatar || "";
+                              form.position.value = admin.position || "";
+                              form.gender.value = admin.gender || "Nam";
+                              popup.style.display = "flex";
+                              const cancelBtn =
+                                document.getElementById("cancelBtn");
+                              cancelBtn.onclick = function () {
+                                popup.style.display = "none";
                               };
-                              // Gọi API để cập nhật thông tin
-                              fetch(
-                                `http://localhost:3001/admin/update/${admin._id}`,
-                                {
-                                  method: "PUT",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
-                                  body: JSON.stringify(updatedData),
-                                }
-                              )
-                                .then((response) => response.json())
-                                .then((result) => {
-                                  alert("Cập nhật thành công!");
-                                  popup.style.display = "none"; // Đóng popup sau khi cập nhật thành công
-                                  location.reload();
-                                })
-                                .catch((error) => {
-                                  console.error("Error updating data:", error);
-                                });
-                            };
-                          }
-                        </script>
+                              form.onsubmit = (e) => {
+                                e.preventDefault();
+                                const updatedData = {
+                                  name: form.name.value,
+                                  phone: form.phone.value,
+                                  avatar: form.avatar.value,
+                                  position: form.position.value,
+                                  password: form.password.value,
+                                  gender: form.gender.value,
+                                };
+                                fetch(
+                                  `http://localhost:3001/admin/update/${admin._id}`,
+                                  {
+                                    method: "PUT",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(updatedData),
+                                  }
+                                )
+                                  .then((response) => response.json())
+                                  .then((result) => {
+                                    alert("Cập nhật thành công!");
+                                    popup.style.display = "none";
+                                    location.reload();
+                                  })
+                                  .catch((error) => {
+                                    console.error(
+                                      "Error updating data:",
+                                      error
+                                    );
+                                  });
+                              };
+                            }
+                          </script>
+                        </div>
                       </div>
                     </div>
                   </div>

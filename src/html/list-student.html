@@ -20,9 +20,9 @@
   </head>
   <style>
     .avatar {
-      width: 35px; /* Thay đổi kích thước theo ý muốn */
-      height: 35px; /* Thay đổi kích thước theo ý muốn */
-      border-radius: 50%; /* Đảm bảo ảnh là hình tròn */
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
     }
   </style>
 
@@ -116,30 +116,6 @@
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                 <span class="hide-menu">Chi tiết</span>
               </li>
-              <!-- <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./add-danhmucbaihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span class="hide-menu">Thêm danh mục bài học</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-danhmucbaihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem danh mục bài học</span>
-                </a>
-              </li> -->
               <li class="sidebar-item">
                 <a
                   class="sidebar-link"
@@ -152,42 +128,6 @@
                   <span class="hide-menu">Thêm giảng viên</span>
                 </a>
               </li>
-              <!-- <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-noidungbaitap.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem nội dung bài tập</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./add-baihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-plus"></i>
-                  </span>
-                  <span class="hide-menu">Thêm bài học</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="./view-baihoc.html"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="fa-solid fa-list"></i>
-                  </span>
-                  <span class="hide-menu">Xem bài học</span>
-                </a>
-              </li> -->
             </ul>
           </nav>
           <!-- End Sidebar navigation -->
@@ -197,7 +137,6 @@
       <!--  Sidebar End -->
       <!--  Main wrapper -->
       <div class="body-wrapper">
-        <!--  Header Start -->
         <!--  Header Start -->
         <header class="app-header">
           <nav class="navbar navbar-expand-lg navbar-light">
@@ -372,114 +311,121 @@
                     />
                   </div>
                   <div class="card mb-4">
-                    <div class="card-body">
-                      <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                          <thead style="background-color: #f1f4f9">
-                            <tr>
-                              <th
-                                style="color: #202224"
-                                class="text-center text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Tên học sinh
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Email
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Ngày sinh
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Số điện thoại
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Giới tính
-                              </th>
-                              <th
-                                style="color: #202224"
-                                class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                              >
-                                Ngày đăng kí
-                              </th>
-                              <th class="text-secondary opacity-7"></th>
-                            </tr>
-                          </thead>
-                          <tbody id="userTableBody">
-                            <!-- Dữ liệu từ API sẽ được thêm vào đây -->
-                          </tbody>
-                        </table>
+                    <div
+                      class="table-responsive p-0"
+                      style="max-height: 75vh; overflow-y: auto"
+                    >
+                      <div class="card-body">
+                        <div class="table-responsive p-0">
+                          <table class="table align-items-center mb-0">
+                            <thead style="background-color: #f1f4f9">
+                              <tr>
+                                <th
+                                  style="color: #202224"
+                                  class="text-center text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Tên học sinh
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Email
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Ngày sinh
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Số điện thoại
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Giới tính
+                                </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                >
+                                  Ngày đăng kí
+                                </th>
+                                <th class="text-secondary opacity-7"></th>
+                              </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                              <!-- Dữ liệu từ API sẽ được thêm vào đây -->
+                            </tbody>
+                          </table>
 
-                        <script>
-                          document.addEventListener("DOMContentLoaded", () => {
-                            fetch("http://localhost:3000/user/getAll")
-                              .then((response) => response.json())
-                              .then((data) => {
-                                const tableBody =
-                                  document.getElementById("userTableBody");
-                                tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+                          <script>
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                fetch("http://localhost:3000/user/getAll")
+                                  .then((response) => response.json())
+                                  .then((data) => {
+                                    const tableBody =
+                                      document.getElementById("userTableBody");
+                                    tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
 
-                                data.forEach((user) => {
-                                  const row = document.createElement("tr");
+                                    data.forEach((user) => {
+                                      const row = document.createElement("tr");
 
-                                  // Tạo các ô dữ liệu
-                                  const nameCell = document.createElement("td");
-                                  const emailCell =
-                                    document.createElement("td");
-                                  const birthDateCell =
-                                    document.createElement("td");
-                                  const phoneCell =
-                                    document.createElement("td");
-                                  const courseCell =
-                                    document.createElement("td");
-                                  const registerDateCell =
-                                    document.createElement("td");
-                                  const actionCell =
-                                    document.createElement("td");
+                                      // Tạo các ô dữ liệu
+                                      const nameCell =
+                                        document.createElement("td");
+                                      const emailCell =
+                                        document.createElement("td");
+                                      const birthDateCell =
+                                        document.createElement("td");
+                                      const phoneCell =
+                                        document.createElement("td");
+                                      const courseCell =
+                                        document.createElement("td");
+                                      const registerDateCell =
+                                        document.createElement("td");
+                                      const actionCell =
+                                        document.createElement("td");
 
-                                  // Chuyển đổi định dạng ngày tháng năm
-                                  const formatDate = (dateString) => {
-                                    if (!dateString) return "";
-                                    const date = new Date(dateString);
-                                    const day = String(date.getDate()).padStart(
-                                      2,
-                                      "0"
-                                    );
-                                    const month = String(
-                                      date.getMonth() + 1
-                                    ).padStart(2, "0");
-                                    const year = date.getFullYear();
-                                    return `${day}-${month}-${year}`;
-                                  };
+                                      // Chuyển đổi định dạng ngày tháng năm
+                                      const formatDate = (dateString) => {
+                                        if (!dateString) return "";
+                                        const date = new Date(dateString);
+                                        const day = String(
+                                          date.getDate()
+                                        ).padStart(2, "0");
+                                        const month = String(
+                                          date.getMonth() + 1
+                                        ).padStart(2, "0");
+                                        const year = date.getFullYear();
+                                        return `${day}-${month}-${year}`;
+                                      };
 
-                                  // Chuyển đổi định dạng ngày tháng năm cho giờ đăng ký
-                                  const formatRegisterDate = (dateString) => {
-                                    if (!dateString) return "";
-                                    const date = new Date(dateString);
-                                    const day = String(date.getDate()).padStart(
-                                      2,
-                                      "0"
-                                    );
-                                    const month = String(
-                                      date.getMonth() + 1
-                                    ).padStart(2, "0");
-                                    const year = date.getFullYear();
-                                    return `${day}-${month}-${year}`;
-                                  };
+                                      // Chuyển đổi định dạng ngày tháng năm cho giờ đăng ký
+                                      const formatRegisterDate = (
+                                        dateString
+                                      ) => {
+                                        if (!dateString) return "";
+                                        const date = new Date(dateString);
+                                        const day = String(
+                                          date.getDate()
+                                        ).padStart(2, "0");
+                                        const month = String(
+                                          date.getMonth() + 1
+                                        ).padStart(2, "0");
+                                        const year = date.getFullYear();
+                                        return `${day}-${month}-${year}`;
+                                      };
 
-                                  // Nội dung các ô
-                                  nameCell.innerHTML = `
+                                      // Nội dung các ô
+                                      nameCell.innerHTML = `
                                     <div class="d-flex align-items-center px-2 py-1">
                                       <div class="form-check me-3">
                                         <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
@@ -503,48 +449,50 @@
                                       </div>
                                     </div>
                                   `;
-                                  emailCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    user.email || ""
-                                  }</span>`;
-                                  birthDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
-                                    user.birthday
-                                  )}</span>`;
-                                  phoneCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    user.phone || ""
-                                  }</span>`;
-                                  courseCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    user.gender || ""
-                                  }</span>`;
-                                  registerDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
-                                    user.createdAt
-                                  )}</span>`;
+                                      emailCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        user.email || ""
+                                      }</span>`;
+                                      birthDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
+                                        user.birthday
+                                      )}</span>`;
+                                      phoneCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        user.phone || ""
+                                      }</span>`;
+                                      courseCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        user.gender || ""
+                                      }</span>`;
+                                      registerDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
+                                        user.createdAt
+                                      )}</span>`;
 
-                                  // Thêm các nút hành động
-                                  // actionCell.innerHTML = `
-                                  //   <div class="input-group-append ms-2">
-                                  //     <button class="btn btn-primary rounded-5" type="button">Sửa</button>
-                                  //     <button class="btn btn-danger rounded-5 ms-2" type="button">Xóa</button>
-                                  //   </div>
-                                  // `;
+                                      // Thêm các nút hành động
+                                      // actionCell.innerHTML = `
+                                      //   <div class="input-group-append ms-2">
+                                      //     <button class="btn btn-primary rounded-5" type="button">Sửa</button>
+                                      //     <button class="btn btn-danger rounded-5 ms-2" type="button">Xóa</button>
+                                      //   </div>
+                                      // `;
 
-                                  // Thêm các ô vào hàng
-                                  row.appendChild(nameCell);
-                                  row.appendChild(emailCell);
-                                  row.appendChild(birthDateCell);
-                                  row.appendChild(phoneCell);
-                                  row.appendChild(courseCell);
-                                  row.appendChild(registerDateCell);
-                                  row.appendChild(actionCell);
+                                      // Thêm các ô vào hàng
+                                      row.appendChild(nameCell);
+                                      row.appendChild(emailCell);
+                                      row.appendChild(birthDateCell);
+                                      row.appendChild(phoneCell);
+                                      row.appendChild(courseCell);
+                                      row.appendChild(registerDateCell);
+                                      row.appendChild(actionCell);
 
-                                  // Thêm hàng vào bảng
-                                  tableBody.appendChild(row);
-                                });
-                              })
-                              .catch((error) =>
-                                console.error("Error fetching data:", error)
-                              );
-                          });
-                        </script>
+                                      // Thêm hàng vào bảng
+                                      tableBody.appendChild(row);
+                                    });
+                                  })
+                                  .catch((error) =>
+                                    console.error("Error fetching data:", error)
+                                  );
+                              }
+                            );
+                          </script>
+                        </div>
                       </div>
                     </div>
                   </div>

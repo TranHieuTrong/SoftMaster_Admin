@@ -365,7 +365,94 @@
                       }
                     </script>
                   </div>
-                  <div id="chart"></div>
+                  <div
+                    id="chart-container"
+                    style="
+                      width: 100%;
+                      max-width: 700px;
+                      padding: 20px;
+                      background-color: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <canvas id="chart"></canvas>
+                  </div>
+
+                  <script>
+                    async function fetchUserCount() {
+                      try {
+                        const response = await fetch(
+                          "http://localhost:3001/user/countUser"
+                        );
+                        const data = await response.json();
+
+                        const ctx = document
+                          .getElementById("chart")
+                          .getContext("2d");
+                        new Chart(ctx, {
+                          type: "bar",
+                          data: {
+                            labels: ["Số lượng User"],
+                            datasets: [
+                              {
+                                label: "Tổng user tham gia SoftMaster",
+                                data: [data.count],
+                                backgroundColor: "rgba(128, 128, 128, 0.7)", // Màu xám nhạt với độ trong suốt
+                                borderColor: "rgba(64, 64, 64, 1)", // Màu xám đậm cho viền
+                                borderWidth: 0.5,
+                                borderRadius: 3, // Bo góc cột
+                                borderSkipped: false, // Hiển thị viền xung quanh cột
+                                barThickness: 30,
+                              },
+                            ],
+                          },
+                          options: {
+                            responsive: true,
+                            plugins: {
+                              legend: {
+                                display: true,
+                                labels: {
+                                  color: "#333",
+                                  font: { size: 14 },
+                                },
+                              },
+                              tooltip: {
+                                backgroundColor: "#333",
+                                titleColor: "#ffffff",
+                                bodyColor: "#ffffff",
+                                titleFont: { size: 16 },
+                                bodyFont: { size: 14 },
+                                padding: 10,
+                              },
+                            },
+                            scales: {
+                              x: {
+                                ticks: { color: "#666" },
+                                grid: { display: false },
+                              },
+                              y: {
+                                beginAtZero: true,
+                                ticks: {
+                                  color: "#666",
+                                  stepSize: Math.ceil(data.count / 5), // Tạo các bước trên trục y để đạt chiều cao cột mong muốn
+                                  max: data.count + 50, // Tăng giá trị tối đa của trục y để kéo dài cột
+                                },
+                                grid: { color: "rgba(200, 200, 200, 0.3)" },
+                              },
+                            },
+                          },
+                        });
+                      } catch (error) {
+                        console.error("Error fetching user count:", error);
+                      }
+                    }
+
+                    fetchUserCount();
+                  </script>
                 </div>
               </div>
             </div>
@@ -992,5 +1079,6 @@
     <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
     <script src="../assets/js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>
