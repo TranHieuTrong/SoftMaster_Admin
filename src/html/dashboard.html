@@ -105,6 +105,18 @@
                   <span class="hide-menu">Quản lý Admin</span>
                 </a>
               </li>
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./list-course.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="fa-solid fa-calendar"></i>
+                  </span>
+                  <span class="hide-menu">Quản lý Khóa Học</span>
+                </a>
+              </li>
               <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                 <span class="hide-menu">Chi tiết</span>
@@ -383,35 +395,89 @@
                   </div>
 
                   <script>
-                    async function fetchUserCount() {
+                    async function fetchCounts() {
                       try {
-                        const response = await fetch(
+                        // Lấy dữ liệu từ API người dùng
+                        const userResponse = await fetch(
                           "http://localhost:3001/user/countUser"
                         );
-                        const data = await response.json();
+                        const userData = await userResponse.json();
+
+                        // Lấy dữ liệu từ API giáo viên
+                        const teacherResponse = await fetch(
+                          "http://localhost:3001/teacher/countTeacher"
+                        );
+                        const teacherData = await teacherResponse.json();
+
+                        // Lấy dữ liệu từ API khóa học
+                        const courseResponse = await fetch(
+                          "http://localhost:3001/course/countCourse"
+                        );
+                        const courseData = await courseResponse.json();
+
+                        // Lấy dữ liệu từ API admin
+                        const adminResponse = await fetch(
+                          "http://localhost:3001/admin/countAdmin"
+                        );
+                        const adminData = await adminResponse.json();
+
+                        // Lấy dữ liệu từ API doanh thu tổng
+                        const revenueResponse = await fetch(
+                          "http://localhost:3001/payment/total-revenue-all-success"
+                        );
+                        const revenueData = await revenueResponse.json();
 
                         const ctx = document
                           .getElementById("chart")
                           .getContext("2d");
+
                         new Chart(ctx, {
                           type: "bar",
                           data: {
-                            labels: ["Số lượng User"],
+                            labels: [
+                              "Số lượng User",
+                              "Số lượng Giáo viên",
+                              "Số lượng Khóa học",
+                              "Số lượng Admin",
+                              "Tổng Doanh Thu", // Đưa doanh thu xuống cuối cùng
+                            ],
                             datasets: [
                               {
-                                label: "Tổng user tham gia SoftMaster",
-                                data: [data.count],
-                                backgroundColor: "rgba(128, 128, 128, 0.7)", // Màu xám nhạt với độ trong suốt
-                                borderColor: "rgba(64, 64, 64, 1)", // Màu xám đậm cho viền
+                                label: "Thống kê SoftMaster",
+                                data: [
+                                  userData.count,
+                                  teacherData.count,
+                                  courseData.courseCount,
+                                  adminData.count,
+                                  revenueData.totalRevenue, // Đưa doanh thu xuống cuối
+                                ],
+                                backgroundColor: [
+                                  "rgba(128, 128, 128, 0.7)", // Màu cho cột User
+                                  "rgba(0, 123, 255, 0.7)", // Màu cho cột Giáo viên
+                                  "rgba(255, 159, 64, 0.7)", // Màu cho cột Khóa học
+                                  "rgba(255, 99, 132, 0.7)", // Màu cho cột Admin
+                                  "rgba(40, 167, 69, 0.7)", // Màu cho cột Doanh thu
+                                ],
+                                borderColor: [
+                                  "rgba(64, 64, 64, 1)", // Màu viền cho cột User
+                                  "rgba(0, 86, 179, 1)", // Màu viền cho cột Giáo viên
+                                  "rgba(255, 159, 64, 1)", // Màu viền cho cột Khóa học
+                                  "rgba(255, 99, 132, 1)", // Màu viền cho cột Admin
+                                  "rgba(25, 135, 84, 1)", // Màu viền cho cột Doanh thu
+                                ],
                                 borderWidth: 0.5,
-                                borderRadius: 3, // Bo góc cột
-                                borderSkipped: false, // Hiển thị viền xung quanh cột
+                                borderRadius: 3,
+                                borderSkipped: false,
                                 barThickness: 30,
                               },
                             ],
                           },
                           options: {
                             responsive: true,
+                            animation: {
+                              duration: 800,
+                              easing: "easeOutQuart",
+                            },
                             plugins: {
                               legend: {
                                 display: true,
@@ -427,6 +493,15 @@
                                 titleFont: { size: 16 },
                                 bodyFont: { size: 14 },
                                 padding: 10,
+                                displayColors: false,
+                                callbacks: {
+                                  label: function (tooltipItem) {
+                                    // Hiển thị thông tin chi tiết khi hover vào mỗi cột
+                                    const label = tooltipItem.label;
+                                    const value = tooltipItem.raw;
+                                    return `${label}: ${value}`;
+                                  },
+                                },
                               },
                             },
                             scales: {
@@ -438,8 +513,23 @@
                                 beginAtZero: true,
                                 ticks: {
                                   color: "#666",
-                                  stepSize: Math.ceil(data.count / 5), // Tạo các bước trên trục y để đạt chiều cao cột mong muốn
-                                  max: data.count + 50, // Tăng giá trị tối đa của trục y để kéo dài cột
+                                  stepSize: Math.ceil(
+                                    Math.max(
+                                      userData.count,
+                                      teacherData.count,
+                                      courseData.courseCount,
+                                      adminData.count,
+                                      revenueData.totalRevenue
+                                    ) / 5
+                                  ),
+                                  max:
+                                    Math.max(
+                                      userData.count,
+                                      teacherData.count,
+                                      courseData.courseCount,
+                                      adminData.count,
+                                      revenueData.totalRevenue
+                                    ) + 50,
                                 },
                                 grid: { color: "rgba(200, 200, 200, 0.3)" },
                               },
@@ -447,11 +537,11 @@
                           },
                         });
                       } catch (error) {
-                        console.error("Error fetching user count:", error);
+                        console.error("Error fetching data:", error);
                       }
                     }
 
-                    fetchUserCount();
+                    fetchCounts();
                   </script>
                 </div>
               </div>
@@ -506,20 +596,30 @@
                   <!-- Monthly Earnings -->
                   <div class="card">
                     <div class="card-body">
-                      <div class="row alig n-items-start">
+                      <div class="row align-items-start">
                         <div class="col-8">
-                          <h5 class="card-title mb-9 fw-semibold">
-                            Doanh thu hàng tháng
-                          </h5>
-                          <h4 class="fw-semibold mb-3">$6,820</h4>
+                          <h5 class="card-title mb-9 fw-semibold">Doanh thu</h5>
+                          <h4 id="monthly-revenue" class="fw-semibold mb-3">
+                            $6,820
+                          </h4>
+                          <!-- Thêm id để cập nhật -->
                           <div class="d-flex align-items-center pb-1">
+                            <!-- Cập nhật tỷ lệ phần trăm -->
                             <span
                               class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
                             >
-                              <i class="ti ti-arrow-down-right text-danger"></i>
+                              <i
+                                id="revenue-trend-icon"
+                                class="ti ti-arrow-down-right text-danger"
+                              ></i>
                             </span>
-                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                            <p class="fs-3 mb-0">so với năm trước</p>
+                            <p
+                              id="revenue-percentage"
+                              class="text-dark me-1 fs-3 mb-0"
+                            >
+                              +9%
+                            </p>
+                            <p class="fs-3 mb-0">so với tháng cũ</p>
                           </div>
                         </div>
 
@@ -536,6 +636,60 @@
                     </div>
                     <div id="earning"></div>
                   </div>
+
+                  <script>
+                    async function fetchRevenueData() {
+                      try {
+                        // Gọi API để lấy dữ liệu doanh thu hiện tại và doanh thu năm trước
+                        const response = await fetch(
+                          "http://localhost:3001/payment/total-revenue-all-success"
+                        );
+                        const data = await response.json();
+
+                        // Lấy phần tử HTML để hiển thị doanh thu
+                        const revenueElement =
+                          document.getElementById("monthly-revenue");
+                        revenueElement.textContent = `$${data.totalRevenue}`; // Cập nhật doanh thu từ API
+
+                        // Giả sử doanh thu năm trước là $700
+                        const previousYearRevenue = 700;
+
+                        // Tính tỷ lệ phần trăm tăng trưởng
+                        const growthPercentage =
+                          ((data.totalRevenue - previousYearRevenue) /
+                            previousYearRevenue) *
+                          100;
+                        const percentageElement =
+                          document.getElementById("revenue-percentage");
+                        const trendIcon =
+                          document.getElementById("revenue-trend-icon");
+
+                        // Cập nhật tỷ lệ phần trăm và biểu tượng tăng trưởng
+                        if (growthPercentage >= 0) {
+                          percentageElement.textContent = `+${growthPercentage.toFixed(
+                            1
+                          )}%`;
+                          trendIcon.classList.remove("text-danger");
+                          trendIcon.classList.add("text-success");
+                          trendIcon.classList.remove("ti-arrow-down-right");
+                          trendIcon.classList.add("ti-arrow-up-right");
+                        } else {
+                          percentageElement.textContent = `${growthPercentage.toFixed(
+                            1
+                          )}%`;
+                          trendIcon.classList.remove("text-success");
+                          trendIcon.classList.add("text-danger");
+                          trendIcon.classList.remove("ti-arrow-up-right");
+                          trendIcon.classList.add("ti-arrow-down-right");
+                        }
+                      } catch (error) {
+                        console.error("Error fetching revenue data:", error);
+                      }
+                    }
+
+                    // Gọi hàm để cập nhật doanh thu khi trang được tải
+                    fetchRevenueData();
+                  </script>
                 </div>
               </div>
             </div>

@@ -296,7 +296,7 @@
           <div>
             <div class="text-start">
               <span style="font-size: 32px; font-weight: 700; color: #202224"
-                >Danh sách giảng viên</span
+                >Quản lý khóa học</span
               >
             </div>
             <div class="py-4">
@@ -327,49 +327,48 @@
                                   style="color: #202224"
                                   class="text-center text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Tên giảng viên
+                                  Tên khóa học
                                 </th>
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Email
+                                  Mô tả
                                 </th>
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Số điện thoại
+                                  Giá
                                 </th>
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Chuyên ngành
+                                  Giảng viên thêm
                                 </th>
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Slogan
+                                  Ngày tạo
                                 </th>
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  Giới tính
+                                  Ngày cập nhật
                                 </th>
-                                <th
+                                <!-- <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
-                                  creatorID
-                                </th>
-                                <th class="text-secondary opacity-7"></th>
+                                  Hành động
+                                </th> -->
                               </tr>
                             </thead>
-                            <tbody id="userTableBody">
-                              <!-- Dữ liệu từ API sẽ được thêm vào đây -->
+                            <tbody id="courseTableBody">
+                              <!-- Các dòng dữ liệu sẽ được chèn vào đây bằng JavaScript -->
                             </tbody>
                           </table>
                           <!-- Popup HTML -->
@@ -526,70 +525,97 @@
                               top: 20%;
                               left: 50%;
                               transform: translateX(-50%);
-                              background: #fff;
-                              padding: 40px 30px;
-                              box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+                              background: white;
+                              padding: 20px;
+                              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                               z-index: 1000;
-                              border-radius: 12px;
-                              max-width: 450px;
-                              width: 100%;
-                              text-align: center;
-                              animation: fadeIn 0.3s ease-out;
                             "
                           >
-                            <h4
-                              style="
-                                color: #333;
-                                font-size: 22px;
-                                margin-bottom: 20px;
-                                font-weight: 600;
-                              "
-                            >
-                              Số lượng khóa học
-                            </h4>
-                            <p
-                              id="courseCount"
-                              style="
-                                color: #555;
-                                font-size: 18px;
-                                margin-bottom: 25px;
-                                font-weight: 500;
-                              "
-                            >
-                              Đang tải...
-                            </p>
-                            <button
-                              onclick="closeCoursesPopup()"
-                              style="
-                                background-color: #167f71;
-                                color: #fff;
-                                border: none;
-                                padding: 12px 30px;
-                                font-size: 16px;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                transition: background-color 0.3s ease;
-                              "
-                              onmouseover="this.style.backgroundColor='#146c5e';"
-                              onmouseout="this.style.backgroundColor='#167f71';"
-                            >
-                              Đóng
-                            </button>
+                            <h4>Số lượng khóa học</h4>
+                            <p id="courseCount">Đang tải...</p>
+                            <button onclick="closeCoursesPopup()">Đóng</button>
                           </div>
+                          <div
+                            id="enrolledUsersPopup"
+                            style="
+                              display: none;
+                              position: fixed;
+                              top: 0;
+                              left: 0;
+                              width: 100%;
+                              height: 100%;
+                              background: rgba(0, 0, 0, 0.5);
+                              justify-content: center;
+                              align-items: center;
+                              z-index: 9999;
+                            "
+                          >
+                            <div
+                              class="popup-content"
+                              style="
+                                background: #ffffff;
+                                padding: 20px;
+                                border-radius: 10px;
+                                width: 400px;
+                                max-width: 90%;
+                                text-align: center;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                              "
+                            >
+                              <h3
+                                style="
+                                  color: #202224;
+                                  font-size: 18px;
+                                  margin-bottom: 20px;
+                                  font-weight: 600;
+                                "
+                              >
+                                Số lượng người tham gia khóa học
+                              </h3>
+                              <p
+                                id="enrolledUsersContent"
+                                style="
+                                  color: #202224;
+                                  font-size: 16px;
+                                  margin-bottom: 20px;
+                                "
+                              >
+                                Đang tải...
+                              </p>
+                              <button
+                                onclick="document.getElementById('enrolledUsersPopup').style.display='none'"
+                                style="
+                                  background-color: #167f71;
+                                  color: white;
+                                  padding: 10px 20px;
+                                  border: none;
+                                  border-radius: 5px;
+                                  cursor: pointer;
+                                  font-size: 14px;
+                                  transition: background-color 0.3s ease;
+                                "
+                              >
+                                Đóng
+                              </button>
+                            </div>
+                          </div>
+
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
-                                fetch("http://localhost:3001/teacher/getAll")
+                                fetch("http://localhost:3001/course/getAll")
                                   .then((response) => response.json())
                                   .then((data) => {
                                     const tableBody =
-                                      document.getElementById("userTableBody");
+                                      document.getElementById(
+                                        "courseTableBody"
+                                      );
                                     tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
 
-                                    const fetchAdminName = (creatorID) => {
+                                    const fetchAdminName = (teacherID) => {
                                       return fetch(
-                                        `http://localhost:3001/admin/getAdminByID/${creatorID}`
+                                        `http://localhost:3001/teacher/getTeacherByID/${teacherID}`
                                       )
                                         .then((response) => {
                                           if (!response.ok) {
@@ -604,168 +630,145 @@
                                         ); // Trả về tên admin
                                     };
 
-                                    const fetchCoursesCount = (teacherID) => {
+                                    const fetchEnrolledUsersCount = (
+                                      courseID
+                                    ) => {
                                       return fetch(
-                                        `http://localhost:3001/course/countByTeacherID/${teacherID}`
+                                        `http://localhost:3001/enrollCourse/countEnrolledUsers/${courseID}`
                                       )
                                         .then((response) => response.json())
-                                        .then(
-                                          (data) => data.count.courseCount || 0
-                                        ); // Trả về số lượng khóa học từ trường `courseCount`
+                                        .then((data) => data.count || 0) // Trả về số lượng người tham gia
+                                        .catch((error) => {
+                                          console.error(
+                                            "Error fetching enrolled users:",
+                                            error
+                                          );
+                                          return 0; // Trả về 0 nếu có lỗi
+                                        });
                                     };
 
-                                    const promises = data.map((teacher) => {
+                                    const promises = data.map((course) => {
                                       const row = document.createElement("tr");
 
                                       // Tạo các ô dữ liệu
-                                      const nameTeacher =
+                                      const courseName =
                                         document.createElement("td");
-                                      const avatarTeacher =
+                                      const courseDesc =
                                         document.createElement("td");
-                                      const emailTeacher =
+                                      const coursePrice =
                                         document.createElement("td");
-                                      const phoneTeacher =
+                                      const teacherName =
                                         document.createElement("td");
-                                      const majorTeacher =
+                                      const createdAt =
                                         document.createElement("td");
-                                      const sloganTeacher =
+                                      const updatedAt =
                                         document.createElement("td");
-                                      const genderTeacher =
-                                        document.createElement("td");
-                                      const creatorID =
-                                        document.createElement("td");
-                                      const actionCell =
-                                        document.createElement("td");
+                                      // const actionCell =
+                                      //   document.createElement("td");
 
                                       // Nội dung các ô
-                                      nameTeacher.innerHTML = `
-          <div class="d-flex align-items-center px-2 py-1">
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
-              <label class="form-check-label" for="flexCheckDefault"></label>
-            </div>
-            <div>
-              <img src="${
-                teacher.avatar || "../assets/images/profile/user-1.png"
-              }"
-                   class="avatar avatar-sm me-2"
-                   alt="avatar"
-                   style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%; cursor: pointer;" />
-            </div>
-            <div class="d-flex flex-column justify-content-center">
-              <h6 class="mb-0 text-sm" id="teacherName" style="cursor: pointer;">${
-                teacher.name || ""
-              }</h6>
-            </div>
-          </div>
-        `;
-                                      avatarTeacher.innerHTML = `<img src="${
-                                        teacher.avatar ||
-                                        "../assets/images/profile/user-1.png"
-                                      }" class="avatar-sm" />`;
-                                      emailTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.email || ""
+                                      courseName.innerHTML = `
+  <div class="d-flex align-items-center px-2 py-1" style="cursor: pointer;">
+    <img src="${
+      course.img || "../assets/images/profile/default.png"
+    }" class="avatar avatar-sm me-2" alt="course image" style="width: 35px; height: 35px; object-fit: cover;" />
+    <div class="d-flex flex-column justify-content-center">
+      <h6 class="mb-0 text-sm" style="color: #202224;">${
+        course.name || "Không có tên"
+      }</h6>
+    </div>
+  </div>
+`;
+                                      courseDesc.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                        course.describe || "Không có mô tả"
                                       }</span>`;
-                                      phoneTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.phone || ""
-                                      }</span>`;
-                                      majorTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.major || ""
-                                      }</span>`;
-                                      sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.slogan || ""
-                                      }</span>`;
-                                      genderTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.gender || ""
-                                      }</span>`;
+                                      coursePrice.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${course.price.toLocaleString()} VND</span>`;
 
-                                      // Gọi hàm để lấy tên admin từ creatorID
-                                      return fetchAdminName(
-                                        teacher.creatorID
-                                      ).then((adminName) => {
-                                        creatorID.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
-
-                                        // Thêm các nút hành động
-                                        actionCell.innerHTML = `
-            <div class="d-flex justify-content-start">
-              <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
-              <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
-            </div>
-          `;
-                                        // Thêm các ô vào hàng
-                                        row.appendChild(nameTeacher);
-                                        row.appendChild(emailTeacher);
-                                        row.appendChild(phoneTeacher);
-                                        row.appendChild(majorTeacher);
-                                        row.appendChild(sloganTeacher);
-                                        row.appendChild(genderTeacher);
-                                        row.appendChild(creatorID);
-                                        row.appendChild(actionCell);
-                                        // Thêm hàng vào bảng
-                                        tableBody.appendChild(row);
-
-                                        // Sự kiện click cho nút sửa
-                                        const editBtn =
-                                          actionCell.querySelector(".edit-btn");
-                                        editBtn.addEventListener("click", () =>
-                                          openEditPopup(teacher)
-                                        );
-
-                                        // Sự kiện click cho nút xóa
-                                        const deleteBtn =
-                                          actionCell.querySelector(
-                                            ".delete-btn"
-                                          );
-                                        deleteBtn.addEventListener(
-                                          "click",
-                                          () => deleteTeacher(teacher._id)
-                                        );
-
-                                        // Thêm sự kiện click vào tên hoặc avatar để hiển thị popup số lượng khóa học
-                                        nameTeacher
-                                          .querySelector("h6")
-                                          .addEventListener("click", () => {
-                                            fetchCoursesCount(teacher._id).then(
-                                              (count) => {
-                                                document.getElementById(
-                                                  "courseCount"
-                                                ).textContent = `Số lượng khóa học: ${count}`;
-                                                document.getElementById(
-                                                  "coursesPopup"
-                                                ).style.display = "block"; // Hiển thị popup
-                                              }
-                                            );
-                                          });
-                                        avatarTeacher
-                                          .querySelector("img")
-                                          .addEventListener("click", () => {
-                                            fetchCoursesCount(teacher._id).then(
-                                              (count) => {
-                                                document.getElementById(
-                                                  "courseCount"
-                                                ).textContent = `Số lượng khóa học: ${count}`;
-                                                document.getElementById(
-                                                  "coursesPopup"
-                                                ).style.display = "block"; // Hiển thị popup
-                                              }
-                                            );
-                                          });
-                                      });
-                                    });
-
-                                    // Chờ tất cả các promise hoàn thành trước khi cập nhật bảng
-                                    Promise.all(promises)
-                                      .then(() =>
-                                        console.log(
-                                          "All data fetched successfully"
-                                        )
-                                      )
-                                      .catch((error) =>
-                                        console.error(
-                                          "Error fetching admin names:",
-                                          error
-                                        )
+                                      // Gọi hàm để lấy tên giảng viên từ teacherID
+                                      fetchAdminName(course.teacherID._id).then(
+                                        (adminName) => {
+                                          teacherName.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
+                                        }
                                       );
+
+                                      createdAt.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${new Date(
+                                        course.createdAt
+                                      ).toLocaleDateString()}</span>`;
+                                      updatedAt.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${new Date(
+                                        course.updatedAt
+                                      ).toLocaleDateString()}</span>`;
+
+                                      // Thêm các nút hành động
+                                      //                               actionCell.innerHTML = `
+                                      //   <div class="d-flex justify-content-start">
+                                      //     <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
+                                      //     <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
+                                      //   </div>
+                                      // `;
+
+                                      // Thêm các ô vào hàng
+                                      row.appendChild(courseName);
+                                      row.appendChild(courseDesc);
+                                      row.appendChild(coursePrice);
+                                      row.appendChild(teacherName);
+                                      row.appendChild(createdAt);
+                                      row.appendChild(updatedAt);
+                                      // row.appendChild(actionCell);
+
+                                      // Thêm hàng vào bảng
+                                      tableBody.appendChild(row);
+
+                                      // Thêm sự kiện click vào tên hoặc hình ảnh khóa học
+                                      const courseLink =
+                                        courseName.querySelector("h6");
+                                      const courseImg =
+                                        courseName.querySelector("img");
+
+                                      const showEnrolledUsersPopup = () => {
+                                        fetchEnrolledUsersCount(
+                                          course._id
+                                        ).then((count) => {
+                                          const popup =
+                                            document.getElementById(
+                                              "enrolledUsersPopup"
+                                            );
+                                          const popupContent =
+                                            document.getElementById(
+                                              "enrolledUsersContent"
+                                            );
+
+                                          // Hiển thị số người tham gia
+                                          popupContent.innerHTML = `Số lượng người tham gia khóa học: ${count}`;
+
+                                          // Hiển thị popup
+                                          popup.style.display = "flex";
+                                        });
+                                      };
+
+                                      // Áp dụng sự kiện cho tên khóa học và hình ảnh
+                                      courseLink.addEventListener(
+                                        "click",
+                                        showEnrolledUsersPopup
+                                      );
+                                      courseImg.addEventListener(
+                                        "click",
+                                        showEnrolledUsersPopup
+                                      );
+
+                                      // Sự kiện click cho nút sửa
+                                      // const editBtn =
+                                      //   actionCell.querySelector(".edit-btn");
+                                      // editBtn.addEventListener("click", () =>
+                                      //   openEditPopup(course)
+                                      // );
+
+                                      // Sự kiện click cho nút xóa
+                                      // const deleteBtn =
+                                      //   actionCell.querySelector(".delete-btn");
+                                      // deleteBtn.addEventListener("click", () =>
+                                      //   deleteCourse(course._id)
+                                      // );
+                                    });
                                   })
                                   .catch((error) =>
                                     console.error("Error fetching data:", error)
@@ -773,22 +776,15 @@
                               }
                             );
 
-                            // Đóng popup
-                            function closeCoursesPopup() {
-                              document.getElementById(
-                                "coursesPopup"
-                              ).style.display = "none";
-                            }
-
-                            // Xóa giáo viên
-                            function deleteTeacher(teacherID) {
+                            // Hàm xóa khóa học
+                            function deleteCourse(courseID) {
                               if (
                                 confirm(
-                                  "Bạn có chắc chắn muốn xóa giáo viên này không?"
+                                  "Bạn có chắc chắn muốn xóa khóa học này không?"
                                 )
                               ) {
                                 fetch(
-                                  `http://localhost:3001/teacher/delete/${teacherID}`,
+                                  `http://localhost:3001/course/delete/${courseID}`,
                                   {
                                     method: "DELETE",
                                     headers: {
@@ -801,47 +797,53 @@
                                     alert("Xóa thành công!");
                                     location.reload(); // Tải lại trang sau khi xóa thành công
                                   })
-                                  .catch((error) => {
+                                  .catch((error) =>
                                     console.error(
-                                      "Error deleting teacher:",
+                                      "Error deleting course:",
                                       error
-                                    );
-                                  });
+                                    )
+                                  );
                               }
                             }
 
-                            function openEditPopup(teacher) {
+                            // Hàm mở popup sửa khóa học
+                            function openEditPopup(course) {
                               const popup =
                                 document.getElementById("editPopup");
                               const form = document.getElementById("editForm");
-                              // Điền thông tin hiện tại của giáo viên vào form
-                              form.name.value = teacher.name || "";
-                              form.phone.value = teacher.phone || "";
-                              form.avatar.value = teacher.avatar || "";
-                              form.major.value = teacher.major || "";
-                              form.slogan.value = teacher.slogan || "";
-                              form.gender.value = teacher.gender || "Nam";
+                              form.name.value = course.name || "";
+                              form.describe.value = course.describe || "";
+                              form.price.value = course.price || "";
+                              form.avatar.value = course.img || "";
+                              form.teacherID.value = course.teacherID._id || "";
+                              form.createdAt.value = new Date(
+                                course.createdAt
+                              ).toLocaleDateString();
+                              form.updatedAt.value = new Date(
+                                course.updatedAt
+                              ).toLocaleDateString();
+
                               // Hiển thị popup
                               popup.style.display = "flex";
-                              // Gán sự kiện "Hủy" để đóng popup khi nhấn nút "Hủy"
+
                               const cancelBtn =
                                 document.getElementById("cancelBtn");
                               cancelBtn.onclick = function () {
                                 popup.style.display = "none";
                               };
+
                               form.onsubmit = (e) => {
                                 e.preventDefault();
                                 const updatedData = {
                                   name: form.name.value,
-                                  phone: form.phone.value,
-                                  avatar: form.avatar.value,
-                                  major: form.major.value,
-                                  slogan: form.slogan.value,
-                                  gender: form.gender.value,
+                                  describe: form.describe.value,
+                                  price: form.price.value,
+                                  img: form.avatar.value,
+                                  teacherID: form.teacherID.value,
                                 };
-                                // Gửi yêu cầu PUT để cập nhật thông tin
+
                                 fetch(
-                                  `http://localhost:3001/teacher/update/${teacher._id}`,
+                                  `http://localhost:3001/course/update/${course._id}`,
                                   {
                                     method: "PUT",
                                     headers: {
@@ -855,12 +857,12 @@
                                     alert("Cập nhật thành công!");
                                     location.reload(); // Tải lại trang sau khi cập nhật thành công
                                   })
-                                  .catch((error) => {
+                                  .catch((error) =>
                                     console.error(
-                                      "Error updating teacher:",
+                                      "Error updating course:",
                                       error
-                                    );
-                                  });
+                                    )
+                                  );
                               };
                             }
                           </script>
