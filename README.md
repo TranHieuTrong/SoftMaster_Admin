@@ -1,6 +1,9 @@
 # Bootstrap, HTML, JavaScript
 
 The project uses bootstrap, html, css, js to write the SoftMaster admin page interface
+
+# Temporary Translation (Tạm dịch)
+
 Dự án sử dụng bootstrap, html, css, js để viết giao diện trang quản trị SoftMaster
 
 # HChong Dev
