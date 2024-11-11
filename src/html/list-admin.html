@@ -156,19 +156,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search"></i>
-                  </span>
-                  <input
-                    style="width: 388px; background-color: #f5f6fa"
-                    type="text"
-                    class="form-control rounded-5"
-                    placeholder="Tìm kiếm"
-                  />
-                </div>
-              </li>
             </ul>
             <div
               class="navbar-collapse justify-content-end px-0"
@@ -239,13 +226,16 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    <img
-                      src="../assets/images/profile/user-1.png"
-                      alt=""
-                      width="35"
-                      height="35"
-                      class="rounded-circle"
-                    />
+                    <div id="currentAvatarContainer">
+                      <img
+                        id="currentAvatar"
+                        src=""
+                        alt="Current Avatar"
+                        width="35"
+                        height="35"
+                        class="rounded-circle"
+                      />
+                    </div>
                   </a>
                   <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
@@ -253,19 +243,13 @@
                   >
                     <div class="message-body">
                       <a
-                        href="javascript:void(0)"
+                        href="changepass.html"
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
                         <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
                       </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
-                      </a>
+
                       <a
                         id="logoutButton"
                         href="./index.html"
@@ -314,7 +298,39 @@
                       type="text"
                       class="form-control rounded-5"
                       placeholder="Tìm kiếm"
+                      id="searchInput"
                     />
+                  </div>
+                  <!-- Phân trang -->
+                  <div
+                    class="pagination-controls"
+                    style="
+                      width: 30%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-evenly;
+                    "
+                  >
+                    <button id="prevPage" class="btn btn-primary" disabled>
+                      Trang trước
+                    </button>
+                    <span id="currentPage">Trang 1</span>
+                    <button id="nextPage" class="btn btn-primary">
+                      Trang sau
+                    </button>
+
+                    <!-- Số lượng bản ghi trên mỗi trang -->
+                    <select
+                      id="pageSize"
+                      class="form-select"
+                      style="width: auto"
+                    >
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="all">Tất cả</option>
+                    </select>
                   </div>
                   <div class="card mb-4">
                     <div
@@ -350,12 +366,6 @@
                                 >
                                   Chức Vụ
                                 </th>
-                                <!-- <th
-                              style="color: #202224"
-                              class="text-uppercase text-xxs font-weight-bolder opacity-7"
-                            >
-                              Slogan
-                            </th> -->
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
@@ -365,10 +375,11 @@
                                 <th class="text-secondary opacity-7"></th>
                               </tr>
                             </thead>
-                            <tbody id="userTableBody">
+                            <tbody id="adminTableBody">
                               <!-- Dữ liệu từ API sẽ được thêm vào đây -->
                             </tbody>
                           </table>
+
                           <!-- Popup HTML -->
                           <div id="editPopup" class="popup">
                             <div class="popup-content">
@@ -518,12 +529,194 @@
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
+                              function () {
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("adminTableBody");
+
+                                // Hàm để cập nhật bảng với dữ liệu
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
+                                  data.forEach((admin) => {
+                                    const row = document.createElement("tr");
+
+                                    // Tạo các ô dữ liệu
+                                    const avatarCell =
+                                      document.createElement("td");
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const emailCell =
+                                      document.createElement("td");
+                                    const phoneCell =
+                                      document.createElement("td");
+                                    const roleCell =
+                                      document.createElement("td");
+                                    const sloganCell =
+                                      document.createElement("td");
+                                    const genderCell =
+                                      document.createElement("td");
+                                    const creatorIDCell =
+                                      document.createElement("td");
+
+                                    // Nội dung các ô
+                                    // Thêm avatar
+                                    const avatarImg =
+                                      document.createElement("img");
+                                    avatarImg.src =
+                                      admin.avatar ||
+                                      "path/to/default-avatar.jpg"; // Dùng đường dẫn avatar nếu có, nếu không dùng ảnh mặc định
+                                    avatarImg.alt = "Avatar";
+                                    avatarImg.style.width = "40px";
+                                    avatarImg.style.height = "40px";
+                                    avatarImg.style.borderRadius = "50%"; // Làm avatar thành hình tròn
+                                    avatarCell.appendChild(avatarImg);
+
+                                    nameCell.innerHTML = admin.name || "";
+                                    emailCell.innerHTML = admin.email || "";
+                                    phoneCell.innerHTML = admin.phone || "";
+                                    roleCell.innerHTML = admin.role || "";
+                                    sloganCell.innerHTML = admin.slogan || "";
+                                    genderCell.innerHTML = admin.gender || "";
+                                    creatorIDCell.innerHTML =
+                                      admin.creatorID || "";
+
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(avatarCell);
+                                    row.appendChild(nameCell);
+                                    row.appendChild(emailCell);
+                                    row.appendChild(phoneCell);
+                                    row.appendChild(roleCell);
+                                    row.appendChild(sloganCell);
+                                    row.appendChild(genderCell);
+                                    row.appendChild(creatorIDCell);
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                }
+
+                                // Hàm gửi yêu cầu API và cập nhật bảng
+                                function fetchData(searchParams) {
+                                  fetch("http://localhost:3001/admin/filter", {
+                                    method: "POST", // Sử dụng POST thay vì GET
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(searchParams), // Gửi dữ liệu tìm kiếm dưới dạng JSON
+                                  })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
+                                      );
+                                    });
+                                }
+
+                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
+                                searchInput.addEventListener(
+                                  "input",
+                                  function () {
+                                    const searchTerm = searchInput.value.trim();
+
+                                    // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
+                                    const searchParams = {};
+                                    if (searchTerm) {
+                                      if (searchTerm.includes("@")) {
+                                        searchParams.email = searchTerm;
+                                      } else if (searchTerm.match(/^\d+$/)) {
+                                        searchParams.phone = searchTerm;
+                                      } else {
+                                        searchParams.name = searchTerm;
+                                      }
+                                    }
+
+                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
+                                  }
+                                );
+
+                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
+                                searchInput.addEventListener(
+                                  "keydown",
+                                  function (event) {
+                                    if (event.key === "Enter") {
+                                      const searchTerm =
+                                        searchInput.value.trim();
+
+                                      const searchParams = {};
+                                      if (searchTerm) {
+                                        if (searchTerm.includes("@")) {
+                                          searchParams.email = searchTerm;
+                                        } else if (searchTerm.match(/^\d+$/)) {
+                                          searchParams.phone = searchTerm;
+                                        } else {
+                                          searchParams.name = searchTerm;
+                                        }
+                                      }
+
+                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
+                                    }
+                                  }
+                                );
+                              }
+                            );
+
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                const admin = JSON.parse(
+                                  localStorage.getItem("admin")
+                                );
+                                const adminId = admin ? admin.id : null; // Lấy adminId
+                                const currentAvatarContainer =
+                                  document.getElementById(
+                                    "currentAvatarContainer"
+                                  );
+                                const currentAvatar =
+                                  document.getElementById("currentAvatar");
+
+                                if (adminId) {
+                                  // Gửi yêu cầu lấy thông tin admin từ API
+                                  fetch(
+                                    `http://localhost:3001/admin/getAdminByID/${adminId}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((adminData) => {
+                                      // Lấy avatar của admin và hiển thị
+                                      if (adminData.avatar) {
+                                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                                        currentAvatarContainer.style.display =
+                                          "block"; // Hiển thị phần tử chứa avatar
+                                      } else {
+                                        currentAvatarContainer.style.display =
+                                          "none"; // Ẩn phần tử nếu không có avatar
+                                      }
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching admin info:",
+                                        error
+                                      );
+                                    });
+                                } else {
+                                  console.error(
+                                    "Admin ID not found in localStorage."
+                                  );
+                                }
+                              }
+                            );
+                            document.addEventListener(
+                              "DOMContentLoaded",
                               () => {
                                 fetch("http://localhost:3001/admin/getAll")
                                   .then((response) => response.json())
                                   .then((data) => {
                                     const tableBody =
-                                      document.getElementById("userTableBody");
+                                      document.getElementById("adminTableBody");
                                     tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
                                     data.forEach((admin) => {
                                       const row = document.createElement("tr");

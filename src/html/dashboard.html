@@ -155,19 +155,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search"></i>
-                  </span>
-                  <input
-                    style="width: 388px; background-color: #f5f6fa"
-                    type="text"
-                    class="form-control rounded-5"
-                    placeholder="Tìm kiếm"
-                  />
-                </div>
-              </li>
             </ul>
             <div
               class="navbar-collapse justify-content-end px-0"
@@ -238,13 +225,16 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    <img
-                      src="../assets/images/profile/user-1.png"
-                      alt=""
-                      width="35"
-                      height="35"
-                      class="rounded-circle"
-                    />
+                    <div id="currentAvatarContainer">
+                      <img
+                        id="currentAvatar"
+                        src=""
+                        alt="Current Avatar"
+                        width="35"
+                        height="35"
+                        class="rounded-circle"
+                      />
+                    </div>
                   </a>
                   <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
@@ -252,19 +242,13 @@
                   >
                     <div class="message-body">
                       <a
-                        href="javascript:void(0)"
+                        href="changepass.html"
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
                         <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
                       </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
-                      </a>
+
                       <a
                         id="logoutButton"
                         href="./index.html"
@@ -439,7 +423,7 @@
                               "Số lượng Giáo viên",
                               "Số lượng Khóa học",
                               "Số lượng Admin",
-                              "Tổng Doanh Thu", // Đưa doanh thu xuống cuối cùng
+                              // "Tổng Doanh Thu", // Đưa doanh thu xuống cuối cùng
                             ],
                             datasets: [
                               {
@@ -449,7 +433,7 @@
                                   teacherData.count,
                                   courseData.courseCount,
                                   adminData.count,
-                                  revenueData.totalRevenue, // Đưa doanh thu xuống cuối
+                                  // revenueData.totalRevenue, // Đưa doanh thu xuống cuối
                                 ],
                                 backgroundColor: [
                                   "rgba(128, 128, 128, 0.7)", // Màu cho cột User
@@ -518,8 +502,8 @@
                                       userData.count,
                                       teacherData.count,
                                       courseData.courseCount,
-                                      adminData.count,
-                                      revenueData.totalRevenue
+                                      adminData.count
+                                      // revenueData.totalRevenue
                                     ) / 5
                                   ),
                                   max:
@@ -527,8 +511,8 @@
                                       userData.count,
                                       teacherData.count,
                                       courseData.courseCount,
-                                      adminData.count,
-                                      revenueData.totalRevenue
+                                      adminData.count
+                                      // revenueData.totalRevenue
                                     ) + 50,
                                 },
                                 grid: { color: "rgba(200, 200, 200, 0.3)" },
@@ -551,36 +535,39 @@
                 <div class="col-lg-12">
                   <!-- Yearly Breakup -->
                   <div class="card overflow-hidden">
+                    <!-- Doanh Thu Năm -->
                     <div class="card-body p-4">
                       <h5 class="card-title mb-9 fw-semibold">
                         Thống kê hàng năm
                       </h5>
                       <div class="row align-items-center">
                         <div class="col-8">
-                          <h4 class="fw-semibold mb-3">$36,358</h4>
-                          <div class="d-flex align-items-center mb-3">
-                            <span
-                              class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center"
-                            >
-                              <i class="ti ti-arrow-up-left text-success"></i>
-                            </span>
-                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                            <p class="fs-3 mb-0">so với năm trước</p>
-                          </div>
+                          <h4 id="annual-revenue" class="fw-semibold mb-3">
+                            $36,358
+                          </h4>
+
                           <div class="d-flex align-items-center">
                             <div class="me-4">
                               <span
                                 class="round-8 bg-primary rounded-circle me-2 d-inline-block"
                               ></span>
-                              <span class="fs-2">2023</span>
+                              <span class="fs-2" id="current-year">2024</span>
                             </div>
                             <div>
                               <span
                                 class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"
                               ></span>
-                              <span class="fs-2">2022</span>
-                              <!-- Thay đổi năm cho chính xác -->
+                              <span class="fs-2" id="previous-year">2023</span>
                             </div>
+                          </div>
+                          <!-- Thêm phần chọn năm -->
+                          <div class="mt-3">
+                            <label for="year-select" class="form-label"
+                              >Chọn năm:</label
+                            >
+                            <select id="year-select" class="form-select">
+                              <!-- Các lựa chọn năm sẽ được thêm động qua JavaScript -->
+                            </select>
                           </div>
                         </div>
                         <div class="col-4">
@@ -590,6 +577,162 @@
                         </div>
                       </div>
                     </div>
+
+                    <script>
+                      async function fetchAnnualRevenue() {
+                        try {
+                          // Gọi API để lấy thống kê doanh thu theo năm
+                          const response = await fetch(
+                            "http://localhost:3001/payment/annual-revenue"
+                          );
+                          const data = await response.json();
+
+                          // Kiểm tra nếu API trả về thành công
+                          if (data && Array.isArray(data) && data.length > 0) {
+                            const currentYear = new Date().getFullYear(); // Lấy năm hiện tại
+                            let revenueForCurrentYear = 0;
+                            let revenueForPreviousYear = 0;
+
+                            // Lọc doanh thu cho năm hiện tại và năm trước
+                            data.forEach((item) => {
+                              if (item._id.year === currentYear) {
+                                revenueForCurrentYear = item.totalRevenue;
+                              } else if (item._id.year === currentYear - 1) {
+                                revenueForPreviousYear = item.totalRevenue;
+                              }
+                            });
+
+                            // Cập nhật doanh thu năm hiện tại
+                            const annualRevenueElement =
+                              document.getElementById("annual-revenue");
+                            annualRevenueElement.textContent = `${revenueForCurrentYear.toLocaleString(
+                              "vi-VN"
+                            )} đ`;
+
+                            // Tính tỷ lệ phần trăm tăng trưởng
+                            const percentageElement =
+                              document.getElementById("revenue-percentage");
+                            const trendIcon =
+                              document.getElementById("revenue-trend-icon");
+                            let growthPercentage = 0;
+
+                            if (revenueForPreviousYear > 0) {
+                              growthPercentage =
+                                ((revenueForCurrentYear -
+                                  revenueForPreviousYear) /
+                                  revenueForPreviousYear) *
+                                100;
+                            }
+
+                            // Hiển thị tỷ lệ tăng trưởng
+                            if (growthPercentage >= 0) {
+                              percentageElement.textContent = `+${growthPercentage.toFixed(
+                                1
+                              )}%`;
+                              trendIcon.classList.remove("text-danger");
+                              trendIcon.classList.add("text-success");
+                              trendIcon.classList.remove("ti-arrow-down-right");
+                              trendIcon.classList.add("ti-arrow-up-left");
+                            } else {
+                              percentageElement.textContent = `${growthPercentage.toFixed(
+                                1
+                              )}%`;
+                              trendIcon.classList.remove("text-success");
+                              trendIcon.classList.add("text-danger");
+                              trendIcon.classList.remove("ti-arrow-up-left");
+                              trendIcon.classList.add("ti-arrow-down-right");
+                            }
+
+                            // Cập nhật thông tin năm
+                            document.getElementById(
+                              "current-year"
+                            ).textContent = currentYear;
+                            document.getElementById(
+                              "previous-year"
+                            ).textContent = currentYear - 1;
+
+                            // Thêm các năm vào dropdown
+                            const yearSelect =
+                              document.getElementById("year-select");
+                            yearSelect.innerHTML = ""; // Xóa tất cả các tùy chọn cũ
+                            const years = [
+                              ...new Set(data.map((item) => item._id.year)),
+                            ]; // Lấy tất cả các năm có dữ liệu
+
+                            years.forEach((year) => {
+                              const option = document.createElement("option");
+                              option.value = year;
+                              option.textContent = year;
+                              yearSelect.appendChild(option);
+                            });
+
+                            // Chọn năm hiện tại trong dropdown
+                            yearSelect.value = currentYear;
+
+                            // Lắng nghe sự kiện thay đổi lựa chọn năm
+                            yearSelect.addEventListener("change", function () {
+                              const selectedYear = parseInt(this.value, 10);
+                              const selectedYearData = data.find(
+                                (item) => item._id.year === selectedYear
+                              );
+                              const revenueForSelectedYear = selectedYearData
+                                ? selectedYearData.totalRevenue
+                                : 0;
+
+                              // Cập nhật doanh thu cho năm đã chọn
+                              annualRevenueElement.textContent = `${revenueForCurrentYear.toLocaleString(
+                                "vi-VN"
+                              )} đ`;
+
+                              // Cập nhật tỷ lệ phần trăm cho năm đã chọn
+                              const previousYearData = data.find(
+                                (item) => item._id.year === selectedYear - 1
+                              );
+                              const revenueForPreviousYear = previousYearData
+                                ? previousYearData.totalRevenue
+                                : 0;
+                              let selectedGrowthPercentage = 0;
+
+                              if (revenueForPreviousYear > 0) {
+                                selectedGrowthPercentage =
+                                  ((revenueForSelectedYear -
+                                    revenueForPreviousYear) /
+                                    revenueForPreviousYear) *
+                                  100;
+                              }
+
+                              if (selectedGrowthPercentage >= 0) {
+                                percentageElement.textContent = `+${selectedGrowthPercentage.toFixed(
+                                  1
+                                )}%`;
+                                trendIcon.classList.remove("text-danger");
+                                trendIcon.classList.add("text-success");
+                                trendIcon.classList.remove(
+                                  "ti-arrow-down-right"
+                                );
+                                trendIcon.classList.add("ti-arrow-up-left");
+                              } else {
+                                percentageElement.textContent = `${selectedGrowthPercentage.toFixed(
+                                  1
+                                )}%`;
+                                trendIcon.classList.remove("text-success");
+                                trendIcon.classList.add("text-danger");
+                                trendIcon.classList.remove("ti-arrow-up-left");
+                                trendIcon.classList.add("ti-arrow-down-right");
+                              }
+                            });
+                          }
+                        } catch (error) {
+                          console.error(
+                            "Error fetching annual revenue data:",
+                            error
+                          );
+                        }
+                      }
+
+                      // Gọi hàm để lấy doanh thu năm khi trang được tải
+                      fetchAnnualRevenue();
+                    </script>
                   </div>
                 </div>
                 <div class="col-lg-12">
@@ -597,6 +740,27 @@
                   <div class="card">
                     <div class="card-body">
                       <div class="row align-items-start">
+                        <!-- Thêm phần chọn tháng -->
+                        <div class="mt-3">
+                          <label for="month-select" class="form-label"
+                            >Chọn tháng:</label
+                          >
+                          <select id="month-select" class="form-select">
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                          </select>
+                        </div>
+
                         <div class="col-8">
                           <h5 class="card-title mb-9 fw-semibold">Doanh thu</h5>
                           <h4 id="monthly-revenue" class="fw-semibold mb-3">
@@ -604,7 +768,6 @@
                           </h4>
                           <!-- Thêm id để cập nhật -->
                           <div class="d-flex align-items-center pb-1">
-                            <!-- Cập nhật tỷ lệ phần trăm -->
                             <span
                               class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
                             >
@@ -638,57 +801,106 @@
                   </div>
 
                   <script>
-                    async function fetchRevenueData() {
+                    async function fetchRevenueForMonth(month) {
                       try {
-                        // Gọi API để lấy dữ liệu doanh thu hiện tại và doanh thu năm trước
+                        // Gọi API để lấy doanh thu theo tháng
                         const response = await fetch(
-                          "http://localhost:3001/payment/total-revenue-all-success"
+                          "http://localhost:3001/payment/getMonthlyRevenue"
                         );
                         const data = await response.json();
 
-                        // Lấy phần tử HTML để hiển thị doanh thu
-                        const revenueElement =
-                          document.getElementById("monthly-revenue");
-                        revenueElement.textContent = `$${data.totalRevenue}`; // Cập nhật doanh thu từ API
+                        // Kiểm tra nếu API trả về thành công
+                        if (data.success) {
+                          const monthlyRevenue = data.totalRevenue || {};
+                          const currentYear = new Date().getFullYear(); // Lấy năm hiện tại
+                          const monthKey = `${currentYear}-${
+                            month < 10 ? "0" + month : month
+                          }`; // Tạo key tháng (ví dụ "2024-01")
 
-                        // Giả sử doanh thu năm trước là $700
-                        const previousYearRevenue = 700;
+                          // Lấy doanh thu cho tháng đã chọn, nếu không có thì gán là 0
+                          const revenueForMonth = monthlyRevenue[monthKey] || 0;
 
-                        // Tính tỷ lệ phần trăm tăng trưởng
-                        const growthPercentage =
-                          ((data.totalRevenue - previousYearRevenue) /
-                            previousYearRevenue) *
-                          100;
-                        const percentageElement =
-                          document.getElementById("revenue-percentage");
-                        const trendIcon =
-                          document.getElementById("revenue-trend-icon");
+                          // Định dạng doanh thu thành VNĐ
+                          const formattedRevenue = new Intl.NumberFormat(
+                            "vi-VN",
+                            {
+                              style: "currency",
+                              currency: "VND",
+                            }
+                          ).format(revenueForMonth);
 
-                        // Cập nhật tỷ lệ phần trăm và biểu tượng tăng trưởng
-                        if (growthPercentage >= 0) {
-                          percentageElement.textContent = `+${growthPercentage.toFixed(
-                            1
-                          )}%`;
-                          trendIcon.classList.remove("text-danger");
-                          trendIcon.classList.add("text-success");
-                          trendIcon.classList.remove("ti-arrow-down-right");
-                          trendIcon.classList.add("ti-arrow-up-right");
+                          // Cập nhật phần tử HTML với doanh thu tháng
+                          const revenueElement =
+                            document.getElementById("monthly-revenue");
+                          revenueElement.textContent = formattedRevenue;
+
+                          // Tính tỷ lệ phần trăm tăng trưởng
+                          const previousMonth = month - 1 > 0 ? month - 1 : 12; // Nếu là tháng 1, so với tháng 12
+                          const previousMonthKey = `${currentYear}-${
+                            previousMonth < 10
+                              ? "0" + previousMonth
+                              : previousMonth
+                          }`;
+                          const previousRevenue =
+                            monthlyRevenue[previousMonthKey] || 0; // Doanh thu của tháng trước
+
+                          const growthPercentage =
+                            previousRevenue !== 0
+                              ? ((revenueForMonth - previousRevenue) /
+                                  previousRevenue) *
+                                100
+                              : 0;
+                          const percentageElement =
+                            document.getElementById("revenue-percentage");
+                          const trendIcon =
+                            document.getElementById("revenue-trend-icon");
+
+                          // Cập nhật tỷ lệ phần trăm và biểu tượng tăng trưởng
+                          if (growthPercentage >= 0) {
+                            percentageElement.textContent = `+${growthPercentage.toFixed(
+                              1
+                            )}%`;
+                            trendIcon.classList.remove("text-danger");
+                            trendIcon.classList.add("text-success");
+                            trendIcon.classList.remove("ti-arrow-down-right");
+                            trendIcon.classList.add("ti-arrow-up-right");
+                          } else {
+                            percentageElement.textContent = `${growthPercentage.toFixed(
+                              1
+                            )}%`;
+                            trendIcon.classList.remove("text-success");
+                            trendIcon.classList.add("text-danger");
+                            trendIcon.classList.remove("ti-arrow-up-right");
+                            trendIcon.classList.add("ti-arrow-down-right");
+                          }
                         } else {
-                          percentageElement.textContent = `${growthPercentage.toFixed(
-                            1
-                          )}%`;
-                          trendIcon.classList.remove("text-success");
-                          trendIcon.classList.add("text-danger");
-                          trendIcon.classList.remove("ti-arrow-up-right");
-                          trendIcon.classList.add("ti-arrow-down-right");
+                          console.error(
+                            "Error fetching revenue data:",
+                            data.message
+                          );
                         }
                       } catch (error) {
                         console.error("Error fetching revenue data:", error);
                       }
                     }
 
-                    // Gọi hàm để cập nhật doanh thu khi trang được tải
-                    fetchRevenueData();
+                    // Lấy tháng hiện tại
+                    const currentMonth = new Date().getMonth() + 1; // `getMonth()` trả về giá trị từ 0 đến 11, cần cộng thêm 1
+
+                    // Cập nhật giá trị mặc định của ô select thành tháng hiện tại
+                    document.getElementById("month-select").value =
+                      currentMonth;
+
+                    // Lắng nghe sự kiện thay đổi lựa chọn tháng
+                    document
+                      .getElementById("month-select")
+                      .addEventListener("change", function () {
+                        const selectedMonth = parseInt(this.value, 10); // Lấy giá trị tháng người dùng chọn
+                        fetchRevenueForMonth(selectedMonth); // Gọi API để lấy doanh thu cho tháng đã chọn
+                      });
+
+                    // Gọi hàm để lấy doanh thu cho tháng hiện tại khi trang được tải
+                    fetchRevenueForMonth(currentMonth); // Lấy doanh thu của tháng hiện tại
                   </script>
                 </div>
               </div>
@@ -1222,6 +1434,36 @@
                 </div>
               </div>
             </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const admin = JSON.parse(localStorage.getItem("admin"));
+                const adminId = admin ? admin.id : null; // Lấy adminId
+                const currentAvatarContainer = document.getElementById(
+                  "currentAvatarContainer"
+                );
+                const currentAvatar = document.getElementById("currentAvatar");
+
+                if (adminId) {
+                  // Gửi yêu cầu lấy thông tin admin từ API
+                  fetch(`http://localhost:3001/admin/getAdminByID/${adminId}`)
+                    .then((response) => response.json())
+                    .then((adminData) => {
+                      // Lấy avatar của admin và hiển thị
+                      if (adminData.avatar) {
+                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                        currentAvatarContainer.style.display = "block"; // Hiển thị phần tử chứa avatar
+                      } else {
+                        currentAvatarContainer.style.display = "none"; // Ẩn phần tử nếu không có avatar
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching admin info:", error);
+                    });
+                } else {
+                  console.error("Admin ID not found in localStorage.");
+                }
+              });
+            </script>
           </div>
         </div>
       </div>

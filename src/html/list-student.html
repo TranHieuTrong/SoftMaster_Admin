@@ -162,19 +162,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search"></i>
-                  </span>
-                  <input
-                    style="width: 388px; background-color: #f5f6fa"
-                    type="text"
-                    class="form-control rounded-5"
-                    placeholder="Tìm kiếm"
-                  />
-                </div>
-              </li>
             </ul>
             <div
               class="navbar-collapse justify-content-end px-0"
@@ -245,13 +232,16 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    <img
-                      src="../assets/images/profile/user-1.png"
-                      alt=""
-                      width="35"
-                      height="35"
-                      class="rounded-circle"
-                    />
+                    <div id="currentAvatarContainer">
+                      <img
+                        id="currentAvatar"
+                        src=""
+                        alt="Current Avatar"
+                        width="35"
+                        height="35"
+                        class="rounded-circle"
+                      />
+                    </div>
                   </a>
                   <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
@@ -259,19 +249,13 @@
                   >
                     <div class="message-body">
                       <a
-                        href="javascript:void(0)"
+                        href="changepass.html"
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
                         <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
                       </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
-                      </a>
+
                       <a
                         id="logoutButton"
                         href="./index.html"
@@ -320,7 +304,39 @@
                       type="text"
                       class="form-control rounded-5"
                       placeholder="Tìm kiếm"
+                      id="searchInput"
                     />
+                  </div>
+                  <!-- Phân trang -->
+                  <div
+                    class="pagination-controls"
+                    style="
+                      width: 30%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-evenly;
+                    "
+                  >
+                    <button id="prevPage" class="btn btn-primary" disabled>
+                      Trang trước
+                    </button>
+                    <span id="currentPage">Trang 1</span>
+                    <button id="nextPage" class="btn btn-primary">
+                      Trang sau
+                    </button>
+
+                    <!-- Số lượng bản ghi trên mỗi trang -->
+                    <select
+                      id="pageSize"
+                      class="form-select"
+                      style="width: auto"
+                    >
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="all">Tất cả</option>
+                    </select>
                   </div>
                   <div class="card mb-4">
                     <div
@@ -375,132 +391,313 @@
                               <!-- Dữ liệu từ API sẽ được thêm vào đây -->
                             </tbody>
                           </table>
+                          <div id="paginationContainer">
+                            <!-- Các nút phân trang sẽ được thêm vào đây -->
+                          </div>
 
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
+                              function () {
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("userTableBody");
+
+                                // Hàm để cập nhật bảng với dữ liệu
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
+                                  data.forEach((user) => {
+                                    const row = document.createElement("tr");
+
+                                    // Tạo các ô dữ liệu
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const emailCell =
+                                      document.createElement("td");
+                                    const birthDateCell =
+                                      document.createElement("td");
+                                    const phoneCell =
+                                      document.createElement("td");
+                                    const courseCell =
+                                      document.createElement("td");
+                                    const registerDateCell =
+                                      document.createElement("td");
+                                    const actionCell =
+                                      document.createElement("td");
+
+                                    // Chuyển đổi định dạng ngày tháng năm
+                                    const formatDate = (dateString) => {
+                                      if (!dateString) return "";
+                                      const date = new Date(dateString);
+                                      const day = String(
+                                        date.getDate()
+                                      ).padStart(2, "0");
+                                      const month = String(
+                                        date.getMonth() + 1
+                                      ).padStart(2, "0");
+                                      const year = date.getFullYear();
+                                      return `${day}-${month}-${year}`;
+                                    };
+
+                                    // Nội dung các ô
+                                    nameCell.innerHTML = user.name || "";
+                                    emailCell.innerHTML = user.email || "";
+                                    birthDateCell.innerHTML = formatDate(
+                                      user.birthday
+                                    );
+                                    phoneCell.innerHTML = user.phone || "";
+                                    courseCell.innerHTML = user.gender || "";
+                                    registerDateCell.innerHTML = formatDate(
+                                      user.createdAt
+                                    );
+
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(nameCell);
+                                    row.appendChild(emailCell);
+                                    row.appendChild(birthDateCell);
+                                    row.appendChild(phoneCell);
+                                    row.appendChild(courseCell);
+                                    row.appendChild(registerDateCell);
+                                    row.appendChild(actionCell);
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                }
+
+                                // Hàm gửi yêu cầu API và cập nhật bảng
+                                function fetchData(searchParams) {
+                                  fetch("http://localhost:3001/user/filter", {
+                                    method: "POST", // Sử dụng POST thay vì GET
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(searchParams), // Gửi dữ liệu tìm kiếm dưới dạng JSON
+                                  })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
+                                      );
+                                    });
+                                }
+
+                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
+                                searchInput.addEventListener(
+                                  "input",
+                                  function () {
+                                    const searchTerm = searchInput.value.trim();
+
+                                    // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
+                                    const searchParams = {};
+                                    if (searchTerm) {
+                                      if (searchTerm.includes("@")) {
+                                        // Nếu chứa dấu @ thì chắc chắn là email
+                                        searchParams.email = searchTerm;
+                                      } else if (searchTerm.match(/^\d+$/)) {
+                                        // Nếu chỉ chứa số thì là số điện thoại
+                                        searchParams.phone = searchTerm;
+                                      } else {
+                                        // Nếu không thì là tên
+                                        searchParams.name = searchTerm;
+                                      }
+                                    }
+
+                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
+                                  }
+                                );
+
+                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
+                                searchInput.addEventListener(
+                                  "keydown",
+                                  function (event) {
+                                    if (event.key === "Enter") {
+                                      const searchTerm =
+                                        searchInput.value.trim();
+
+                                      // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
+                                      const searchParams = {};
+                                      if (searchTerm) {
+                                        if (searchTerm.includes("@")) {
+                                          // Nếu chứa dấu @ thì chắc chắn là email
+                                          searchParams.email = searchTerm;
+                                        } else if (searchTerm.match(/^\d+$/)) {
+                                          // Nếu chỉ chứa số thì là số điện thoại
+                                          searchParams.phone = searchTerm;
+                                        } else {
+                                          // Nếu không thì là tên
+                                          searchParams.name = searchTerm;
+                                        }
+                                      }
+
+                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
+                                    }
+                                  }
+                                );
+                              }
+                            );
+
+                            document.addEventListener(
+                              "DOMContentLoaded",
                               () => {
+                                let currentPage = 1;
+                                let itemsPerPage = 10; // Mặc định là 10 bản ghi mỗi trang
+                                let totalItems = 0;
+                                let totalPages = 0;
+                                let data = [];
+
+                                // Lấy dữ liệu người dùng từ API
                                 fetch("http://localhost:3001/user/getAll")
                                   .then((response) => response.json())
-                                  .then((data) => {
-                                    const tableBody =
-                                      document.getElementById("userTableBody");
-                                    tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+                                  .then((fetchedData) => {
+                                    data = fetchedData;
+                                    totalItems = data.length;
+                                    totalPages = Math.ceil(
+                                      totalItems / itemsPerPage
+                                    );
 
-                                    data.forEach((user) => {
-                                      const row = document.createElement("tr");
-
-                                      // Tạo các ô dữ liệu
-                                      const nameCell =
-                                        document.createElement("td");
-                                      const emailCell =
-                                        document.createElement("td");
-                                      const birthDateCell =
-                                        document.createElement("td");
-                                      const phoneCell =
-                                        document.createElement("td");
-                                      const courseCell =
-                                        document.createElement("td");
-                                      const registerDateCell =
-                                        document.createElement("td");
-                                      const actionCell =
-                                        document.createElement("td");
-
-                                      // Chuyển đổi định dạng ngày tháng năm
-                                      const formatDate = (dateString) => {
-                                        if (!dateString) return "";
-                                        const date = new Date(dateString);
-                                        const day = String(
-                                          date.getDate()
-                                        ).padStart(2, "0");
-                                        const month = String(
-                                          date.getMonth() + 1
-                                        ).padStart(2, "0");
-                                        const year = date.getFullYear();
-                                        return `${day}-${month}-${year}`;
-                                      };
-
-                                      // Chuyển đổi định dạng ngày tháng năm cho giờ đăng ký
-                                      const formatRegisterDate = (
-                                        dateString
-                                      ) => {
-                                        if (!dateString) return "";
-                                        const date = new Date(dateString);
-                                        const day = String(
-                                          date.getDate()
-                                        ).padStart(2, "0");
-                                        const month = String(
-                                          date.getMonth() + 1
-                                        ).padStart(2, "0");
-                                        const year = date.getFullYear();
-                                        return `${day}-${month}-${year}`;
-                                      };
-
-                                      // Nội dung các ô
-                                      nameCell.innerHTML = `
-                                    <div class="d-flex align-items-center px-2 py-1">
-                                      <div class="form-check me-3">
-                                        <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
-                                        <label class="form-check-label" for="flexCheckDefault"></label>
-                                      </div>
-                                     <div>
-                                          <img
-                                              src="${
-                                                user.avatar ||
-                                                "../assets/images/profile/user-1.png"
-                                              }"
-                                              class="avatar avatar-sm me-2"
-                                              alt="avatar"
-                                              style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;"
-                                          />
-                                      </div>
-                                      <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">${
-                                          user.name || ""
-                                        }</h6>
-                                      </div>
-                                    </div>
-                                  `;
-                                      emailCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        user.email || ""
-                                      }</span>`;
-                                      birthDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
-                                        user.birthday
-                                      )}</span>`;
-                                      phoneCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        user.phone || ""
-                                      }</span>`;
-                                      courseCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        user.gender || ""
-                                      }</span>`;
-                                      registerDateCell.innerHTML = `<span style="color: #202224" class=" text-xs font-weight-bold">${formatRegisterDate(
-                                        user.createdAt
-                                      )}</span>`;
-
-                                      // Thêm các nút hành động
-                                      // actionCell.innerHTML = `
-                                      //   <div class="input-group-append ms-2">
-                                      //     <button class="btn btn-primary rounded-5" type="button">Sửa</button>
-                                      //     <button class="btn btn-danger rounded-5 ms-2" type="button">Xóa</button>
-                                      //   </div>
-                                      // `;
-
-                                      // Thêm các ô vào hàng
-                                      row.appendChild(nameCell);
-                                      row.appendChild(emailCell);
-                                      row.appendChild(birthDateCell);
-                                      row.appendChild(phoneCell);
-                                      row.appendChild(courseCell);
-                                      row.appendChild(registerDateCell);
-                                      row.appendChild(actionCell);
-
-                                      // Thêm hàng vào bảng
-                                      tableBody.appendChild(row);
-                                    });
+                                    // Hiển thị người dùng trang đầu tiên
+                                    displayUsers(currentPage);
+                                    updatePaginationControls();
                                   })
                                   .catch((error) =>
                                     console.error("Error fetching data:", error)
                                   );
+
+                                // Hàm hiển thị người dùng trong bảng
+                                const displayUsers = (page) => {
+                                  const tableBody =
+                                    document.getElementById("userTableBody");
+                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+
+                                  // Tính toán chỉ số người dùng cần hiển thị cho trang hiện tại
+                                  const startIndex = (page - 1) * itemsPerPage;
+                                  const endIndex = Math.min(
+                                    startIndex + itemsPerPage,
+                                    totalItems
+                                  );
+                                  const usersToDisplay = data.slice(
+                                    startIndex,
+                                    endIndex
+                                  );
+
+                                  usersToDisplay.forEach((user) => {
+                                    const row = document.createElement("tr");
+
+                                    // Tạo các ô dữ liệu
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const emailCell =
+                                      document.createElement("td");
+                                    const birthDateCell =
+                                      document.createElement("td");
+                                    const phoneCell =
+                                      document.createElement("td");
+                                    const genderCell =
+                                      document.createElement("td");
+                                    const registerDateCell =
+                                      document.createElement("td");
+
+                                    const formatDate = (dateString) => {
+                                      if (!dateString) return "";
+                                      const date = new Date(dateString);
+                                      const day = String(
+                                        date.getDate()
+                                      ).padStart(2, "0");
+                                      const month = String(
+                                        date.getMonth() + 1
+                                      ).padStart(2, "0");
+                                      const year = date.getFullYear();
+                                      return `${day}-${month}-${year}`;
+                                    };
+
+                                    nameCell.innerHTML = user.name || "";
+                                    emailCell.innerHTML = user.email || "";
+                                    birthDateCell.innerHTML = formatDate(
+                                      user.birthday
+                                    );
+                                    phoneCell.innerHTML = user.phone || "";
+                                    genderCell.innerHTML = user.gender || "";
+                                    registerDateCell.innerHTML = formatDate(
+                                      user.createdAt
+                                    );
+
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(nameCell);
+                                    row.appendChild(emailCell);
+                                    row.appendChild(birthDateCell);
+                                    row.appendChild(phoneCell);
+                                    row.appendChild(genderCell);
+                                    row.appendChild(registerDateCell);
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                };
+
+                                // Cập nhật các điều khiển phân trang
+                                const updatePaginationControls = () => {
+                                  const prevPageBtn =
+                                    document.getElementById("prevPage");
+                                  const nextPageBtn =
+                                    document.getElementById("nextPage");
+                                  const currentPageSpan =
+                                    document.getElementById("currentPage");
+
+                                  // Cập nhật trang hiện tại và trạng thái của các nút
+                                  currentPageSpan.innerText = `Trang ${currentPage}`;
+                                  prevPageBtn.disabled = currentPage === 1;
+                                  nextPageBtn.disabled =
+                                    currentPage === totalPages;
+
+                                  // Cập nhật sự kiện cho nút "Trang trước" và "Trang sau"
+                                  prevPageBtn.onclick = () => {
+                                    if (currentPage > 1) {
+                                      currentPage--; // Giảm trang
+                                      displayUsers(currentPage);
+                                      updatePaginationControls();
+                                    }
+                                  };
+
+                                  nextPageBtn.onclick = () => {
+                                    if (currentPage < totalPages) {
+                                      currentPage++; // Tăng trang
+                                      displayUsers(currentPage);
+                                      updatePaginationControls();
+                                    }
+                                  };
+                                };
+
+                                // Xử lý thay đổi số lượng bản ghi mỗi trang
+                                const pageSizeSelect =
+                                  document.getElementById("pageSize");
+                                pageSizeSelect.addEventListener(
+                                  "change",
+                                  (event) => {
+                                    const selectedValue = event.target.value;
+                                    if (selectedValue === "all") {
+                                      itemsPerPage = totalItems; // Hiển thị tất cả các bản ghi
+                                    } else {
+                                      itemsPerPage = parseInt(
+                                        selectedValue,
+                                        10
+                                      ); // Cập nhật số lượng bản ghi mỗi trang
+                                    }
+
+                                    // Cập nhật lại tổng số trang và hiển thị người dùng
+                                    totalPages = Math.ceil(
+                                      totalItems / itemsPerPage
+                                    );
+                                    currentPage = 1; // Quay lại trang đầu tiên mỗi khi thay đổi số lượng bản ghi
+                                    displayUsers(currentPage);
+                                    updatePaginationControls();
+                                  }
+                                );
                               }
                             );
                           </script>

@@ -216,19 +216,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search"></i>
-                  </span>
-                  <input
-                    style="width: 388px; background-color: #f5f6fa"
-                    type="text"
-                    class="form-control rounded-5"
-                    placeholder="Tìm kiếm"
-                  />
-                </div>
-              </li>
             </ul>
             <div
               class="navbar-collapse justify-content-end px-0"
@@ -299,13 +286,16 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    <img
-                      src="../assets/images/profile/user-1.png"
-                      alt=""
-                      width="35"
-                      height="35"
-                      class="rounded-circle"
-                    />
+                    <div id="currentAvatarContainer">
+                      <img
+                        id="currentAvatar"
+                        src=""
+                        alt="Current Avatar"
+                        width="35"
+                        height="35"
+                        class="rounded-circle"
+                      />
+                    </div>
                   </a>
                   <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
@@ -313,18 +303,11 @@
                   >
                     <div class="message-body">
                       <a
-                        href="javascript:void(0)"
+                        href="changepass.html"
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
                         <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
-                      </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
                       </a>
                       <a
                         id="logoutButton"
@@ -413,17 +396,33 @@
                             </div>
                             <div class="mb-3">
                               <label for="avatar" class="form-label"
-                                >Link Avatar</label
+                                >Chọn Avatar</label
                               >
                               <input
                                 style="border-radius: 15px"
-                                type="text"
+                                type="file"
                                 class="form-control"
                                 id="avatar"
-                                placeholder="Nhập link avatar"
+                                accept="image/*"
                                 required
                               />
+                              <small
+                                id="avatarHelp"
+                                class="form-text text-muted"
+                              >
+                                Vui lòng chọn một ảnh có định dạng hợp lệ (JPG,
+                                PNG, GIF).
+                              </small>
                             </div>
+                            <img
+                              id="avatarPreview"
+                              style="
+                                display: none;
+                                max-width: 100px;
+                                margin-top: 10px;
+                              "
+                              alt="Preview Avatar"
+                            />
                           </div>
 
                           <!-- Cột bên phải -->
@@ -513,6 +512,80 @@
             </div>
             <script>
               document.addEventListener("DOMContentLoaded", () => {
+                const avatarInput = document.getElementById("avatar"); // Input chọn ảnh
+                const avatarPreview = document.getElementById("avatarPreview"); // Element preview ảnh
+
+                avatarInput.addEventListener("change", async (event) => {
+                  const file = event.target.files[0]; // Lấy tệp ảnh từ input
+
+                  if (!file) return; // Nếu không có file, thoát
+
+                  const formData = new FormData();
+                  formData.append("image", file); // Thêm ảnh vào formData
+
+                  try {
+                    // Gửi yêu cầu POST đến ImgBB API để tải ảnh lên
+                    const response = await fetch(
+                      "https://api.imgbb.com/1/upload?expiration=600&key=4254690dda1ab4a773856d7de73bfd86",
+                      {
+                        method: "POST",
+                        body: formData,
+                      }
+                    );
+
+                    const data = await response.json();
+                    if (data.success) {
+                      // Nếu tải ảnh lên thành công, lấy URL ảnh từ dữ liệu trả về
+                      const imageUrl = data.data.display_url; // Lấy display_url (URL ảnh)
+
+                      // Hiển thị ảnh preview
+                      avatarPreview.src = imageUrl;
+                      avatarPreview.style.display = "block"; // Hiển thị ảnh preview
+
+                      // Cập nhật lại input với URL ảnh (nếu cần lưu vào cơ sở dữ liệu sau này)
+                      avatarInput.setAttribute("data-upload-url", imageUrl); // Lưu URL vào input
+
+                      console.log("Ảnh tải lên thành công, URL:", imageUrl);
+                    } else {
+                      console.error("Lỗi tải ảnh lên:", data);
+                      alert("Lỗi tải ảnh lên. Vui lòng thử lại.");
+                    }
+                  } catch (error) {
+                    console.error("Lỗi tải ảnh lên:", error);
+                    alert("Lỗi tải ảnh lên: " + error.message);
+                  }
+                });
+              });
+
+              document.addEventListener("DOMContentLoaded", () => {
+                const admin = JSON.parse(localStorage.getItem("admin"));
+                const adminId = admin ? admin.id : null; // Lấy adminId
+                const currentAvatarContainer = document.getElementById(
+                  "currentAvatarContainer"
+                );
+                const currentAvatar = document.getElementById("currentAvatar");
+
+                if (adminId) {
+                  // Gửi yêu cầu lấy thông tin admin từ API
+                  fetch(`http://localhost:3001/admin/getAdminByID/${adminId}`)
+                    .then((response) => response.json())
+                    .then((adminData) => {
+                      // Lấy avatar của admin và hiển thị
+                      if (adminData.avatar) {
+                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                        currentAvatarContainer.style.display = "block"; // Hiển thị phần tử chứa avatar
+                      } else {
+                        currentAvatarContainer.style.display = "none"; // Ẩn phần tử nếu không có avatar
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching admin info:", error);
+                    });
+                } else {
+                  console.error("Admin ID not found in localStorage.");
+                }
+              });
+              document.addEventListener("DOMContentLoaded", () => {
                 // Lấy thông tin admin từ localStorage
                 const admin = JSON.parse(localStorage.getItem("admin"));
                 const adminId = admin ? admin.id : null;
@@ -579,6 +652,9 @@
                         console.log("Giảng viên đã được thêm:", result);
                         // Bạn có thể làm mới bảng hoặc hiển thị thông báo thành công ở đây
                         alert("Giảng viên đã được thêm thành công!"); // Thông báo thành công
+                        // Reset lại form sau khi thêm thành công
+                        teacherForm.reset();
+                        location.reload(); // Tải lại trang
                       })
                       .catch((error) => {
                         console.error("Error adding teacher:", error);

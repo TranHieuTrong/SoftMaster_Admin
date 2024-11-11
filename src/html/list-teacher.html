@@ -156,19 +156,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search"></i>
-                  </span>
-                  <input
-                    style="width: 388px; background-color: #f5f6fa"
-                    type="text"
-                    class="form-control rounded-5"
-                    placeholder="Tìm kiếm"
-                  />
-                </div>
-              </li>
             </ul>
             <div
               class="navbar-collapse justify-content-end px-0"
@@ -239,13 +226,16 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    <img
-                      src="../assets/images/profile/user-1.png"
-                      alt=""
-                      width="35"
-                      height="35"
-                      class="rounded-circle"
-                    />
+                    <div id="currentAvatarContainer">
+                      <img
+                        id="currentAvatar"
+                        src=""
+                        alt="Current Avatar"
+                        width="35"
+                        height="35"
+                        class="rounded-circle"
+                      />
+                    </div>
                   </a>
                   <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
@@ -253,19 +243,13 @@
                   >
                     <div class="message-body">
                       <a
-                        href="javascript:void(0)"
+                        href="changepass.html"
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
                         <p class="mb-0 fs-3">Cài Đặt Tài Khoản</p>
                       </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">Đổi Mật Khẩu</p>
-                      </a>
+
                       <a
                         id="logoutButton"
                         href="./index.html"
@@ -311,8 +295,41 @@
                       type="text"
                       class="form-control rounded-5"
                       placeholder="Tìm kiếm"
+                      id="searchInput"
                     />
                   </div>
+                  <!-- Phân trang -->
+                  <!-- Phân trang -->
+                  <div
+                    class="pagination-controls"
+                    style="
+                      width: 30%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-evenly;
+                    "
+                  >
+                    <button id="prevPage" class="btn btn-primary" disabled>
+                      Trang trước
+                    </button>
+                    <span id="currentPage">Trang 1</span>
+                    <button id="nextPage" class="btn btn-primary">
+                      Trang sau
+                    </button>
+
+                    <select
+                      id="pageSize"
+                      class="form-select"
+                      style="width: auto"
+                    >
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="all">Tất cả</option>
+                    </select>
+                  </div>
+
                   <div class="card mb-4">
                     <div
                       class="table-responsive p-0"
@@ -359,12 +376,13 @@
                                 >
                                   Giới tính
                                 </th>
-                                <th
+                                <!-- <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
                                   creatorID
-                                </th>
+                                </th> -->
+                                <th class="text-secondary opacity-7"></th>
                                 <th class="text-secondary opacity-7"></th>
                               </tr>
                             </thead>
@@ -372,6 +390,10 @@
                               <!-- Dữ liệu từ API sẽ được thêm vào đây -->
                             </tbody>
                           </table>
+
+                          <div id="paginationContainer">
+                            <!-- Các nút phân trang sẽ được thêm vào đây -->
+                          </div>
                           <!-- Popup HTML -->
                           <div id="editPopup" class="popup">
                             <div class="popup-content">
@@ -517,268 +539,549 @@
                               cursor: pointer;
                             }
                           </style>
-                          <!-- Popup hiển thị số lượng khóa học -->
+                          <!-- Lớp nền mờ -->
+                          <div
+                            id="overlay"
+                            style="
+                              display: none;
+                              position: fixed;
+                              top: 0;
+                              left: 0;
+                              width: 100%;
+                              height: 100%;
+                              background: rgba(
+                                0,
+                                0,
+                                0,
+                                0.5
+                              ); /* Màu nền đen mờ */
+                              z-index: 999; /* Để lớp nền mờ dưới popup */
+                            "
+                          ></div>
+
+                          <!-- Popup hiển thị thông tin khóa học -->
                           <div
                             id="coursesPopup"
                             style="
                               display: none;
+                              background: #fff; /* Nền trắng */
+                              padding: 20px;
+                              border-radius: 15px;
                               position: fixed;
-                              top: 20%;
+                              top: 50%;
                               left: 50%;
-                              transform: translateX(-50%);
-                              background: #fff;
-                              padding: 40px 30px;
-                              box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+                              transform: translate(
+                                -50%,
+                                -50%
+                              ); /* Căn giữa theo cả chiều ngang và dọc */
                               z-index: 1000;
-                              border-radius: 12px;
-                              max-width: 450px;
-                              width: 100%;
-                              text-align: center;
-                              animation: fadeIn 0.3s ease-out;
+                              width: 80%; /* Chiều rộng popup */
+                              max-width: 600px; /* Chiều rộng tối đa */
+                              height: auto;
+                              color: #333; /* Màu chữ đen đậm */
+                              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+                              font-family: 'Segoe UI', Tahoma, Geneva, Verdana,
+                                sans-serif; /* Font dễ đọc */
                             "
                           >
-                            <h4
-                              style="
-                                color: #333;
-                                font-size: 22px;
-                                margin-bottom: 20px;
-                                font-weight: 600;
-                              "
-                            >
-                              Số lượng khóa học
-                            </h4>
-                            <p
-                              id="courseCount"
-                              style="
-                                color: #555;
-                                font-size: 18px;
-                                margin-bottom: 25px;
-                                font-weight: 500;
-                              "
-                            >
-                              Đang tải...
-                            </p>
+                            <!-- Nút đóng -->
                             <button
-                              onclick="closeCoursesPopup()"
+                              id="closePopupBtn"
                               style="
-                                background-color: #167f71;
-                                color: #fff;
+                                position: absolute;
+                                top: 10px;
+                                right: 10px;
+                                font-size: 18px;
+                                background: #ff4d4d; /* Màu nền đỏ */
                                 border: none;
-                                padding: 12px 30px;
-                                font-size: 16px;
-                                border-radius: 6px;
+                                color: white; /* Màu chữ trắng */
+                                padding: 8px 15px;
+                                border-radius: 8px; /* Bo góc nút */
                                 cursor: pointer;
-                                transition: background-color 0.3s ease;
+                                transition: background 0.3s ease; /* Hiệu ứng đổi màu nền khi hover */
                               "
-                              onmouseover="this.style.backgroundColor='#146c5e';"
-                              onmouseout="this.style.backgroundColor='#167f71';"
+                              onmouseover="this.style.background='#ff2a2a'"
+                              onmouseout="this.style.background='#ff4d4d'"
                             >
                               Đóng
                             </button>
+
+                            <!-- Tiêu đề popup -->
+                            <h2
+                              style="
+                                color: #444; /* Màu chữ tiêu đề */
+                                font-size: 22px;
+                                margin-bottom: 20px;
+                                text-align: center;
+                              "
+                            >
+                              Thông tin khóa học
+                            </h2>
+
+                            <!-- Nội dung popup -->
+                            <div
+                              id="popupContent"
+                              style="
+                                color: #555; /* Màu chữ nội dung */
+                                font-size: 16px;
+                                line-height: 1.6;
+                                max-height: 60vh; /* Giới hạn chiều cao để tránh quá dài */
+                                overflow-y: auto;
+                                margin-bottom: 20px;
+                              "
+                            >
+                              <!-- Nội dung sẽ được thay đổi bằng JS -->
+                            </div>
                           </div>
+
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
-                              () => {
-                                fetch("http://localhost:3001/teacher/getAll")
-                                  .then((response) => response.json())
-                                  .then((data) => {
-                                    const tableBody =
-                                      document.getElementById("userTableBody");
-                                    tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+                              function () {
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("userTableBody");
 
-                                    const fetchAdminName = (creatorID) => {
-                                      return fetch(
-                                        `http://localhost:3001/admin/getAdminByID/${creatorID}`
-                                      )
-                                        .then((response) => {
-                                          if (!response.ok) {
-                                            throw new Error(
-                                              "Error fetching admin info"
-                                            );
-                                          }
-                                          return response.json();
-                                        })
-                                        .then(
-                                          (adminData) => adminData.name || ""
-                                        ); // Trả về tên admin
-                                    };
+                                // Hàm để cập nhật bảng với dữ liệu
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
+                                  data.forEach((teacher) => {
+                                    const row = document.createElement("tr");
 
-                                    const fetchCoursesCount = (teacherID) => {
-                                      return fetch(
-                                        `http://localhost:3001/course/countByTeacherID/${teacherID}`
-                                      )
-                                        .then((response) => response.json())
-                                        .then(
-                                          (data) => data.count.courseCount || 0
-                                        ); // Trả về số lượng khóa học từ trường `courseCount`
-                                    };
+                                    // Tạo các ô dữ liệu
+                                    const avatarCell =
+                                      document.createElement("td");
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const emailCell =
+                                      document.createElement("td");
+                                    const phoneCell =
+                                      document.createElement("td");
+                                    const specializationCell =
+                                      document.createElement("td");
+                                    const sloganCell =
+                                      document.createElement("td");
+                                    const genderCell =
+                                      document.createElement("td");
+                                    // const creatorIDCell =
+                                    //   document.createElement("td");
 
-                                    const promises = data.map((teacher) => {
-                                      const row = document.createElement("tr");
+                                    // Nội dung các ô
+                                    // Thêm avatar
+                                    const avatarImg =
+                                      document.createElement("img");
+                                    avatarImg.src =
+                                      teacher.avatar ||
+                                      "path/to/default-avatar.jpg"; // Dùng đường dẫn avatar nếu có, nếu không dùng ảnh mặc định
+                                    avatarImg.alt = "Avatar";
+                                    avatarImg.style.width = "40px";
+                                    avatarImg.style.height = "40px";
+                                    avatarImg.style.borderRadius = "50%"; // Làm avatar thành hình tròn
+                                    avatarCell.appendChild(avatarImg);
 
-                                      // Tạo các ô dữ liệu
-                                      const nameTeacher =
-                                        document.createElement("td");
-                                      const avatarTeacher =
-                                        document.createElement("td");
-                                      const emailTeacher =
-                                        document.createElement("td");
-                                      const phoneTeacher =
-                                        document.createElement("td");
-                                      const majorTeacher =
-                                        document.createElement("td");
-                                      const sloganTeacher =
-                                        document.createElement("td");
-                                      const genderTeacher =
-                                        document.createElement("td");
-                                      const creatorID =
-                                        document.createElement("td");
-                                      const actionCell =
-                                        document.createElement("td");
+                                    nameCell.innerHTML = teacher.name || "";
+                                    emailCell.innerHTML = teacher.email || "";
+                                    phoneCell.innerHTML = teacher.phone || "";
+                                    specializationCell.innerHTML =
+                                      teacher.specialization || "";
+                                    sloganCell.innerHTML = teacher.slogan || "";
+                                    genderCell.innerHTML = teacher.gender || "";
+                                    // creatorIDCell.innerHTML =
+                                    //   teacher.creatorID || "";
 
-                                      // Nội dung các ô
-                                      nameTeacher.innerHTML = `
-          <div class="d-flex align-items-center px-2 py-1">
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
-              <label class="form-check-label" for="flexCheckDefault"></label>
-            </div>
-            <div>
-              <img src="${
-                teacher.avatar || "../assets/images/profile/user-1.png"
-              }"
-                   class="avatar avatar-sm me-2"
-                   alt="avatar"
-                   style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%; cursor: pointer;" />
-            </div>
-            <div class="d-flex flex-column justify-content-center">
-              <h6 class="mb-0 text-sm" id="teacherName" style="cursor: pointer;">${
-                teacher.name || ""
-              }</h6>
-            </div>
-          </div>
-        `;
-                                      avatarTeacher.innerHTML = `<img src="${
-                                        teacher.avatar ||
-                                        "../assets/images/profile/user-1.png"
-                                      }" class="avatar-sm" />`;
-                                      emailTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.email || ""
-                                      }</span>`;
-                                      phoneTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.phone || ""
-                                      }</span>`;
-                                      majorTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.major || ""
-                                      }</span>`;
-                                      sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.slogan || ""
-                                      }</span>`;
-                                      genderTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        teacher.gender || ""
-                                      }</span>`;
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(avatarCell);
+                                    row.appendChild(nameCell);
+                                    row.appendChild(emailCell);
+                                    row.appendChild(phoneCell);
+                                    row.appendChild(specializationCell);
+                                    row.appendChild(sloganCell);
+                                    row.appendChild(genderCell);
+                                    // row.appendChild(creatorIDCell);
 
-                                      // Gọi hàm để lấy tên admin từ creatorID
-                                      return fetchAdminName(
-                                        teacher.creatorID
-                                      ).then((adminName) => {
-                                        creatorID.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                }
 
-                                        // Thêm các nút hành động
-                                        actionCell.innerHTML = `
-            <div class="d-flex justify-content-start">
-              <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
-              <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
-            </div>
-          `;
-                                        // Thêm các ô vào hàng
-                                        row.appendChild(nameTeacher);
-                                        row.appendChild(emailTeacher);
-                                        row.appendChild(phoneTeacher);
-                                        row.appendChild(majorTeacher);
-                                        row.appendChild(sloganTeacher);
-                                        row.appendChild(genderTeacher);
-                                        row.appendChild(creatorID);
-                                        row.appendChild(actionCell);
-                                        // Thêm hàng vào bảng
-                                        tableBody.appendChild(row);
-
-                                        // Sự kiện click cho nút sửa
-                                        const editBtn =
-                                          actionCell.querySelector(".edit-btn");
-                                        editBtn.addEventListener("click", () =>
-                                          openEditPopup(teacher)
-                                        );
-
-                                        // Sự kiện click cho nút xóa
-                                        const deleteBtn =
-                                          actionCell.querySelector(
-                                            ".delete-btn"
-                                          );
-                                        deleteBtn.addEventListener(
-                                          "click",
-                                          () => deleteTeacher(teacher._id)
-                                        );
-
-                                        // Thêm sự kiện click vào tên hoặc avatar để hiển thị popup số lượng khóa học
-                                        nameTeacher
-                                          .querySelector("h6")
-                                          .addEventListener("click", () => {
-                                            fetchCoursesCount(teacher._id).then(
-                                              (count) => {
-                                                document.getElementById(
-                                                  "courseCount"
-                                                ).textContent = `Số lượng khóa học: ${count}`;
-                                                document.getElementById(
-                                                  "coursesPopup"
-                                                ).style.display = "block"; // Hiển thị popup
-                                              }
-                                            );
-                                          });
-                                        avatarTeacher
-                                          .querySelector("img")
-                                          .addEventListener("click", () => {
-                                            fetchCoursesCount(teacher._id).then(
-                                              (count) => {
-                                                document.getElementById(
-                                                  "courseCount"
-                                                ).textContent = `Số lượng khóa học: ${count}`;
-                                                document.getElementById(
-                                                  "coursesPopup"
-                                                ).style.display = "block"; // Hiển thị popup
-                                              }
-                                            );
-                                          });
-                                      });
-                                    });
-
-                                    // Chờ tất cả các promise hoàn thành trước khi cập nhật bảng
-                                    Promise.all(promises)
-                                      .then(() =>
-                                        console.log(
-                                          "All data fetched successfully"
-                                        )
-                                      )
-                                      .catch((error) =>
-                                        console.error(
-                                          "Error fetching admin names:",
-                                          error
-                                        )
+                                // Hàm gửi yêu cầu API và cập nhật bảng
+                                function fetchData(searchParams) {
+                                  fetch(
+                                    "http://localhost:3001/teacher/filter",
+                                    {
+                                      method: "POST", // Sử dụng POST thay vì GET
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify(searchParams), // Gửi dữ liệu tìm kiếm dưới dạng JSON
+                                    }
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
                                       );
-                                  })
-                                  .catch((error) =>
-                                    console.error("Error fetching data:", error)
+                                    });
+                                }
+
+                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
+                                searchInput.addEventListener(
+                                  "input",
+                                  function () {
+                                    const searchTerm = searchInput.value.trim();
+
+                                    // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
+                                    const searchParams = {};
+                                    if (searchTerm) {
+                                      if (searchTerm.includes("@")) {
+                                        searchParams.email = searchTerm;
+                                      } else if (searchTerm.match(/^\d+$/)) {
+                                        searchParams.phone = searchTerm;
+                                      } else {
+                                        searchParams.name = searchTerm;
+                                      }
+                                    }
+
+                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
+                                  }
+                                );
+
+                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
+                                searchInput.addEventListener(
+                                  "keydown",
+                                  function (event) {
+                                    if (event.key === "Enter") {
+                                      const searchTerm =
+                                        searchInput.value.trim();
+
+                                      const searchParams = {};
+                                      if (searchTerm) {
+                                        if (searchTerm.includes("@")) {
+                                          searchParams.email = searchTerm;
+                                        } else if (searchTerm.match(/^\d+$/)) {
+                                          searchParams.phone = searchTerm;
+                                        } else {
+                                          searchParams.name = searchTerm;
+                                        }
+                                      }
+
+                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
+                                    }
+                                  }
+                                );
+                              }
+                            );
+
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                const admin = JSON.parse(
+                                  localStorage.getItem("admin")
+                                );
+                                const adminId = admin ? admin.id : null; // Lấy adminId
+                                const currentAvatarContainer =
+                                  document.getElementById(
+                                    "currentAvatarContainer"
                                   );
+                                const currentAvatar =
+                                  document.getElementById("currentAvatar");
+
+                                if (adminId) {
+                                  // Gửi yêu cầu lấy thông tin admin từ API
+                                  fetch(
+                                    `http://localhost:3001/admin/getAdminByID/${adminId}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((adminData) => {
+                                      // Lấy avatar của admin và hiển thị
+                                      if (adminData.avatar) {
+                                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                                        currentAvatarContainer.style.display =
+                                          "block"; // Hiển thị phần tử chứa avatar
+                                      } else {
+                                        currentAvatarContainer.style.display =
+                                          "none"; // Ẩn phần tử nếu không có avatar
+                                      }
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching admin info:",
+                                        error
+                                      );
+                                    });
+                                } else {
+                                  console.error(
+                                    "Admin ID not found in localStorage."
+                                  );
+                                }
+                              }
+                            );
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                const tableBody =
+                                  document.getElementById("userTableBody");
+
+                                // Hàm lấy tên admin
+                                const fetchAdminName = async (creatorID) => {
+                                  try {
+                                    const response = await fetch(
+                                      `http://localhost:3001/admin/getAdminByID/${creatorID}`
+                                    );
+                                    if (!response.ok)
+                                      throw new Error(
+                                        "Error fetching admin info"
+                                      );
+                                    const adminData = await response.json();
+                                    return adminData.name || "";
+                                  } catch (error) {
+                                    console.error(error);
+                                    return "";
+                                  }
+                                };
+
+                                // Hàm lấy danh sách khóa học của giảng viên
+                                const fetchCourses = async (teacherID) => {
+                                  try {
+                                    const response = await fetch(
+                                      `http://localhost:3001/course/getCourseByTeacherID/${teacherID}`
+                                    );
+                                    const courses = await response.json();
+                                    return courses;
+                                  } catch (error) {
+                                    console.error(error);
+                                    return [];
+                                  }
+                                };
+
+                                // Hàm tạo nội dung hàng giảng viên
+                                const createTeacherRow = async (teacher) => {
+                                  const row = document.createElement("tr");
+
+                                  // Tạo các ô dữ liệu
+                                  const nameTeacher =
+                                    document.createElement("td");
+                                  const avatarTeacher =
+                                    document.createElement("td");
+                                  const emailTeacher =
+                                    document.createElement("td");
+                                  const phoneTeacher =
+                                    document.createElement("td");
+                                  const majorTeacher =
+                                    document.createElement("td");
+                                  const sloganTeacher =
+                                    document.createElement("td");
+                                  const genderTeacher =
+                                    document.createElement("td");
+                                  const creatorID =
+                                    document.createElement("td");
+                                  const actionCell =
+                                    document.createElement("td");
+
+                                  // Cập nhật nội dung các ô
+                                  nameTeacher.innerHTML =
+                                    getTeacherNameMarkup(teacher);
+                                  avatarTeacher.innerHTML =
+                                    getTeacherAvatarMarkup(teacher);
+                                  emailTeacher.innerHTML =
+                                    getTeacherEmailMarkup(teacher);
+                                  phoneTeacher.innerHTML =
+                                    getTeacherPhoneMarkup(teacher);
+                                  majorTeacher.innerHTML =
+                                    getTeacherMajorMarkup(teacher);
+                                  sloganTeacher.innerHTML =
+                                    getTeacherSloganMarkup(teacher);
+                                  genderTeacher.innerHTML =
+                                    getTeacherGenderMarkup(teacher);
+
+                                  // Lấy tên admin từ creatorID
+                                  const adminName = await fetchAdminName(
+                                    teacher.creatorID
+                                  );
+                                  // creatorID.innerHTML =
+                                  //   getTeacherCreatorMarkup(adminName);
+
+                                  // Thêm các nút hành động
+                                  actionCell.innerHTML =
+                                    getTeacherActionsMarkup();
+
+                                  // Thêm các ô vào hàng và thêm hàng vào bảng
+                                  row.appendChild(nameTeacher);
+                                  row.appendChild(emailTeacher);
+                                  row.appendChild(phoneTeacher);
+                                  row.appendChild(majorTeacher);
+                                  row.appendChild(sloganTeacher);
+                                  row.appendChild(genderTeacher);
+                                  row.appendChild(creatorID);
+                                  row.appendChild(actionCell);
+                                  tableBody.appendChild(row);
+
+                                  // Sự kiện click cho nút sửa
+                                  addEditEvent(actionCell, teacher);
+
+                                  // Sự kiện click cho nút xóa
+                                  addDeleteEvent(actionCell, teacher);
+
+                                  // Sự kiện click vào tên hoặc avatar để hiển thị popup số lượng khóa học
+                                  addCoursePopupEvent(nameTeacher, teacher);
+                                  addCoursePopupEvent(avatarTeacher, teacher);
+                                };
+
+                                // Hàm lấy các markup HTML cho các ô dữ liệu giảng viên
+                                const getTeacherNameMarkup = (teacher) => `
+    <div class="d-flex align-items-center px-2 py-1">
+      <div>
+        <img src="${teacher.avatar || "../assets/images/profile/user-1.png"}"
+             class="avatar avatar-sm me-2"
+             alt="avatar"
+             style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%; cursor: pointer;" />
+      </div>
+      <div class="d-flex flex-column justify-content-center">
+        <h6 class="mb-0 text-sm" id="teacherName" style="cursor: pointer;">${
+          teacher.name || ""
+        }</h6>
+      </div>
+    </div>
+  `;
+
+                                const getTeacherAvatarMarkup = (teacher) =>
+                                  `<img src="${
+                                    teacher.avatar ||
+                                    "../assets/images/profile/user-1.png"
+                                  }" class="avatar-sm" />`;
+                                const getTeacherEmailMarkup = (teacher) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                    teacher.email || ""
+                                  }</span>`;
+                                const getTeacherPhoneMarkup = (teacher) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                    teacher.phone || ""
+                                  }</span>`;
+                                const getTeacherMajorMarkup = (teacher) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                    teacher.major || ""
+                                  }</span>`;
+                                const getTeacherSloganMarkup = (teacher) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                    teacher.slogan || ""
+                                  }</span>`;
+                                const getTeacherGenderMarkup = (teacher) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                    teacher.gender || ""
+                                  }</span>`;
+                                const getTeacherCreatorMarkup = (adminName) =>
+                                  `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
+                                const getTeacherActionsMarkup = () => `
+    <div class="d-flex justify-content-start">
+      <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
+      <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
+    </div>
+  `;
+
+                                // Thêm sự kiện cho nút sửa
+                                const addEditEvent = (actionCell, teacher) => {
+                                  actionCell
+                                    .querySelector(".edit-btn")
+                                    .addEventListener("click", () =>
+                                      openEditPopup(teacher)
+                                    );
+                                };
+
+                                // Thêm sự kiện cho nút xóa
+                                const addDeleteEvent = (
+                                  actionCell,
+                                  teacher
+                                ) => {
+                                  actionCell
+                                    .querySelector(".delete-btn")
+                                    .addEventListener("click", () =>
+                                      deleteTeacher(teacher._id)
+                                    );
+                                };
+
+                                // Thêm sự kiện hiển thị popup khóa học
+                                const addCoursePopupEvent = (
+                                  element,
+                                  teacher
+                                ) => {
+                                  element.addEventListener(
+                                    "click",
+                                    async () => {
+                                      const courses = await fetchCourses(
+                                        teacher._id
+                                      );
+                                      showCoursesPopup(courses, teacher.name);
+                                    }
+                                  );
+                                };
+
+                                // Hiển thị popup khóa học
+                                const showCoursesPopup = (
+                                  courses,
+                                  teacherName
+                                ) => {
+                                  let courseDetails = `<h5>Khóa học của ${teacherName}</h5>`;
+                                  if (courses.length === 0) {
+                                    courseDetails += `<p>Giảng viên này hiện tại chưa có khóa học.</p>`;
+                                  } else {
+                                    courses.forEach((course, index) => {
+                                      courseDetails += `
+          <div class="course-detail">
+            <h6>${index + 1}. ${course.name}</h6>
+            <p>${course.describe}</p>
+          </div>
+          <hr />
+        `;
+                                    });
+                                  }
+
+                                  const popup =
+                                    document.getElementById("coursesPopup");
+                                  popup.querySelector(
+                                    "#popupContent"
+                                  ).innerHTML = courseDetails;
+                                  popup.style.display = "block";
+                                };
+
+                                // Lấy danh sách giảng viên
+                                const fetchTeachers = async () => {
+                                  try {
+                                    const response = await fetch(
+                                      "http://localhost:3001/teacher/getAll"
+                                    );
+                                    const data = await response.json();
+                                    tableBody.innerHTML = ""; // Xóa nội dung bảng hiện tại
+
+                                    // Duyệt qua từng giảng viên và tạo hàng cho giảng viên
+                                    for (const teacher of data) {
+                                      await createTeacherRow(teacher);
+                                    }
+                                  } catch (error) {
+                                    console.error(
+                                      "Error fetching teachers:",
+                                      error
+                                    );
+                                  }
+                                };
+
+                                // Gọi hàm để lấy giảng viên
+                                fetchTeachers();
                               }
                             );
 
                             // Đóng popup
-                            function closeCoursesPopup() {
-                              document.getElementById(
-                                "coursesPopup"
-                              ).style.display = "none";
-                            }
+                            document
+                              .getElementById("closePopupBtn")
+                              .addEventListener("click", () => {
+                                document.getElementById(
+                                  "coursesPopup"
+                                ).style.display = "none"; // Đóng popup
+                              });
 
                             // Xóa giáo viên
                             function deleteTeacher(teacherID) {
