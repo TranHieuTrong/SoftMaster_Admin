@@ -1,173 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="description" content="Hệ thống quản lý WIFI FPT Polytechnic" />
-    <meta name="author" content="MokaDEV" />
-    <title>Đăng nhập</title>
-    <!-- Favicon -->
-    <link
-      rel="icon"
-      href="https://regmac.fpl.edu.vn/assets/img/brand/favicon.png"
-      type="image/png"
-    />
-    <!-- Fonts -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
-    />
-    <!-- Icons -->
-    <link
-      rel="stylesheet"
-      href="https://regmac.fpl.edu.vn/assets/vendor/nucleo/css/nucleo.css"
-      type="text/css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://regmac.fpl.edu.vn/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
-      type="text/css"
-    />
-    <!-- Argon CSS -->
-    <link
-      rel="stylesheet"
-      href="https://regmac.fpl.edu.vn/assets/css/argon.css?v=1.1.0"
-      type="text/css"
-    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Khóa Học</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .course-container {
+        margin: 20px;
+      }
+      .course {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .course img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+      }
+      .course-info {
+        flex-grow: 1;
+        margin-left: 10px;
+      }
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    </style>
   </head>
-
-  <body class="bg-default">
-    <!-- Navbar -->
-    <nav
-      id="navbar-main"
-      class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light"
-    >
-      <div class="container">
-        <a class="navbar-brand" href="/">
-          <img src="https://regmac.fpl.edu.vn/assets/img/brand/logo.png" />
-        </a>
-      </div>
-    </nav>
-    <!-- Main content -->
-    <div class="main-content">
-      <!-- Header -->
-      <div class="header bg-gradient-primary py-7 py-lg-8 pt-lg-9">
-        <div class="container">
-          <div class="header-body text-center mb-7">
-            <div class="row justify-content-center">
-              <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                <h1 class="text-white">Welcome!</h1>
-                <p class="text-lead text-white">
-                  Đăng nhập vào hệ thống quản lý địa chỉ mac Wifi.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="separator separator-bottom separator-skew zindex-100">
-          <svg
-            x="0"
-            y="0"
-            viewBox="0 0 2560 100"
-            preserveAspectRatio="none"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <polygon
-              class="fill-default"
-              points="2560 0 2560 100 0 100"
-            ></polygon>
-          </svg>
-        </div>
-      </div>
-      <!-- Page content -->
-      <div class="container mt--8 pb-5">
-        <div class="row justify-content-center">
-          <div class="col-lg-5 col-md-7">
-            <div class="card bg-secondary border-0 mb-0">
-              <div class="card-header bg-transparent">
-                <div class="text-sm text-center">Đăng nhập</div>
-              </div>
-              <div class="card-body">
-                <div class="btn-wrapper text-center">
-                  <a
-                    href="https://regmac.fpl.edu.vn/feid"
-                    class="btn btn-neutral btn-icon"
-                  >
-                    <span class="btn-inner--icon"
-                      ><img
-                        src="https://regmac.fpl.edu.vn/assets/img/icons/common/feid.png"
-                    /></span>
-                    <span class="btn-inner--text"
-                      >Đăng nhập dành cho sinh viên</span
-                    >
-                  </a>
-                </div>
-                <div class="btn-wrapper text-center mt-3">
-                  <a
-                    href="https://regmac.fpl.edu.vn/google"
-                    class="btn btn-neutral btn-icon"
-                  >
-                    <span class="btn-inner--icon"
-                      ><img
-                        src="https://regmac.fpl.edu.vn/assets/img/icons/common/google.svg"
-                    /></span>
-                    <span class="btn-inner--text"
-                      >Đăng nhập cán bộ - giảng viên</span
-                    >
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <body>
+    <h1>Danh Sách Khóa Học</h1>
+    <div id="courseList" class="course-container">
+      <!-- Khóa học sẽ được hiển thị ở đây -->
     </div>
-    <!-- Footer -->
-    <footer class="py-5" id="footer-main">
-      <div class="container">
-        <div class="row align-items-center justify-content-xl-between">
-          <div class="col-xl-6">
-            <div class="copyright text-center text-xl-left text-muted">
-              &copy; 2024
-              <a
-                href="https://caodang.fpt.edu.vn"
-                class="font-weight-bold ml-1"
-                target="_blank"
-                >FPT Polytechnic</a
-              >
-            </div>
+
+    <script>
+      // Fetch data from the API to load the courses
+      async function loadCourses() {
+        const response = await fetch("http://localhost:3001/course/getAll");
+        const courses = await response.json();
+
+        const courseList = document.getElementById("courseList");
+        courseList.innerHTML = "";
+
+        courses.forEach((course) => {
+          const courseElement = document.createElement("div");
+          courseElement.classList.add("course");
+          courseElement.innerHTML = `
+          <img src="${course.img}" alt="${course.name}">
+          <div class="course-info">
+            <h3>${course.name}</h3>
+            <p>${course.describe}</p>
+            <p>Giá: ${course.price.toLocaleString()} VND</p>
           </div>
-          <div class="col-xl-6">
-            <ul
-              class="nav nav-footer justify-content-center justify-content-xl-end"
-            >
-              <li class="nav-item">
-                <a
-                  href="https://www.facebook.com/localhost.io"
-                  class="nav-link"
-                  target="_blank"
-                  >Developer MokaDEV</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
-    <!-- Argon Scripts -->
-    <!-- Core -->
-    <script src="https://regmac.fpl.edu.vn/assets/vendor/jquery/dist/jquery.min.js"></script>
-    <script src="https://regmac.fpl.edu.vn/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://regmac.fpl.edu.vn/assets/vendor/js-cookie/js.cookie.js"></script>
-    <script src="https://regmac.fpl.edu.vn/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="https://regmac.fpl.edu.vn/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
-    <!-- Argon JS -->
-    <script src="https://regmac.fpl.edu.vn/assets/js/argon.js?v=1.1.0"></script>
-    <!-- Demo JS - remove this in your project -->
-    <script src="https://regmac.fpl.edu.vn/assets/js/demo.min.js"></script>
+          <button onclick="toggleBlockStatus('${course._id}', ${
+            course.isBlock
+          })">
+            ${course.isBlock ? "Ẩn" : "Hiện"}
+          </button>
+        `;
+          courseList.appendChild(courseElement);
+        });
+      }
+
+      // Toggle the 'isBlock' status using PUT request
+      async function toggleBlockStatus(courseID, currentStatus) {
+        const newStatus = !currentStatus;
+        const response = await fetch(
+          `http://localhost:3001/course/toggleIsBlock/${courseID}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ isBlock: newStatus }),
+          }
+        );
+
+        const data = await response.json();
+        if (data.message === "Trạng thái khóa học đã được thay đổi") {
+          alert("Trạng thái khóa học đã được thay đổi!");
+          loadCourses(); // Reload courses after changing status
+        } else {
+          alert("Có lỗi xảy ra!");
+        }
+      }
+
+      // Load courses when the page is loaded
+      loadCourses();
+    </script>
   </body>
 </html>

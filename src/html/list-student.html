@@ -404,9 +404,8 @@
                                 const tableBody =
                                   document.getElementById("userTableBody");
 
-                                // Hàm để cập nhật bảng với dữ liệu
                                 function updateTable(data) {
-                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
+                                  tableBody.innerHTML = "";
                                   data.forEach((user) => {
                                     const row = document.createElement("tr");
 
@@ -546,7 +545,7 @@
                               "DOMContentLoaded",
                               () => {
                                 let currentPage = 1;
-                                let itemsPerPage = 10; // Mặc định là 10 bản ghi mỗi trang
+                                let itemsPerPage = 10;
                                 let totalItems = 0;
                                 let totalPages = 0;
                                 let data = [];
@@ -573,9 +572,8 @@
                                 const displayUsers = (page) => {
                                   const tableBody =
                                     document.getElementById("userTableBody");
-                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
+                                  tableBody.innerHTML = "";
 
-                                  // Tính toán chỉ số người dùng cần hiển thị cho trang hiện tại
                                   const startIndex = (page - 1) * itemsPerPage;
                                   const endIndex = Math.min(
                                     startIndex + itemsPerPage,
@@ -589,7 +587,6 @@
                                   usersToDisplay.forEach((user) => {
                                     const row = document.createElement("tr");
 
-                                    // Tạo các ô dữ liệu
                                     const nameCell =
                                       document.createElement("td");
                                     const emailCell =
@@ -617,17 +614,26 @@
                                     };
 
                                     nameCell.innerHTML = user.name || "";
+                                    nameCell.style.color = "black";
+                                    nameCell.style.cursor = "pointer"; // Thêm con trỏ chuột để chỉ ra có thể click
+                                    nameCell.onclick = () =>
+                                      fetchAndShowCourses(user._id); // Gọi hàm khi nhấn vào tên
+
                                     emailCell.innerHTML = user.email || "";
+                                    emailCell.style.color = "black";
                                     birthDateCell.innerHTML = formatDate(
                                       user.birthday
                                     );
+                                    birthDateCell.style.color = "black";
                                     phoneCell.innerHTML = user.phone || "";
+                                    phoneCell.style.color = "black";
                                     genderCell.innerHTML = user.gender || "";
+                                    genderCell.style.color = "black";
                                     registerDateCell.innerHTML = formatDate(
                                       user.createdAt
                                     );
+                                    registerDateCell.style.color = "black";
 
-                                    // Thêm các ô vào hàng
                                     row.appendChild(nameCell);
                                     row.appendChild(emailCell);
                                     row.appendChild(birthDateCell);
@@ -635,9 +641,74 @@
                                     row.appendChild(genderCell);
                                     row.appendChild(registerDateCell);
 
-                                    // Thêm hàng vào bảng
                                     tableBody.appendChild(row);
                                   });
+                                };
+
+                                // Hàm lấy danh sách khóa học của người dùng và hiển thị modal
+                                const fetchAndShowCourses = (userID) => {
+                                  fetch(
+                                    `http://localhost:3001/enrollCourse/getCourseUserEnrolled/${userID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      const courseNames = data.map(
+                                        (item) => item.courseID.name
+                                      );
+                                      showPopup(courseNames);
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching courses:",
+                                        error
+                                      )
+                                    );
+                                };
+
+                                // Hàm hiển thị modal với danh sách khóa học
+                                const showPopup = (courseNames) => {
+                                  const existingModal =
+                                    document.getElementById("courseModal");
+                                  if (existingModal) existingModal.remove();
+
+                                  const modal = document.createElement("div");
+                                  modal.classList.add("modal", "fade");
+                                  modal.id = "courseModal";
+                                  modal.tabIndex = "-1";
+                                  modal.setAttribute(
+                                    "aria-labelledby",
+                                    "courseModalLabel"
+                                  );
+                                  modal.setAttribute("aria-hidden", "true");
+
+                                  modal.innerHTML = `
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="courseModalLabel">Khóa học đã đăng ký</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              ${courseNames
+                .map((name) => `<li class="list-group-item">${name}</li>`)
+                .join("")}
+            </ul>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+                                  document.body.appendChild(modal);
+
+                                  const bootstrapModal = new bootstrap.Modal(
+                                    modal
+                                  );
+                                  bootstrapModal.show();
                                 };
 
                                 // Cập nhật các điều khiển phân trang
@@ -649,16 +720,14 @@
                                   const currentPageSpan =
                                     document.getElementById("currentPage");
 
-                                  // Cập nhật trang hiện tại và trạng thái của các nút
                                   currentPageSpan.innerText = `Trang ${currentPage}`;
                                   prevPageBtn.disabled = currentPage === 1;
                                   nextPageBtn.disabled =
                                     currentPage === totalPages;
 
-                                  // Cập nhật sự kiện cho nút "Trang trước" và "Trang sau"
                                   prevPageBtn.onclick = () => {
                                     if (currentPage > 1) {
-                                      currentPage--; // Giảm trang
+                                      currentPage--;
                                       displayUsers(currentPage);
                                       updatePaginationControls();
                                     }
@@ -666,7 +735,7 @@
 
                                   nextPageBtn.onclick = () => {
                                     if (currentPage < totalPages) {
-                                      currentPage++; // Tăng trang
+                                      currentPage++;
                                       displayUsers(currentPage);
                                       updatePaginationControls();
                                     }
@@ -681,19 +750,18 @@
                                   (event) => {
                                     const selectedValue = event.target.value;
                                     if (selectedValue === "all") {
-                                      itemsPerPage = totalItems; // Hiển thị tất cả các bản ghi
+                                      itemsPerPage = totalItems;
                                     } else {
                                       itemsPerPage = parseInt(
                                         selectedValue,
                                         10
-                                      ); // Cập nhật số lượng bản ghi mỗi trang
+                                      );
                                     }
 
-                                    // Cập nhật lại tổng số trang và hiển thị người dùng
                                     totalPages = Math.ceil(
                                       totalItems / itemsPerPage
                                     );
-                                    currentPage = 1; // Quay lại trang đầu tiên mỗi khi thay đổi số lượng bản ghi
+                                    currentPage = 1;
                                     displayUsers(currentPage);
                                     updatePaginationControls();
                                   }

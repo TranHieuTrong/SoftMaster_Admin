@@ -360,12 +360,12 @@
                                 >
                                   Số điện thoại
                                 </th>
-                                <th
+                                <!-- <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
                                   Chức Vụ
-                                </th>
+                                </th> -->
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
@@ -542,8 +542,8 @@
                                     const row = document.createElement("tr");
 
                                     // Tạo các ô dữ liệu
-                                    const avatarCell =
-                                      document.createElement("td");
+                                    // const avatarCell =
+                                    //   document.createElement("td");
                                     const nameCell =
                                       document.createElement("td");
                                     const emailCell =
@@ -552,8 +552,8 @@
                                       document.createElement("td");
                                     const roleCell =
                                       document.createElement("td");
-                                    const sloganCell =
-                                      document.createElement("td");
+                                    // const sloganCell =
+                                    //   document.createElement("td");
                                     const genderCell =
                                       document.createElement("td");
                                     const creatorIDCell =
@@ -561,33 +561,33 @@
 
                                     // Nội dung các ô
                                     // Thêm avatar
-                                    const avatarImg =
-                                      document.createElement("img");
-                                    avatarImg.src =
-                                      admin.avatar ||
-                                      "path/to/default-avatar.jpg"; // Dùng đường dẫn avatar nếu có, nếu không dùng ảnh mặc định
-                                    avatarImg.alt = "Avatar";
-                                    avatarImg.style.width = "40px";
-                                    avatarImg.style.height = "40px";
-                                    avatarImg.style.borderRadius = "50%"; // Làm avatar thành hình tròn
-                                    avatarCell.appendChild(avatarImg);
+                                    // const avatarImg =
+                                    //   document.createElement("img");
+                                    // avatarImg.src =
+                                    //   admin.avatar ||
+                                    //   "path/to/default-avatar.jpg"; // Dùng đường dẫn avatar nếu có, nếu không dùng ảnh mặc định
+                                    // avatarImg.alt = "Avatar";
+                                    // avatarImg.style.width = "40px";
+                                    // avatarImg.style.height = "40px";
+                                    // avatarImg.style.borderRadius = "50%"; // Làm avatar thành hình tròn
+                                    // avatarCell.appendChild(avatarImg);
 
                                     nameCell.innerHTML = admin.name || "";
                                     emailCell.innerHTML = admin.email || "";
                                     phoneCell.innerHTML = admin.phone || "";
-                                    roleCell.innerHTML = admin.role || "";
-                                    sloganCell.innerHTML = admin.slogan || "";
+                                    // roleCell.innerHTML = admin.role || "";
+                                    // sloganCell.innerHTML = admin.slogan || "";
                                     genderCell.innerHTML = admin.gender || "";
                                     creatorIDCell.innerHTML =
                                       admin.creatorID || "";
 
                                     // Thêm các ô vào hàng
-                                    row.appendChild(avatarCell);
+                                    // row.appendChild(avatarCell);
                                     row.appendChild(nameCell);
                                     row.appendChild(emailCell);
                                     row.appendChild(phoneCell);
-                                    row.appendChild(roleCell);
-                                    row.appendChild(sloganCell);
+                                    // row.appendChild(roleCell);
+                                    // row.appendChild(sloganCell);
                                     row.appendChild(genderCell);
                                     row.appendChild(creatorIDCell);
 
@@ -727,8 +727,8 @@
                                         document.createElement("td");
                                       const phoneAdmin =
                                         document.createElement("td");
-                                      const positionAdmin =
-                                        document.createElement("td");
+                                      // const positionAdmin =
+                                      //   document.createElement("td");
                                       const genderAdmin =
                                         document.createElement("td");
                                       const actionCell =
@@ -736,16 +736,6 @@
                                       // Nội dung các ô
                                       nameAdmin.innerHTML = `
                           <div class="d-flex align-items-center px-2 py-1">
-        <div class="form-check me-3">
-          <input class="form-check-input" type="checkbox" id="flexCheckDefault" />
-          <label class="form-check-label" for="flexCheckDefault"></label>
-        </div>
-        <div>
-          <img src="${admin.avatar || "../assets/images/profile/user-1.png"}"
-               class="avatar avatar-sm me-2"
-               alt="avatar"
-               style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;" />
-        </div>
         <div class="d-flex flex-column justify-content-center">
           <h6 class="mb-0 text-sm">${admin.name || ""}</h6>
         </div>
@@ -757,9 +747,9 @@
                                       phoneAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
                                         admin.phone || ""
                                       }</span>`;
-                                      positionAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        admin.position || ""
-                                      }</span>`;
+                                      // positionAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
+                                      //   admin.position || ""
+                                      // }</span>`;
                                       // sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
                                       //   teacher.slogan || ""
                                       // }</span>`;
@@ -767,29 +757,29 @@
                                         admin.gender || ""
                                       }</span>`;
                                       // Thêm các nút hành động
-                                      actionCell.innerHTML = `
-        <div class="d-flex justify-content-start">
-          <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
-          <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
-        </div>
-      `;
+                                      // actionCell.innerHTML = `
+                                      //   <div class="d-flex justify-content-start">
+                                      //     <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
+                                      //     <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
+                                      //   </div>
+                                      // `;
                                       row.appendChild(nameAdmin);
                                       row.appendChild(emailAdmin);
                                       row.appendChild(phoneAdmin);
-                                      row.appendChild(positionAdmin);
+                                      // row.appendChild(positionAdmin);
                                       row.appendChild(genderAdmin);
-                                      row.appendChild(actionCell);
+                                      // row.appendChild(actionCell);
                                       tableBody.appendChild(row);
-                                      const editBtn =
-                                        actionCell.querySelector(".edit-btn");
-                                      editBtn.addEventListener("click", () =>
-                                        openEditPopup(admin)
-                                      );
-                                      const deleteBtn =
-                                        actionCell.querySelector(".delete-btn");
-                                      deleteBtn.addEventListener("click", () =>
-                                        deleteAdmin(admin._id)
-                                      );
+                                      // const editBtn =
+                                      //   actionCell.querySelector(".edit-btn");
+                                      // editBtn.addEventListener("click", () =>
+                                      //   openEditPopup(admin)
+                                      // );
+                                      // const deleteBtn =
+                                      //   actionCell.querySelector(".delete-btn");
+                                      // deleteBtn.addEventListener("click", () =>
+                                      //   deleteAdmin(admin._id)
+                                      // );
                                     });
                                   })
                                   .catch((error) =>
@@ -833,7 +823,7 @@
                               const form = document.getElementById("editForm");
                               form.name.value = admin.name || "";
                               form.phone.value = admin.phone || "";
-                              form.avatar.value = admin.avatar || "";
+                              // form.avatar.value = admin.avatar || "";
                               form.position.value = admin.position || "";
                               form.gender.value = admin.gender || "Nam";
                               popup.style.display = "flex";
@@ -847,7 +837,7 @@
                                 const updatedData = {
                                   name: form.name.value,
                                   phone: form.phone.value,
-                                  avatar: form.avatar.value,
+                                  // avatar: form.avatar.value,
                                   position: form.position.value,
                                   password: form.password.value,
                                   gender: form.gender.value,

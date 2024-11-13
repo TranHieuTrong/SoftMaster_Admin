@@ -414,15 +414,6 @@
                                 PNG, GIF).
                               </small>
                             </div>
-                            <img
-                              id="avatarPreview"
-                              style="
-                                display: none;
-                                max-width: 100px;
-                                margin-top: 10px;
-                              "
-                              alt="Preview Avatar"
-                            />
                           </div>
 
                           <!-- Cột bên phải -->
@@ -511,113 +502,85 @@
               </div>
             </div>
             <script>
-              document.addEventListener("DOMContentLoaded", () => {
-                const avatarInput = document.getElementById("avatar"); // Input chọn ảnh
-                const avatarPreview = document.getElementById("avatarPreview"); // Element preview ảnh
+              let avatarUrl = ""; // Biến để lưu URL của ảnh đã upload
 
-                avatarInput.addEventListener("change", async (event) => {
-                  const file = event.target.files[0]; // Lấy tệp ảnh từ input
-
-                  if (!file) return; // Nếu không có file, thoát
-
-                  const formData = new FormData();
-                  formData.append("image", file); // Thêm ảnh vào formData
-
-                  try {
-                    // Gửi yêu cầu POST đến ImgBB API để tải ảnh lên
-                    const response = await fetch(
-                      "https://api.imgbb.com/1/upload?expiration=600&key=4254690dda1ab4a773856d7de73bfd86",
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
-                    );
-
-                    const data = await response.json();
-                    if (data.success) {
-                      // Nếu tải ảnh lên thành công, lấy URL ảnh từ dữ liệu trả về
-                      const imageUrl = data.data.display_url; // Lấy display_url (URL ảnh)
-
-                      // Hiển thị ảnh preview
-                      avatarPreview.src = imageUrl;
-                      avatarPreview.style.display = "block"; // Hiển thị ảnh preview
-
-                      // Cập nhật lại input với URL ảnh (nếu cần lưu vào cơ sở dữ liệu sau này)
-                      avatarInput.setAttribute("data-upload-url", imageUrl); // Lưu URL vào input
-
-                      console.log("Ảnh tải lên thành công, URL:", imageUrl);
-                    } else {
-                      console.error("Lỗi tải ảnh lên:", data);
-                      alert("Lỗi tải ảnh lên. Vui lòng thử lại.");
-                    }
-                  } catch (error) {
-                    console.error("Lỗi tải ảnh lên:", error);
-                    alert("Lỗi tải ảnh lên: " + error.message);
+              document
+                .getElementById("avatar")
+                .addEventListener("change", async (event) => {
+                  const avatarInput = event.target.files[0];
+                  if (!avatarInput) {
+                    alert("Vui lòng chọn một ảnh!");
+                    return;
                   }
+
+                  // Chuyển đổi file ảnh thành base64
+                  const reader = new FileReader();
+                  reader.onload = async () => {
+                    const base64Image = reader.result.split(",")[1];
+
+                    // Gửi ảnh đến API ImgBB
+                    const formData = new FormData();
+                    formData.append("image", base64Image);
+
+                    try {
+                      const response = await fetch(
+                        "https://api.imgbb.com/1/upload?expiration=600&key=4254690dda1ab4a773856d7de73bfd86",
+                        {
+                          method: "POST",
+                          body: formData,
+                        }
+                      );
+                      const result = await response.json();
+
+                      if (result.success) {
+                        // Lấy URL của ảnh và lưu vào biến avatarUrl
+                        avatarUrl = result.data.url;
+                        console.log("URL của avatar:", avatarUrl);
+
+                        // Cập nhật thông báo thành công
+                        document.getElementById(
+                          "avatarHelp"
+                        ).innerText = `Avatar đã được upload và URL đã lưu: ${avatarUrl}`;
+                      } else {
+                        alert("Upload thất bại, vui lòng thử lại.");
+                      }
+                    } catch (error) {
+                      console.error("Lỗi khi upload avatar:", error);
+                      alert("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                  };
+                  reader.readAsDataURL(avatarInput);
                 });
-              });
 
               document.addEventListener("DOMContentLoaded", () => {
                 const admin = JSON.parse(localStorage.getItem("admin"));
-                const adminId = admin ? admin.id : null; // Lấy adminId
-                const currentAvatarContainer = document.getElementById(
-                  "currentAvatarContainer"
-                );
-                const currentAvatar = document.getElementById("currentAvatar");
+                const adminId = admin ? admin.id : null;
 
                 if (adminId) {
                   // Gửi yêu cầu lấy thông tin admin từ API
                   fetch(`http://localhost:3001/admin/getAdminByID/${adminId}`)
                     .then((response) => response.json())
                     .then((adminData) => {
-                      // Lấy avatar của admin và hiển thị
                       if (adminData.avatar) {
-                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
-                        currentAvatarContainer.style.display = "block"; // Hiển thị phần tử chứa avatar
-                      } else {
-                        currentAvatarContainer.style.display = "none"; // Ẩn phần tử nếu không có avatar
+                        document.getElementById("currentAvatar").src =
+                          adminData.avatar;
+                        document.getElementById(
+                          "currentAvatarContainer"
+                        ).style.display = "block";
+                      }
+                      // Hiển thị tên của admin lên input adminName
+                      if (adminData.name) {
+                        document.getElementById("adminName").value =
+                          adminData.name;
                       }
                     })
-                    .catch((error) => {
-                      console.error("Error fetching admin info:", error);
-                    });
-                } else {
-                  console.error("Admin ID not found in localStorage.");
-                }
-              });
-              document.addEventListener("DOMContentLoaded", () => {
-                // Lấy thông tin admin từ localStorage
-                const admin = JSON.parse(localStorage.getItem("admin"));
-                const adminId = admin ? admin.id : null;
-                console.log("Admin ID:", adminId);
-
-                const adminNameInput = document.getElementById("adminName");
-
-                // Kiểm tra xem adminId có tồn tại không
-                if (adminId) {
-                  // Gửi yêu cầu lấy thông tin admin dựa trên adminId
-                  fetch(`http://localhost:3001/admin/getAdminByID/${adminId}`)
-                    .then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Error fetching admin info");
-                      }
-                      return response.json();
-                    })
-                    .then((adminData) => {
-                      // Điền tên admin vào input
-                      adminNameInput.value = adminData.name || ""; // Điền tên admin vào input
-                      document.getElementById(
-                        "loggedInAdmin"
-                      ).textContent = `Đang đăng nhập với Admin: ${adminData.name}`; // Hiển thị tên admin
-                    })
-                    .catch((error) => {
-                      console.error("Error fetching admin info:", error);
-                    });
+                    .catch((error) =>
+                      console.error("Error fetching admin info:", error)
+                    );
                 } else {
                   console.error("Admin ID not found in localStorage.");
                 }
 
-                // Xử lý khi gửi form
                 const teacherForm = document.getElementById("teacherForm");
                 teacherForm.addEventListener("submit", (event) => {
                   event.preventDefault();
@@ -626,14 +589,13 @@
                     name: document.getElementById("name").value,
                     email: document.getElementById("email").value,
                     phone: document.getElementById("phone").value,
-                    password: "trong123", // Thay thế bằng cách tạo password thực tế nếu cần
-                    avatar: document.getElementById("avatar").value,
+                    password: "trong123",
+                    avatar: avatarUrl, // Gán URL đã upload vào avatar
                     major: document.getElementById("major").value,
                     slogan: document.getElementById("slogan").value,
                     gender: document.getElementById("gender").value,
                   };
 
-                  // Gửi yêu cầu POST đến API để thêm giảng viên
                   if (adminId) {
                     fetch(`http://localhost:3001/teacher/register/${adminId}`, {
                       method: "POST",
@@ -643,22 +605,18 @@
                       body: JSON.stringify(formData),
                     })
                       .then((response) => {
-                        if (!response.ok) {
+                        if (!response.ok)
                           throw new Error("Error adding teacher");
-                        }
                         return response.json();
                       })
                       .then((result) => {
-                        console.log("Giảng viên đã được thêm:", result);
-                        // Bạn có thể làm mới bảng hoặc hiển thị thông báo thành công ở đây
-                        alert("Giảng viên đã được thêm thành công!"); // Thông báo thành công
-                        // Reset lại form sau khi thêm thành công
+                        alert("Giảng viên đã được thêm thành công!");
                         teacherForm.reset();
-                        location.reload(); // Tải lại trang
+                        location.reload();
                       })
-                      .catch((error) => {
-                        console.error("Error adding teacher:", error);
-                      });
+                      .catch((error) =>
+                        console.error("Error adding teacher:", error)
+                      );
                   } else {
                     alert("Không thể thêm giảng viên. Admin ID không hợp lệ.");
                   }

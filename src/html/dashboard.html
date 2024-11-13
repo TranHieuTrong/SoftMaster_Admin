@@ -297,6 +297,11 @@
               </ul>
             </div>
           </nav>
+          <div class="text-start">
+            <span style="font-size: 32px; font-weight: 700; color: #202224"
+              >Trang tổng quan</span
+            >
+          </div>
         </header>
         <!--  Header End -->
         <div class="container-fluid">
@@ -311,7 +316,7 @@
                     <div class="mb-3 mb-sm-0">
                       <h5 class="card-title fw-semibold">Thống kê</h5>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                       <div class="d-flex">
                         <select
                           id="daySelect"
@@ -337,7 +342,7 @@
                           <option value="">Năm</option>
                         </select>
                       </div>
-                    </div>
+                    </div> -->
 
                     <script>
                       // Tạo ngày
@@ -586,7 +591,7 @@
                             "http://localhost:3001/payment/annual-revenue"
                           );
                           const data = await response.json();
-
+                          console.log(data);
                           // Kiểm tra nếu API trả về thành công
                           if (data && Array.isArray(data) && data.length > 0) {
                             const currentYear = new Date().getFullYear(); // Lấy năm hiện tại
@@ -917,28 +922,7 @@
                     class="timeline-widget mb-0 position-relative mb-n5"
                     style="max-height: 420px; overflow: hidden"
                   >
-                    <li
-                      class="timeline-item d-flex position-relative overflow-hidden"
-                    >
-                      <div
-                        class="timeline-time text-dark flex-shrink-0 text-end"
-                      >
-                        09:30
-                      </div>
-                      <div
-                        class="timeline-badge-wrap d-flex flex-column align-items-center"
-                      >
-                        <span
-                          class="timeline-badge border-2 border border-success flex-shrink-0 my-8"
-                        ></span>
-                        <span
-                          class="timeline-badge-border d-block flex-shrink-0"
-                        ></span>
-                      </div>
-                      <div class="timeline-desc fs-3 text-dark mt-n1">
-                        Đã nhận thanh toán từ Nguyễn Văn A là $385.90
-                      </div>
-                    </li>
+                    <!-- Các giao dịch sẽ được thêm vào đây -->
                   </ul>
                 </div>
               </div>
@@ -948,67 +932,67 @@
                   document.querySelector(".timeline-widget");
                 let scrollPosition = 0;
 
-                const transactions = [
-                  "Đã nhận thanh toán từ ",
-                  "Đã ghi nhận giao dịch bán hàng mới từ ",
-                  "Đã thanh toán từ ",
-                  "Đã hoàn tất thanh toán từ ",
-                  "Đã hoàn tất thanh toán luôn nha từ ",
-                ];
+                async function fetchTransactions() {
+                  try {
+                    // Gọi API để lấy dữ liệu
+                    const response = await fetch(
+                      "http://localhost:3001/payment/payment-history-sort"
+                    );
+                    const data = await response.json();
 
-                const names = [
-                  "Nguyễn Văn A",
-                  "Trần Thị B",
-                  "Lê Văn C",
-                  "Phạm Thị D",
-                  "Nguyễn Minh E",
-                  "Đỗ Thị F",
-                  "Nguyễn Văn G",
-                  "Vũ Thị H",
-                ];
+                    if (data && Array.isArray(data)) {
+                      data.forEach((transaction) => {
+                        const newTransaction = document.createElement("li");
+                        newTransaction.className =
+                          "timeline-item d-flex position-relative overflow-hidden";
 
-                function addTransaction() {
-                  const newTransaction = document.createElement("li");
-                  newTransaction.className =
-                    "timeline-item d-flex position-relative overflow-hidden";
+                        const time = new Date(
+                          transaction.createdAt || transaction.timestamp
+                        ); // Sử dụng createdAt nếu không có timestamp
+                        const hours = time
+                          .getHours()
+                          .toString()
+                          .padStart(2, "0");
+                        const minutes = time
+                          .getMinutes()
+                          .toString()
+                          .padStart(2, "0");
 
-                  const time = new Date();
-                  const hours = time.getHours().toString().padStart(2, "0");
-                  const minutes = time.getMinutes().toString().padStart(2, "0");
+                        // Sử dụng dữ liệu đúng từ API và kiểm tra an toàn với fallback value
+                        const randomTransaction = `Có giao dịch từ ${
+                          transaction.userID?.name || "Ẩn Danh"
+                        } là ${
+                          transaction.total
+                            ? transaction.total.toLocaleString()
+                            : "0"
+                        } đ`;
 
-                  const randomTransactionIndex = Math.floor(
-                    Math.random() * transactions.length
-                  );
-                  const randomNameIndex = Math.floor(
-                    Math.random() * names.length
-                  );
-                  const randomTransaction =
-                    transactions[randomTransactionIndex] +
-                    names[randomNameIndex] +
-                    " là $" +
-                    (Math.random() * 1000).toFixed(2);
+                        const colors = [
+                          "border-success",
+                          "border-info",
+                          "border-warning",
+                          "border-danger",
+                        ];
+                        const randomColorIndex = Math.floor(
+                          Math.random() * colors.length
+                        );
+                        const randomColor = colors[randomColorIndex];
 
-                  const colors = [
-                    "border-success",
-                    "border-info",
-                    "border-warning",
-                    "border-danger",
-                  ];
-                  const randomColorIndex = Math.floor(
-                    Math.random() * colors.length
-                  );
-                  const randomColor = colors[randomColorIndex];
+                        newTransaction.innerHTML = `
+                          <div class="timeline-time text-dark flex-shrink-0 text-end">${hours}:${minutes}</div>
+                          <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                            <span class="timeline-badge border-2 ${randomColor} flex-shrink-0 my-8"></span>
+                            <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                          </div>
+                          <div class="timeline-desc fs-3 text-dark mt-n1">${randomTransaction}</div>
+                        `;
 
-                  newTransaction.innerHTML = `
-                    <div class="timeline-time text-dark flex-shrink-0 text-end">${hours}:${minutes}</div>
-                    <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                      <span class="timeline-badge border-2 ${randomColor} flex-shrink-0 my-8"></span>
-                      <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                    </div>
-                    <div class="timeline-desc fs-3 text-dark mt-n1">${randomTransaction}</div>
-                  `;
-
-                  timelineWidget.appendChild(newTransaction);
+                        timelineWidget.appendChild(newTransaction);
+                      });
+                    }
+                  } catch (error) {
+                    console.error("Có lỗi khi gọi API:", error);
+                  }
                 }
 
                 function autoScroll() {
@@ -1023,417 +1007,238 @@
                   timelineWidget.scrollTo(0, scrollPosition);
                 }
 
-                // Thêm giao dịch mới
-                setInterval(addTransaction, 1);
-                // Thực hiện cuộn tự động
+                // Gọi API để lấy dữ liệu khi trang được tải
+                fetchTransactions();
+
+                // Thực hiện cuộn tự động mỗi 30ms
                 setInterval(autoScroll, 30);
+
+                // Thêm giao dịch mới mỗi 3 giây (hoặc bạn có thể điều chỉnh theo API)
+                setInterval(fetchTransactions, 3000); // Bạn có thể điều chỉnh thời gian lấy dữ liệu từ API ở đây
               </script>
             </div>
 
             <div class="col-lg-8 d-flex align-items-stretch">
               <div class="card w-100">
                 <div class="card-body p-4">
-                  <h5 class="card-title fw-semibold mb-4">Giao dịch gần đây</h5>
+                  <h5 class="card-title fw-semibold mb-4">Top Chi Tiêu</h5>
                   <div class="table-responsive">
                     <table class="table text-nowrap mb-0 align-middle">
                       <thead class="text-dark fs-4">
                         <tr>
                           <th class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">Id</h6>
-                          </th>
-                          <th class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">Người phụ trách</h6>
+                            <h6 class="fw-semibold mb-0">Top</h6>
                           </th>
                           <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">Tên</h6>
                           </th>
                           <th class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">Độ ưu tiên</h6>
+                            <h6 class="fw-semibold mb-0">Trạng thái</h6>
                           </th>
                           <th class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">Ngân sách</h6>
+                            <h6 class="fw-semibold mb-0">Chi tiêu</h6>
                           </th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">1</h6>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                            <span class="fw-normal">Nhà thiết kế web</span>
-                          </td>
-                          <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">Quản trị viên Elite</p>
-                          </td>
-                          <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                              <span
-                                class="badge bg-primary rounded-3 fw-semibold"
-                                >Thấp</span
-                              >
-                            </div>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">2</h6>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
-                            <span class="fw-normal">Quản lý dự án</span>
-                          </td>
-                          <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">
-                              Giao diện Real Homes WP
-                            </p>
-                          </td>
-                          <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                              <span
-                                class="badge bg-secondary rounded-3 fw-semibold"
-                                >Trung bình</span
-                              >
-                            </div>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0 fs-4">$24.5k</h6>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">3</h6>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1">Christopher Jamil</h6>
-                            <span class="fw-normal">Quản lý dự án</span>
-                          </td>
-                          <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">
-                              Giao diện MedicalPro WP
-                            </p>
-                          </td>
-                          <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                              <span
-                                class="badge bg-danger rounded-3 fw-semibold"
-                                >Cao</span
-                              >
-                            </div>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0 fs-4">$12.8k</h6>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">4</h6>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1">Nirav Joshi</h6>
-                            <span class="fw-normal">Kỹ sư Frontend</span>
-                          </td>
-                          <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">
-                              Giao diện Hosting Press HTML
-                            </p>
-                          </td>
-                          <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                              <span
-                                class="badge bg-secondary rounded-3 fw-semibold"
-                                >Trung bình</span
-                              >
-                            </div>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0 fs-4">$32.6k</h6>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0">5</h6>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
-                            <span class="fw-normal">Nhà phát triển</span>
-                          </td>
-                          <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">Giao diện App Landing</p>
-                          </td>
-                          <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                              <span
-                                class="badge bg-success rounded-3 fw-semibold"
-                                >Thấp</span
-                              >
-                            </div>
-                          </td>
-                          <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-0 fs-4">$9.5k</h6>
-                          </td>
-                        </tr>
+                      <tbody id="transaction-table-body">
+                        <!-- Dữ liệu từ API sẽ được điền vào đây -->
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
             </div>
+
+            <script>
+              // Hàm gọi API và xử lý dữ liệu
+              async function fetchData() {
+                try {
+                  const response = await fetch(
+                    "http://localhost:3001/payment/payment-history-sort"
+                  );
+                  const data = await response.json();
+
+                  // Sắp xếp theo `total` giảm dần và chọn 5 mục đầu tiên
+                  const sortedData = data
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 5);
+
+                  const tableBody = document.getElementById(
+                    "transaction-table-body"
+                  );
+
+                  // Xóa dữ liệu cũ
+                  tableBody.innerHTML = "";
+
+                  // Thêm từng hàng vào bảng
+                  sortedData.forEach((item, index) => {
+                    const row = document.createElement("tr");
+
+                    // Cột Số thứ tự
+                    const rankCell = document.createElement("td");
+                    rankCell.className = "border-bottom-0";
+                    rankCell.innerHTML = `<h6 class="fw-semibold mb-0">${
+                      index + 1
+                    }</h6>`;
+                    row.appendChild(rankCell);
+
+                    // Cột Tên (kiểm tra nếu không có `name` hoặc `userID` là null)
+                    const nameCell = document.createElement("td");
+                    nameCell.className = "border-bottom-0";
+                    const name =
+                      item.userID && item.userID.name
+                        ? item.userID.name
+                        : "Ẩn Danh";
+                    nameCell.innerHTML = `<h6 class="fw-semibold mb-0">${name}</h6>`;
+                    row.appendChild(nameCell);
+
+                    // Cột Trạng thái
+                    const statusCell = document.createElement("td");
+                    statusCell.className = "border-bottom-0";
+                    const statusBadge = document.createElement("span");
+                    statusBadge.className = `badge rounded-3 fw-semibold ${
+                      item.status === "SUCCESS" ? "bg-success" : "bg-secondary"
+                    }`;
+                    statusBadge.textContent =
+                      item.status === "SUCCESS"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán";
+                    statusCell.appendChild(statusBadge);
+                    row.appendChild(statusCell);
+
+                    // Cột Chi tiêu (Total) với đơn vị VNĐ
+                    const totalCell = document.createElement("td");
+                    totalCell.className = "border-bottom-0";
+                    totalCell.innerHTML = `<h6 class="fw-semibold mb-0 fs-4">${item.total.toLocaleString(
+                      "vi-VN"
+                    )} VNĐ</h6>`;
+                    row.appendChild(totalCell);
+
+                    // Thêm hàng vào bảng
+                    tableBody.appendChild(row);
+                  });
+                } catch (error) {
+                  console.error("Error fetching data:", error);
+                }
+              }
+
+              // Gọi hàm để lấy dữ liệu và hiển thị lên bảng
+              fetchData();
+            </script>
           </div>
 
           <div class="row">
-            <div class="col-sm-6 col-xl-3">
-              <div class="card overflow-hidden rounded-2">
-                <div class="position-relative">
-                  <a href="javascript:void(0)">
-                    <img
-                      src="../assets/images/products/s4.jpg"
-                      class="card-img-top rounded-0"
-                      alt="Tai nghe Boat"
-                    />
-                  </a>
-                  <a
-                    href="javascript:void(0)"
-                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-title="Thêm vào giỏ hàng"
-                  >
-                    <i class="ti ti-basket fs-4"></i>
-                  </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                  <h6 class="fw-semibold fs-4">Tai nghe Boat</h6>
-                  <div
-                    class="d-flex align-items-center justify-content-between"
-                  >
-                    <h6 class="fw-semibold fs-4 mb-0">
-                      $50
-                      <span class="ms-2 fw-normal text-muted fs-3"
-                        ><del>$65</del></span
-                      >
-                    </h6>
-                    <ul class="list-unstyled d-flex align-items-center mb-0">
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <div class="text-start">
+              <span style="font-size: 20px; font-weight: 700; color: #202224"
+                >Top khóa học bán chạy</span
+              >
             </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="card overflow-hidden rounded-2">
-                <div class="position-relative">
-                  <a href="javascript:void(0)">
-                    <img
-                      src="../assets/images/products/s5.jpg"
-                      class="card-img-top rounded-0"
-                      alt="MacBook Air Pro"
-                    />
-                  </a>
-                  <a
-                    href="javascript:void(0)"
-                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-title="Thêm vào giỏ hàng"
-                  >
-                    <i class="ti ti-basket fs-4"></i>
-                  </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                  <h6 class="fw-semibold fs-4">MacBook Air Pro</h6>
-                  <div
-                    class="d-flex align-items-center justify-content-between"
-                  >
-                    <h6 class="fw-semibold fs-4 mb-0">
-                      $650
-                      <span class="ms-2 fw-normal text-muted fs-3"
-                        ><del>$900</del></span
-                      >
-                    </h6>
-                    <ul class="list-unstyled d-flex align-items-center mb-0">
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <div
+              style="margin-top: 20px"
+              id="courses-container"
+              class="scroll-container"
+            >
+              <!-- Các thẻ khóa học sẽ được thêm vào đây từ API -->
             </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="card overflow-hidden rounded-2">
-                <div class="position-relative">
-                  <a href="javascript:void(0)">
-                    <img
-                      src="../assets/images/products/s7.jpg"
-                      class="card-img-top rounded-0"
-                      alt="Đầm nhung đỏ"
-                    />
-                  </a>
-                  <a
-                    href="javascript:void(0)"
-                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-title="Thêm vào giỏ hàng"
-                  >
-                    <i class="ti ti-basket fs-4"></i>
-                  </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                  <h6 class="fw-semibold fs-4">Đầm nhung đỏ</h6>
-                  <div
-                    class="d-flex align-items-center justify-content-between"
-                  >
-                    <h6 class="fw-semibold fs-4 mb-0">
-                      $150
-                      <span class="ms-2 fw-normal text-muted fs-3"
-                        ><del>$200</del></span
-                      >
-                    </h6>
-                    <ul class="list-unstyled d-flex align-items-center mb-0">
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="card overflow-hidden rounded-2">
-                <div class="position-relative">
-                  <a href="javascript:void(0)">
-                    <img
-                      src="../assets/images/products/s11.jpg"
-                      class="card-img-top rounded-0"
-                      alt="Gấu teddy dễ thương"
-                    />
-                  </a>
-                  <a
-                    href="javascript:void(0)"
-                    class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-title="Thêm vào giỏ hàng"
-                  >
-                    <i class="ti ti-basket fs-4"></i>
-                  </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                  <h6 class="fw-semibold fs-4">Gấu teddy dễ thương</h6>
-                  <div
-                    class="d-flex align-items-center justify-content-between"
-                  >
-                    <h6 class="fw-semibold fs-4 mb-0">
-                      $285
-                      <span class="ms-2 fw-normal text-muted fs-3"
-                        ><del>$345</del></span
-                      >
-                    </h6>
-                    <ul class="list-unstyled d-flex align-items-center mb-0">
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a class="me-1" href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">
-                          <i class="ti ti-star text-warning"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <style>
+              .scroll-container {
+                display: flex;
+                overflow: hidden;
+                white-space: nowrap;
+                width: 100%;
+                position: relative;
+                animation: scroll 20s linear infinite;
+              }
+
+              .course-item {
+                display: inline-block;
+                width: 250px; /* Đặt chiều rộng cố định cho thẻ */
+                margin-right: 20px;
+              }
+
+              .card {
+                width: 100%;
+                display: inline-block;
+                vertical-align: top;
+              }
+
+              .card img {
+                width: 100%;
+                height: 150px; /* Đặt chiều cao cố định cho hình ảnh */
+                object-fit: cover; /* Giúp hình ảnh không bị méo và căn chỉnh cho hợp lý */
+              }
+
+              .card-body {
+                padding: 10px;
+              }
+
+              @keyframes scroll {
+                0% {
+                  transform: translateX(100%);
+                }
+                100% {
+                  transform: translateX(-100%);
+                }
+              }
+            </style>
+            <script>
+              fetch("http://localhost:3001/payment/top-selling-courses")
+                .then((response) => response.json())
+                .then((data) => {
+                  const coursesContainer =
+                    document.getElementById("courses-container");
+                  coursesContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
+
+                  data.forEach((course) => {
+                    const courseElement = `
+                      <div class="course-item">
+                        <div class="card overflow-hidden rounded-2">
+                          <div class="position-relative">
+                            <a href="javascript:void(0)">
+                              <img
+                                src="${course.courseDetails.img}"
+                                class="card-img-top rounded-0"
+                                alt="${course.courseDetails.name}"
+                              />
+                            </a>
+                            <a
+                              href="javascript:void(0)"
+                              class="bg-primary rounded-circle p-2 text-white d-inline-flex position-absolute bottom-0 end-0 mb-n3 me-3"
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="top"
+                              data-bs-title="Thêm vào giỏ hàng"
+                            >
+                              <i class="ti ti-basket fs-4"></i>
+                            </a>
+                          </div>
+                          <div class="card-body pt-3 p-4">
+                            <h6 class="fw-semibold fs-4">${
+                              course.courseDetails.name
+                            }</h6>
+                            <div class="d-flex align-items-center justify-content-between">
+                              <h6 class="fw-semibold fs-4 mb-0">
+                                ${new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(course.courseDetails.price)}
+                              </h6>
+                              <ul class="list-unstyled d-flex align-items-center mb-0">
+                                <li><i class="ti ti-star text-warning"></i></li>
+                                <li><i class="ti ti-star text-warning"></i></li>
+                                <li><i class="ti ti-star text-warning"></i></li>
+                                <li><i class="ti ti-star text-warning"></i></li>
+                                <li><i class="ti ti-star text-warning"></i></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                    coursesContainer.innerHTML += courseElement;
+                  });
+                });
+            </script>
+
             <script>
               document.addEventListener("DOMContentLoaded", () => {
                 const admin = JSON.parse(localStorage.getItem("admin"));

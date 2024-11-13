@@ -295,6 +295,7 @@
                       type="text"
                       class="form-control rounded-5"
                       placeholder="Tìm kiếm"
+                      id="searchInput"
                     />
                   </div>
                   <!-- Phân trang -->
@@ -387,6 +388,10 @@
                                 >
                                   Số lượng hs
                                 </th>
+                                <th
+                                  style="color: #202224"
+                                  class="text-uppercase text-xxs font-weight-bolder opacity-7"
+                                ></th>
                               </tr>
                             </thead>
 
@@ -394,90 +399,6 @@
                               <!-- Các dòng dữ liệu sẽ được chèn vào đây bằng JavaScript -->
                             </tbody>
                           </table>
-
-                          <!-- Popup hiển thị số lượng khóa học -->
-                          <div
-                            id="coursesPopup"
-                            style="
-                              display: none;
-                              position: fixed;
-                              top: 20%;
-                              left: 50%;
-                              transform: translateX(-50%);
-                              background: white;
-                              padding: 20px;
-                              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                              z-index: 1000;
-                            "
-                          >
-                            <h4>Số lượng khóa học</h4>
-                            <p id="courseCount">Đang tải...</p>
-                            <button onclick="closeCoursesPopup()">Đóng</button>
-                          </div>
-                          <div
-                            id="enrolledUsersPopup"
-                            style="
-                              display: none;
-                              position: fixed;
-                              top: 0;
-                              left: 0;
-                              width: 100%;
-                              height: 100%;
-                              background: rgba(0, 0, 0, 0.5);
-                              justify-content: center;
-                              align-items: center;
-                              z-index: 9999;
-                            "
-                          >
-                            <div
-                              class="popup-content"
-                              style="
-                                background: #ffffff;
-                                padding: 20px;
-                                border-radius: 10px;
-                                width: 400px;
-                                max-width: 90%;
-                                text-align: center;
-                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                              "
-                            >
-                              <h3
-                                style="
-                                  color: #202224;
-                                  font-size: 18px;
-                                  margin-bottom: 20px;
-                                  font-weight: 600;
-                                "
-                              >
-                                Số lượng người tham gia khóa học
-                              </h3>
-                              <p
-                                id="enrolledUsersContent"
-                                style="
-                                  color: #202224;
-                                  font-size: 16px;
-                                  margin-bottom: 20px;
-                                "
-                              >
-                                Đang tải...
-                              </p>
-                              <button
-                                onclick="document.getElementById('enrolledUsersPopup').style.display='none'"
-                                style="
-                                  background-color: #167f71;
-                                  color: white;
-                                  padding: 10px 20px;
-                                  border: none;
-                                  border-radius: 5px;
-                                  cursor: pointer;
-                                  font-size: 14px;
-                                  transition: background-color 0.3s ease;
-                                "
-                              >
-                                Đóng
-                              </button>
-                            </div>
-                          </div>
 
                           <script>
                             document.addEventListener(
@@ -524,6 +445,310 @@
                                 }
                               }
                             );
+
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              function () {
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("courseTableBody");
+
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa bảng hiện tại để thay thế bằng dữ liệu mới
+
+                                  data.forEach((course) => {
+                                    const row = document.createElement("tr");
+
+                                    // Tạo các ô dữ liệu cho mỗi cột
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const descriptionCell =
+                                      document.createElement("td");
+                                    const priceCell =
+                                      document.createElement("td");
+                                    const instructorCell =
+                                      document.createElement("td");
+                                    const createdDateCell =
+                                      document.createElement("td");
+                                    const updatedDateCell =
+                                      document.createElement("td");
+                                    const ratingCell =
+                                      document.createElement("td");
+                                    const studentsCountCell =
+                                      document.createElement("td");
+                                    const blockCell =
+                                      document.createElement("td"); // Thêm ô cho nút "Ẩn/Hiện"
+
+                                    // Chuyển đổi định dạng ngày
+                                    const formatDate = (dateString) => {
+                                      if (!dateString) return "";
+                                      const date = new Date(dateString);
+                                      const day = String(
+                                        date.getDate()
+                                      ).padStart(2, "0");
+                                      const month = String(
+                                        date.getMonth() + 1
+                                      ).padStart(2, "0");
+                                      const year = date.getFullYear();
+                                      return `${day}-${month}-${year}`;
+                                    };
+
+                                    // Nội dung các ô và đặt màu chữ đen
+                                    nameCell.innerHTML = course.name || "";
+                                    nameCell.style.color = "#000";
+                                    descriptionCell.innerHTML =
+                                      course.describe || "";
+                                    descriptionCell.style.color = "#000";
+                                    priceCell.innerHTML = course.price
+                                      ? `${course.price.toLocaleString()} VND`
+                                      : "";
+                                    priceCell.style.color = "#000";
+                                    createdDateCell.innerHTML = formatDate(
+                                      course.createdAt
+                                    );
+                                    createdDateCell.style.color = "#000";
+                                    updatedDateCell.innerHTML = formatDate(
+                                      course.updatedAt
+                                    );
+                                    updatedDateCell.style.color = "#000";
+
+                                    // Hiển thị rating với sao
+                                    fetchAverageRating(course._id).then(
+                                      (avgRating) => {
+                                        const stars =
+                                          "★".repeat(Math.round(avgRating)) +
+                                          "☆".repeat(5 - Math.round(avgRating));
+                                        ratingCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${avgRating.toFixed(
+                                          1
+                                        )} ${stars}</span>`;
+                                      }
+                                    );
+
+                                    // Hiển thị số lượng người tham gia
+                                    fetchEnrolledUsersCount(course._id).then(
+                                      (count) => {
+                                        studentsCountCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${count}</span>`;
+                                      }
+                                    );
+
+                                    // Lấy tên giảng viên từ teacherID
+                                    fetchAdminName(course.teacherID).then(
+                                      (adminName) => {
+                                        instructorCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
+                                      }
+                                    );
+
+                                    // Thêm sự kiện cho nút "Ẩn/Hiện"
+                                    const toggleButton =
+                                      document.createElement("button");
+                                    fetch(
+                                      `http://localhost:3001/course/getDetailByCourseID/${course._id}`
+                                    )
+                                      .then((response) => response.json())
+                                      .then((data) => {
+                                        let isBlock = data.isBlock;
+                                        toggleButton.textContent = isBlock
+                                          ? "Ẩn"
+                                          : "Hiện";
+                                        toggleButton.classList.add(
+                                          "btn",
+                                          isBlock ? "btn-danger" : "btn-success"
+                                        );
+
+                                        toggleButton.addEventListener(
+                                          "click",
+                                          () => {
+                                            fetch(
+                                              `http://localhost:3001/course/toggleIsBlock/${course._id}`,
+                                              {
+                                                method: "PUT",
+                                              }
+                                            )
+                                              .then((response) =>
+                                                response.json()
+                                              )
+                                              .then((result) => {
+                                                isBlock = !isBlock;
+                                                toggleButton.textContent =
+                                                  isBlock ? "Ẩn" : "Hiện";
+                                                toggleButton.classList.remove(
+                                                  isBlock
+                                                    ? "btn-success"
+                                                    : "btn-danger"
+                                                );
+                                                toggleButton.classList.add(
+                                                  isBlock
+                                                    ? "btn-danger"
+                                                    : "btn-success"
+                                                );
+
+                                                fetch(
+                                                  `http://localhost:3001/course/getDetailByCourseID/${course._id}`
+                                                )
+                                                  .then((response) =>
+                                                    response.json()
+                                                  )
+                                                  .then((updatedData) => {
+                                                    const updatedIsBlocked =
+                                                      updatedData.isBlock;
+                                                    toggleButton.textContent =
+                                                      updatedIsBlocked
+                                                        ? "Ẩn"
+                                                        : "Hiện";
+                                                    toggleButton.classList.remove(
+                                                      updatedIsBlocked
+                                                        ? "btn-success"
+                                                        : "btn-danger"
+                                                    );
+                                                    toggleButton.classList.add(
+                                                      updatedIsBlocked
+                                                        ? "btn-danger"
+                                                        : "btn-success"
+                                                    );
+                                                  });
+                                              })
+                                              .catch((error) =>
+                                                console.error(
+                                                  "Error toggling block status:",
+                                                  error
+                                                )
+                                              );
+                                          }
+                                        );
+
+                                        blockCell.appendChild(toggleButton); // Thêm nút vào cell
+                                      })
+                                      .catch((error) =>
+                                        console.error(
+                                          "Error fetching course details:",
+                                          error
+                                        )
+                                      );
+
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(nameCell);
+                                    row.appendChild(descriptionCell);
+                                    row.appendChild(priceCell);
+                                    row.appendChild(instructorCell);
+                                    row.appendChild(createdDateCell);
+                                    row.appendChild(updatedDateCell);
+                                    row.appendChild(ratingCell);
+                                    row.appendChild(studentsCountCell);
+                                    row.appendChild(blockCell); // Thêm cell có nút vào dòng
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                }
+
+                                function fetchData(searchParams = null) {
+                                  const url = searchParams
+                                    ? "http://localhost:3001/course/search"
+                                    : "http://localhost:3001/course/getAll";
+                                  const options = searchParams
+                                    ? {
+                                        method: "POST",
+                                        headers: {
+                                          "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify(searchParams),
+                                      }
+                                    : {};
+
+                                  fetch(url, options)
+                                    .then((response) => response.json())
+                                    .then((data) => updateTable(data))
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
+                                      )
+                                    );
+                                }
+
+                                // Tải toàn bộ dữ liệu khi khởi động
+                                fetchData();
+
+                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
+                                searchInput.addEventListener(
+                                  "input",
+                                  function () {
+                                    const searchTerm = searchInput.value.trim();
+                                    if (searchTerm) {
+                                      fetchData({ name: searchTerm });
+                                    } else {
+                                      fetchData();
+                                    }
+                                  }
+                                );
+
+                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
+                                searchInput.addEventListener(
+                                  "keydown",
+                                  function (event) {
+                                    if (event.key === "Enter") {
+                                      const searchTerm =
+                                        searchInput.value.trim();
+                                      if (searchTerm) {
+                                        fetchData({ name: searchTerm });
+                                      } else {
+                                        fetchData();
+                                      }
+                                    }
+                                  }
+                                );
+
+                                // Các hàm bổ trợ
+                                const fetchAdminName = (teacherID) => {
+                                  return fetch(
+                                    `http://localhost:3001/teacher/getTeacherByID/${teacherID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((adminData) => adminData.name || "");
+                                };
+
+                                const fetchEnrolledUsersCount = (courseID) => {
+                                  return fetch(
+                                    `http://localhost:3001/enrollCourse/countEnrolledUsers/${courseID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => data.count || 0)
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching enrolled users:",
+                                        error
+                                      )
+                                    );
+                                };
+
+                                const fetchAverageRating = (courseID) => {
+                                  return fetch(
+                                    `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      const ratings = data.map(
+                                        (feedback) =>
+                                          feedback.feedbackDetail.rating
+                                      );
+                                      const averageRating =
+                                        ratings.reduce(
+                                          (acc, rating) => acc + rating,
+                                          0
+                                        ) / ratings.length;
+                                      return averageRating || 0;
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching feedback:",
+                                        error
+                                      )
+                                    );
+                                };
+                              }
+                            );
+
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
@@ -536,23 +761,124 @@
                                       );
                                     tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
 
+                                    // Tạo Modal
+                                    const modalHTML = `
+  <div class="modal fade" id="courseDetailsModal" tabindex="-1" aria-labelledby="courseDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="courseDetailsModalLabel">FeedBack của Khóa Học</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="max-height: 400px; overflow-y: auto">
+          <h3 id="popupCourseName"></h3>
+          <p id="popupCourseDesc"></p>
+          <p id="popupCoursePrice"></p>
+          <p id="popupTeacherName"></p>
+          <p id="popupAvgRating"></p>
+          <p id="popupEnrolledUsers"></p>
+          <div id="popupFeedback"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+                                    document.body.insertAdjacentHTML(
+                                      "beforeend",
+                                      modalHTML
+                                    );
+
+                                    const popupCourseName =
+                                      document.getElementById(
+                                        "popupCourseName"
+                                      );
+                                    const popupCourseDesc =
+                                      document.getElementById(
+                                        "popupCourseDesc"
+                                      );
+                                    const popupCoursePrice =
+                                      document.getElementById(
+                                        "popupCoursePrice"
+                                      );
+                                    const popupTeacherName =
+                                      document.getElementById(
+                                        "popupTeacherName"
+                                      );
+                                    const popupAvgRating =
+                                      document.getElementById("popupAvgRating");
+                                    const popupEnrolledUsers =
+                                      document.getElementById(
+                                        "popupEnrolledUsers"
+                                      );
+                                    const popupFeedback =
+                                      document.getElementById("popupFeedback");
+
+                                    // Hàm lấy thông tin phản hồi
+                                    const fetchFeedback = (courseID) => {
+                                      return fetch(
+                                        `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
+                                      )
+                                        .then((response) => response.json())
+                                        .then((feedbackData) => {
+                                          // Tạo danh sách phản hồi
+                                          popupFeedback.innerHTML = ""; // Xóa các phản hồi cũ
+                                          feedbackData.forEach((feedback) => {
+                                            fetch(
+                                              `http://localhost:3001/user/getUserByID/${feedback.userID}`
+                                            )
+                                              .then((userResponse) =>
+                                                userResponse.json()
+                                              )
+                                              .then((userData) => {
+                                                const feedbackItem =
+                                                  document.createElement("div");
+                                                feedbackItem.style.marginBottom =
+                                                  "10px";
+                                                feedbackItem.innerHTML = `
+                    <strong>Tên: ${userData.name || "Unknown"}</strong><br>
+                    Đánh giá: ${feedback.feedbackDetail.rating} <br>
+                    Mô tả: ${feedback.feedbackDetail.content} <br>
+                    Viết vào lúc: ${new Date(
+                      feedback.feedbackDetail.createdAt
+                    ).toLocaleString()}<br>
+                  `;
+                                                popupFeedback.appendChild(
+                                                  feedbackItem
+                                                );
+                                              })
+                                              .catch((error) => {
+                                                console.error(
+                                                  "Error fetching user data:",
+                                                  error
+                                                );
+                                              });
+                                          });
+                                        })
+                                        .catch((error) => {
+                                          console.error(
+                                            "Error fetching feedback:",
+                                            error
+                                          );
+                                        });
+                                    };
+
+                                    // Hàm lấy tên giảng viên từ teacherID
                                     const fetchAdminName = (teacherID) => {
                                       return fetch(
                                         `http://localhost:3001/teacher/getTeacherByID/${teacherID}`
                                       )
-                                        .then((response) => {
-                                          if (!response.ok) {
-                                            throw new Error(
-                                              "Error fetching admin info"
-                                            );
-                                          }
-                                          return response.json();
-                                        })
+                                        .then((response) => response.json())
                                         .then(
-                                          (adminData) => adminData.name || ""
-                                        ); // Trả về tên admin
+                                          (adminData) =>
+                                            adminData.name || "Unknown"
+                                        );
                                     };
 
+                                    // Hàm lấy số người tham gia khóa học
                                     const fetchEnrolledUsersCount = (
                                       courseID
                                     ) => {
@@ -560,16 +886,17 @@
                                         `http://localhost:3001/enrollCourse/countEnrolledUsers/${courseID}`
                                       )
                                         .then((response) => response.json())
-                                        .then((data) => data.count || 0) // Trả về số lượng người tham gia
+                                        .then((data) => data.count || 0)
                                         .catch((error) => {
                                           console.error(
                                             "Error fetching enrolled users:",
                                             error
                                           );
-                                          return 0; // Trả về 0 nếu có lỗi
+                                          return 0;
                                         });
                                     };
 
+                                    // Hàm lấy rating trung bình
                                     const fetchAverageRating = (courseID) => {
                                       return fetch(
                                         `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
@@ -615,21 +942,20 @@
                                       const ratingCell =
                                         document.createElement("td");
                                       const enrolledUsersCell =
-                                        document.createElement("td"); // Cột mới
+                                        document.createElement("td");
+                                      const blockCell =
+                                        document.createElement("td");
 
                                       // Nội dung các ô
                                       courseName.innerHTML = `
-          <div class="d-flex align-items-center px-2 py-1" style="cursor: pointer;">
-            <img src="${
-              course.img || "../assets/images/profile/default.png"
-            }" class="avatar avatar-sm me-2" alt="course image" style="width: 35px; height: 35px; object-fit: cover;" />
-            <div class="d-flex flex-column justify-content-center">
-              <h6 class="mb-0 text-sm" style="color: #202224;">${
-                course.name || "Không có tên"
-              }</h6>
-            </div>
+        <div class="d-flex align-items-center px-2 py-1" style="cursor: pointer;">
+          <div class="d-flex flex-column justify-content-center">
+            <h6 class="mb-0 text-sm" style="color: #202224;">${
+              course.name || "Không có tên"
+            }</h6>
           </div>
-        `;
+        </div>
+      `;
                                       courseDesc.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
                                         course.describe || "Không có mô tả"
                                       }</span>`;
@@ -670,6 +996,105 @@
                                         }
                                       );
 
+                                      // Thêm nút "Ẩn/Hiện"
+                                      const toggleButton =
+                                        document.createElement("button");
+
+                                      // Lấy chi tiết khóa học từ API để kiểm tra trạng thái isBlock
+                                      fetch(
+                                        `http://localhost:3001/course/getDetailByCourseID/${course._id}`
+                                      )
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                          // Kiểm tra trạng thái isBlock và gán văn bản và class cho nút
+                                          let isBlock = data.isBlock; // Lấy trạng thái isBlock từ dữ liệu trả về
+                                          toggleButton.textContent = isBlock
+                                            ? "Ẩn"
+                                            : "Hiện";
+                                          toggleButton.classList.add(
+                                            "btn",
+                                            isBlock
+                                              ? "btn-danger"
+                                              : "btn-success"
+                                          );
+
+                                          // Thêm sự kiện click cho nút
+                                          toggleButton.addEventListener(
+                                            "click",
+                                            () => {
+                                              // Gửi PUT request để thay đổi trạng thái isBlock của khóa học
+                                              fetch(
+                                                `http://localhost:3001/course/toggleIsBlock/${course._id}`,
+                                                {
+                                                  method: "PUT", // Thay đổi từ POST sang PUT
+                                                }
+                                              )
+                                                .then((response) =>
+                                                  response.json()
+                                                )
+                                                .then((result) => {
+                                                  // Cập nhật lại trạng thái isBlock sau khi thay đổi
+                                                  isBlock = !isBlock;
+
+                                                  // Cập nhật lại văn bản và màu sắc của nút
+                                                  toggleButton.textContent =
+                                                    isBlock ? "Ẩn" : "Hiện";
+                                                  toggleButton.classList.remove(
+                                                    isBlock
+                                                      ? "btn-success"
+                                                      : "btn-danger"
+                                                  );
+                                                  toggleButton.classList.add(
+                                                    isBlock
+                                                      ? "btn-danger"
+                                                      : "btn-success"
+                                                  );
+
+                                                  // Sau khi thay đổi trạng thái, ta cũng cần lấy lại trạng thái cập nhật từ server để cập nhật lại
+                                                  fetch(
+                                                    `http://localhost:3001/course/getDetailByCourseID/${course._id}`
+                                                  )
+                                                    .then((response) =>
+                                                      response.json()
+                                                    )
+                                                    .then((updatedData) => {
+                                                      const updatedIsBlocked =
+                                                        updatedData.isBlock;
+                                                      toggleButton.textContent =
+                                                        updatedIsBlocked
+                                                          ? "Ẩn"
+                                                          : "Hiện";
+                                                      toggleButton.classList.remove(
+                                                        updatedIsBlocked
+                                                          ? "btn-success"
+                                                          : "btn-danger"
+                                                      );
+                                                      toggleButton.classList.add(
+                                                        updatedIsBlocked
+                                                          ? "btn-danger"
+                                                          : "btn-success"
+                                                      );
+                                                    });
+                                                })
+                                                .catch((error) => {
+                                                  console.error(
+                                                    "Error toggling block status:",
+                                                    error
+                                                  );
+                                                });
+                                            }
+                                          );
+
+                                          // Thêm nút vào trong cell hoặc container
+                                          blockCell.appendChild(toggleButton); // Thêm nút vào blockCell
+                                        })
+                                        .catch((error) => {
+                                          console.error(
+                                            "Error fetching course details:",
+                                            error
+                                          );
+                                        });
+
                                       // Thêm các ô vào hàng
                                       row.appendChild(courseName);
                                       row.appendChild(courseDesc);
@@ -678,16 +1103,55 @@
                                       row.appendChild(createdAt);
                                       row.appendChild(updatedAt);
                                       row.appendChild(ratingCell);
-                                      row.appendChild(enrolledUsersCell); // Thêm cột số người tham gia
+                                      row.appendChild(enrolledUsersCell);
+                                      row.appendChild(blockCell);
+
+                                      // Xử lý khi nhấp vào tên khóa học để mở modal
+                                      courseName.addEventListener(
+                                        "click",
+                                        () => {
+                                          popupCourseName.innerHTML =
+                                            course.name;
+                                          popupCourseDesc.innerHTML =
+                                            course.describe;
+                                          popupCoursePrice.innerHTML = `${course.price.toLocaleString()} VND`;
+                                          fetchAdminName(
+                                            course.teacherID._id
+                                          ).then((adminName) => {
+                                            popupTeacherName.innerHTML = `Giảng viên: ${adminName}`;
+                                          });
+                                          fetchAverageRating(course._id).then(
+                                            (avgRating) => {
+                                              popupAvgRating.innerHTML = `Đánh giá: ${avgRating.toFixed(
+                                                1
+                                              )}`;
+                                            }
+                                          );
+                                          fetchEnrolledUsersCount(
+                                            course._id
+                                          ).then((count) => {
+                                            popupEnrolledUsers.innerHTML = `Người tham gia: ${count}`;
+                                          });
+                                          fetchFeedback(course._id);
+                                          new bootstrap.Modal(
+                                            document.getElementById(
+                                              "courseDetailsModal"
+                                            )
+                                          ).show();
+                                        }
+                                      );
 
                                       // Thêm hàng vào bảng
                                       tableBody.appendChild(row);
                                     });
-                                  })
-                                  .catch((error) =>
-                                    console.error("Error fetching data:", error)
-                                  );
-                              }
+
+                                    // Chờ tất cả các promise hoàn thành
+                                    Promise.all(promises).catch((error) =>
+                                      console.error(error)
+                                    );
+                                  });
+                              },
+                              false
                             );
                           </script>
                         </div>
