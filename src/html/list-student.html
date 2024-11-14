@@ -236,7 +236,7 @@
                       <img
                         id="currentAvatar"
                         src=""
-                        alt="Current Avatar"
+                        alt="Loading"
                         width="35"
                         height="35"
                         class="rounded-circle"
@@ -396,6 +396,51 @@
                           </div>
 
                           <script>
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                const admin = JSON.parse(
+                                  localStorage.getItem("admin")
+                                );
+                                const adminId = admin ? admin.id : null; // Lấy adminId
+                                const currentAvatarContainer =
+                                  document.getElementById(
+                                    "currentAvatarContainer"
+                                  );
+                                const currentAvatar =
+                                  document.getElementById("currentAvatar");
+
+                                if (adminId) {
+                                  // Gửi yêu cầu lấy thông tin admin từ API
+                                  fetch(
+                                    `http://localhost:3001/admin/getAdminByID/${adminId}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((adminData) => {
+                                      // Lấy avatar của admin và hiển thị
+                                      if (adminData.avatar) {
+                                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                                        currentAvatarContainer.style.display =
+                                          "block"; // Hiển thị phần tử chứa avatar
+                                      } else {
+                                        currentAvatarContainer.style.display =
+                                          "none"; // Ẩn phần tử nếu không có avatar
+                                      }
+                                    })
+                                    .catch((error) => {
+                                      console.error(
+                                        "Error fetching admin info:",
+                                        error
+                                      );
+                                    });
+                                } else {
+                                  console.error(
+                                    "Admin ID not found in localStorage."
+                                  );
+                                }
+                              }
+                            );
+
                             document.addEventListener(
                               "DOMContentLoaded",
                               function () {
