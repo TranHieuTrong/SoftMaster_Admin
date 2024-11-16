@@ -398,193 +398,6 @@
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
-                              function () {
-                                const searchInput =
-                                  document.getElementById("searchInput");
-                                const tableBody =
-                                  document.getElementById("userTableBody");
-
-                                // Hàm để cập nhật bảng với dữ liệu
-                                function updateTable(data) {
-                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
-                                  data.forEach((teacher) => {
-                                    const row = document.createElement("tr");
-
-                                    // Tạo các ô dữ liệu
-                                    const nameCell =
-                                      document.createElement("td");
-                                    const emailCell =
-                                      document.createElement("td");
-                                    const phoneCell =
-                                      document.createElement("td");
-                                    const specializationCell =
-                                      document.createElement("td");
-                                    const sloganCell =
-                                      document.createElement("td");
-                                    const genderCell =
-                                      document.createElement("td");
-                                    const actionCell =
-                                      document.createElement("td");
-
-                                    // Cập nhật nội dung các ô
-                                    nameCell.innerHTML = teacher.name || "";
-                                    emailCell.innerHTML = teacher.email || "";
-                                    phoneCell.innerHTML = teacher.phone || "";
-                                    specializationCell.innerHTML =
-                                      teacher.major || "";
-                                    sloganCell.innerHTML = teacher.slogan || "";
-                                    genderCell.innerHTML = teacher.gender || "";
-
-                                    // Tạo nút "Mở/Khóa"
-                                    const lockButton =
-                                      document.createElement("button");
-                                    lockButton.classList.add(
-                                      "btn",
-                                      teacher.isLocked
-                                        ? "btn-danger"
-                                        : "btn-success",
-                                      "rounded-5",
-                                      "lock-btn"
-                                    );
-                                    lockButton.textContent = teacher.isLocked
-                                      ? "Khóa"
-                                      : "Mở";
-                                    lockButton.setAttribute(
-                                      "data-teacher-id",
-                                      teacher.id
-                                    );
-
-                                    // Tạo nút "Chi tiết"
-                                    const detailButton =
-                                      document.createElement("button");
-                                    detailButton.classList.add(
-                                      "btn",
-                                      "btn-info",
-                                      "rounded-5",
-                                      "detail-btn"
-                                    );
-                                    detailButton.textContent = "Chi tiết";
-                                    detailButton.setAttribute(
-                                      "data-teacher-id",
-                                      teacher.id
-                                    );
-
-                                    // Thêm sự kiện click cho nút "Chi tiết"
-                                    detailButton.addEventListener(
-                                      "click",
-                                      async () => {
-                                        const courses = await fetchCourses(
-                                          teacher.id
-                                        ); // Lấy danh sách khóa học của giảng viên
-                                        showCoursesPopup(teacher.name, courses); // Hiển thị modal với danh sách khóa học
-                                      }
-                                    );
-
-                                    // Thêm nút vào ô hành động
-                                    actionCell.appendChild(detailButton);
-
-                                    actionCell.appendChild(lockButton);
-
-                                    // Thêm các ô vào hàng
-                                    row.appendChild(nameCell);
-                                    row.appendChild(emailCell);
-                                    row.appendChild(phoneCell);
-                                    row.appendChild(specializationCell);
-                                    row.appendChild(sloganCell);
-                                    row.appendChild(genderCell);
-                                    row.appendChild(actionCell);
-
-                                    // Thêm hàng vào bảng
-                                    tableBody.appendChild(row);
-
-                                    // Thêm sự kiện click cho nút "Chi tiết"
-                                    detailButton.addEventListener(
-                                      "click",
-                                      async () => {
-                                        const courses = await fetchCourses(
-                                          teacher.id
-                                        );
-                                        showCoursesPopup(teacher.name, courses);
-                                      }
-                                    );
-
-                                    // Thêm sự kiện cho nút "Mở/Khóa"
-                                    lockButton.addEventListener("click", () => {
-                                      toggleLockStatus(teacher.id);
-                                    });
-                                  });
-                                }
-                                // Hàm gửi yêu cầu API và cập nhật bảng
-                                function fetchData(searchParams) {
-                                  fetch(
-                                    "http://localhost:3001/teacher/filter",
-                                    {
-                                      method: "POST",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify(searchParams),
-                                    }
-                                  )
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
-                                    })
-                                    .catch((error) => {
-                                      console.error(
-                                        "Error fetching data:",
-                                        error
-                                      );
-                                    });
-                                }
-
-                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
-                                searchInput.addEventListener(
-                                  "input",
-                                  function () {
-                                    const searchTerm = searchInput.value.trim();
-                                    const searchParams = {};
-                                    if (searchTerm) {
-                                      if (searchTerm.includes("@")) {
-                                        searchParams.email = searchTerm;
-                                      } else if (searchTerm.match(/^\d+$/)) {
-                                        searchParams.phone = searchTerm;
-                                      } else {
-                                        searchParams.name = searchTerm;
-                                      }
-                                    }
-
-                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
-                                  }
-                                );
-
-                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
-                                searchInput.addEventListener(
-                                  "keydown",
-                                  function (event) {
-                                    if (event.key === "Enter") {
-                                      const searchTerm =
-                                        searchInput.value.trim();
-                                      const searchParams = {};
-                                      if (searchTerm) {
-                                        if (searchTerm.includes("@")) {
-                                          searchParams.email = searchTerm;
-                                        } else if (searchTerm.match(/^\d+$/)) {
-                                          searchParams.phone = searchTerm;
-                                        } else {
-                                          searchParams.name = searchTerm;
-                                        }
-                                      }
-
-                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
-                                    }
-                                  }
-                                );
-                              }
-                            );
-
-                            document.addEventListener(
-                              "DOMContentLoaded",
                               () => {
                                 const admin = JSON.parse(
                                   localStorage.getItem("admin")
@@ -631,116 +444,135 @@
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
+                                // Elements
+                                const searchInput =
+                                  document.getElementById("searchInput");
                                 const tableBody =
                                   document.getElementById("userTableBody");
+                                const prevPageBtn =
+                                  document.getElementById("prevPage");
+                                const nextPageBtn =
+                                  document.getElementById("nextPage");
+                                const currentPageSpan =
+                                  document.getElementById("currentPage");
+                                const pageSizeSelect =
+                                  document.getElementById("pageSize");
 
-                                // Hàm lấy tên admin
-                                const fetchAdminName = async (creatorID) => {
+                                // Constants & Variables
+                                let teachersData = [];
+                                let currentPage = 1;
+                                let pageSize = 10;
+
+                                // Utilities
+                                const formatDate = (dateString) => {
+                                  if (!dateString) return "";
+                                  const date = new Date(dateString);
+                                  return date.toLocaleDateString("vi-VN");
+                                };
+
+                                const fetchData = async (url, options = {}) => {
                                   try {
-                                    const response = await fetch(
-                                      `http://localhost:3001/admin/getAdminByID/${creatorID}`
-                                    );
+                                    const response = await fetch(url, options);
                                     if (!response.ok)
                                       throw new Error(
-                                        "Error fetching admin info"
+                                        `HTTP error! Status: ${response.status}`
                                       );
-                                    const adminData = await response.json();
-                                    return adminData.name || "";
+                                    return await response.json();
                                   } catch (error) {
-                                    console.error(error);
-                                    return "";
+                                    console.error(
+                                      `Error fetching data from ${url}:`,
+                                      error
+                                    );
+                                    return null;
                                   }
                                 };
 
-                                // Hàm lấy danh sách khóa học của giảng viên
-                                const fetchCourses = async (teacherID) => {
-                                  try {
-                                    const response = await fetch(
-                                      `http://localhost:3001/course/getCourseByTeacherID/${teacherID}`
+                                // API Calls
+                                const fetchTeachers = async () => {
+                                  const data = await fetchData(
+                                    "http://localhost:3001/teacher/getAll"
+                                  );
+                                  if (data) {
+                                    teachersData = data.sort(
+                                      (a, b) =>
+                                        new Date(b.createdAt) -
+                                        new Date(a.createdAt)
                                     );
-                                    const courses = await response.json();
-                                    return courses;
-                                  } catch (error) {
-                                    console.error(error);
-                                    return [];
+                                    displayTeachers();
                                   }
                                 };
 
-                                // Hàm tạo nội dung hàng giảng viên
+                                const toggleLockStatus = async (
+                                  teacherID,
+                                  button
+                                ) => {
+                                  const teacher = teachersData.find(
+                                    (t) => t._id === teacherID
+                                  );
+                                  if (!teacher) return;
 
-                                const createTeacherRow = async (teacher) => {
-                                  const row = document.createElement("tr");
-
-                                  // Tạo các ô dữ liệu
-                                  const nameTeacher =
-                                    document.createElement("td");
-                                  const emailTeacher =
-                                    document.createElement("td");
-                                  const phoneTeacher =
-                                    document.createElement("td");
-                                  const majorTeacher =
-                                    document.createElement("td");
-                                  const sloganTeacher =
-                                    document.createElement("td");
-                                  const genderTeacher =
-                                    document.createElement("td");
-                                  const creatorID =
-                                    document.createElement("td");
-                                  const actionCell =
-                                    document.createElement("td");
-
-                                  // Cập nhật nội dung các ô
-                                  nameTeacher.innerHTML =
-                                    getTeacherNameMarkup(teacher);
-                                  emailTeacher.innerHTML =
-                                    getTeacherEmailMarkup(teacher);
-                                  phoneTeacher.innerHTML =
-                                    getTeacherPhoneMarkup(teacher);
-                                  majorTeacher.innerHTML =
-                                    getTeacherMajorMarkup(teacher);
-                                  sloganTeacher.innerHTML =
-                                    getTeacherSloganMarkup(teacher);
-                                  genderTeacher.innerHTML =
-                                    getTeacherGenderMarkup(teacher);
-
-                                  // // Lấy tên admin từ creatorID (nếu cần thiết)
-                                  // const adminName = await fetchAdminName(
-                                  //   teacher.creatorID
-                                  // );
-                                  // creatorID.innerHTML = adminName || "Unknown";
-
-                                  // Thêm các nút hành động (Mở/Khóa)
-                                  actionCell.innerHTML =
-                                    getTeacherActionsMarkup(
-                                      teacher.isLocked,
-                                      teacher._id
-                                    );
-
-                                  // Thêm các ô vào hàng và thêm hàng vào bảng
-                                  row.appendChild(nameTeacher);
-                                  row.appendChild(emailTeacher);
-                                  row.appendChild(phoneTeacher);
-                                  row.appendChild(majorTeacher);
-                                  row.appendChild(sloganTeacher);
-                                  row.appendChild(genderTeacher);
-                                  row.appendChild(creatorID);
-                                  row.appendChild(actionCell);
-                                  tableBody.appendChild(row);
-
-                                  // Sự kiện click cho tên giảng viên để hiển thị popup
-                                  nameTeacher.addEventListener(
-                                    "click",
-                                    async () => {
-                                      const courses = await fetchCourses(
-                                        teacher._id
-                                      );
-                                      showCoursesPopup(teacher.name, courses);
+                                  const newStatus = !teacher.isLocked;
+                                  const result = await fetchData(
+                                    `http://localhost:3001/teacher/change-status/${teacherID}`,
+                                    {
+                                      method: "PUT",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify({
+                                        isLocked: newStatus,
+                                      }),
                                     }
                                   );
 
-                                  // Sự kiện click cho nút "Chi tiết"
+                                  if (result) {
+                                    teacher.isLocked = newStatus;
+                                    button.textContent = newStatus
+                                      ? "Khóa"
+                                      : "Mở";
+                                    button.classList.toggle(
+                                      "btn-danger",
+                                      newStatus
+                                    );
+                                    button.classList.toggle(
+                                      "btn-success",
+                                      !newStatus
+                                    );
+                                  }
+                                };
+
+                                const fetchCourses = async (teacherID) => {
+                                  return await fetchData(
+                                    `http://localhost:3001/course/getCourseByTeacherID/${teacherID}`
+                                  );
+                                };
+
+                                // Rendering
+                                const createTeacherRow = async (teacher) => {
+                                  const row = document.createElement("tr");
+
+                                  row.innerHTML = `
+      <td>${teacher.name || ""}</td>
+      <td>${teacher.email || ""}</td>
+      <td>${teacher.phone || ""}</td>
+      <td>${teacher.major || ""}</td>
+      <td>${teacher.slogan || ""}</td>
+      <td>${teacher.gender || ""}</td>
+      <td>
+        <button class="btn btn-info rounded-5 detail-btn" data-teacher-id="${
+          teacher._id
+        }">Chi tiết</button>
+        <button class="btn ${
+          teacher.isLocked ? "btn-danger" : "btn-success"
+        } rounded-5 lock-btn" data-teacher-id="${teacher._id}">${
+                                    teacher.isLocked ? "Khóa" : "Mở"
+                                  }</button>
+      </td>
+    `;
+
+                                  // Add event listeners for buttons
                                   const detailButton =
-                                    actionCell.querySelector(".detail-btn");
+                                    row.querySelector(".detail-btn");
                                   detailButton.addEventListener(
                                     "click",
                                     async () => {
@@ -751,264 +583,108 @@
                                     }
                                   );
 
-                                  // Thêm sự kiện cho nút Mở/Khóa
-                                  addLockToggleEvent(actionCell, teacher);
-                                };
-                                // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
-                                // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
-                                // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
-                                const showCoursesPopup = (
-                                  teacherName,
-                                  courses
-                                ) => {
-                                  // Kiểm tra và xóa modal cũ nếu đã tồn tại
-                                  const existingModal =
-                                    document.getElementById("exampleModal");
-                                  if (existingModal) {
-                                    existingModal.remove();
-                                  }
-
-                                  // Kiểm tra nếu có khóa học hoặc không
-                                  const hasCourses =
-                                    Array.isArray(courses) &&
-                                    courses.length > 0;
-
-                                  // Tạo HTML cho modal
-                                  const modalHTML = `
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Danh sách khóa học của ${teacherName}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div id="coursesList">
-              ${
-                hasCourses
-                  ? courses
-                      .map(
-                        (course) => `
-                          <div>
-                            <p><strong>${course.name}</strong>: ${course.describe}</p>
-                          </div>
-                        `
-                      )
-                      .join("")
-                  : "<p>Giảng viên này chưa có khóa học nào.</p>"
-              }
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-                                  // Thêm modal vào body của trang
-                                  document.body.insertAdjacentHTML(
-                                    "beforeend",
-                                    modalHTML
+                                  const lockButton =
+                                    row.querySelector(".lock-btn");
+                                  lockButton.addEventListener("click", () =>
+                                    toggleLockStatus(teacher._id, lockButton)
                                   );
 
-                                  // Mở modal khi đã thêm vào DOM
-                                  const modal = new bootstrap.Modal(
-                                    document.getElementById("exampleModal")
-                                  );
-                                  modal.show();
-                                };
-                                // Hàm lấy các markup HTML cho các ô dữ liệu giảng viên
-                                const getTeacherNameMarkup = (teacher) => `
-    <div class="d-flex align-items-center px-2 py-1">
-      <div class="d-flex flex-column justify-content-center">
-        <h6 class="mb-0 text-sm" id="teacherName" style="cursor: pointer;">${
-          teacher.name || ""
-        }</h6>
-      </div>
-    </div>
-  `;
-                                const getTeacherEmailMarkup = (teacher) =>
-                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    teacher.email || ""
-                                  }</span>`;
-                                const getTeacherPhoneMarkup = (teacher) =>
-                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    teacher.phone || ""
-                                  }</span>`;
-                                const getTeacherMajorMarkup = (teacher) =>
-                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    teacher.major || ""
-                                  }</span>`;
-                                const getTeacherSloganMarkup = (teacher) =>
-                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    teacher.slogan || ""
-                                  }</span>`;
-                                const getTeacherGenderMarkup = (teacher) =>
-                                  `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                    teacher.gender || ""
-                                  }</span>`;
-                                const getTeacherActionsMarkup = (
-                                  isLocked,
-                                  teacherID
-                                ) => `
-  <div class="d-flex justify-content-start">
-    <button class="btn btn-primary rounded-5 detail-btn" type="button" data-teacher-id="${teacherID}">
-      Chi tiết
-    </button>
-    <button class="btn ${
-      isLocked ? "btn-danger" : "btn-success"
-    } rounded-5 lock-btn ms-1" type="button" data-teacher-id="${teacherID}">
-      ${isLocked ? "Khóa" : "Mở"}
-    </button>
-  </div>
-`;
-
-                                // Xử lý sự kiện click trên các nút "Khóa" và "Mở"
-                                document.addEventListener(
-                                  "click",
-                                  function (event) {
-                                    if (
-                                      event.target.classList.contains(
-                                        "lock-btn"
-                                      )
-                                    ) {
-                                      const button = event.target;
-                                      const teacherID =
-                                        button.getAttribute("data-teacher-id");
-
-                                      // Lấy thông tin giáo viên từ API của bạn
-                                      fetch(
-                                        `http://localhost:3001/teacher/getTeacherByID/${teacherID}`
-                                      )
-                                        .then((response) => response.json())
-                                        .then((teacher) => {
-                                          const isLocked = teacher.isLocked; // Kiểm tra trạng thái khóa của giáo viên
-
-                                          // Gửi yêu cầu PUT để thay đổi trạng thái
-                                          fetch(
-                                            `http://localhost:3001/teacher/change-status/${teacherID}`,
-                                            {
-                                              method: "PUT",
-                                              headers: {
-                                                "Content-Type":
-                                                  "application/json",
-                                              },
-                                              body: JSON.stringify({
-                                                isLocked: !isLocked, // Đổi trạng thái: Nếu là "Khóa" thì chuyển thành "Mở" và ngược lại
-                                              }),
-                                            }
-                                          )
-                                            .then((response) => response.json())
-                                            .then((data) => {
-                                              // Cập nhật lại giao diện sau khi thay đổi trạng thái thành công
-                                              button.textContent = data.isLocked
-                                                ? "Khóa"
-                                                : "Mở";
-                                              button.classList.toggle(
-                                                "btn-danger",
-                                                data.isLocked
-                                              );
-                                              button.classList.toggle(
-                                                "btn-success",
-                                                !data.isLocked
-                                              );
-                                            })
-                                            .catch((error) => {
-                                              console.error(
-                                                "Error changing status:",
-                                                error
-                                              );
-                                            });
-                                        })
-                                        .catch((error) => {
-                                          console.error(
-                                            "Error fetching teacher data:",
-                                            error
-                                          );
-                                        });
-                                    }
-                                  }
-                                );
-
-                                let teachersData = []; // Lưu dữ liệu giảng viên
-                                let currentPage = 1; // Trang hiện tại
-                                let pageSize = 10; // Số lượng giảng viên trên mỗi trang
-
-                                const fetchTeachers = async () => {
-                                  try {
-                                    const response = await fetch(
-                                      "http://localhost:3001/teacher/getAll"
-                                    );
-                                    teachersData = await response.json();
-                                    teachersData.sort(
-                                      (a, b) =>
-                                        new Date(b.createdAt) -
-                                        new Date(a.createdAt)
-                                    );
-                                    displayTeachers(); // Hiển thị dữ liệu theo trang
-                                  } catch (error) {
-                                    console.error(
-                                      "Error fetching teachers:",
-                                      error
-                                    );
-                                  }
+                                  return row;
                                 };
 
-                                const displayTeachers = () => {
-                                  tableBody.innerHTML = ""; // Xóa nội dung bảng hiện tại
+                                const displayTeachers = async () => {
+                                  tableBody.innerHTML = "";
                                   const start = (currentPage - 1) * pageSize;
                                   const end =
                                     pageSize === "all"
                                       ? teachersData.length
                                       : start + pageSize;
-                                  const teachersToDisplay = teachersData.slice(
+
+                                  const fragment =
+                                    document.createDocumentFragment();
+                                  for (const teacher of teachersData.slice(
                                     start,
                                     end
-                                  );
+                                  )) {
+                                    const row = await createTeacherRow(teacher);
+                                    fragment.appendChild(row);
+                                  }
+                                  tableBody.appendChild(fragment);
 
-                                  teachersToDisplay.forEach(async (teacher) => {
-                                    await createTeacherRow(teacher);
-                                  });
-
-                                  document.getElementById(
-                                    "currentPage"
-                                  ).innerText = `Trang ${currentPage}`;
-
-                                  // Cập nhật trạng thái của nút phân trang
-                                  document.getElementById("prevPage").disabled =
-                                    currentPage === 1;
-                                  document.getElementById("nextPage").disabled =
+                                  currentPageSpan.textContent = `Trang ${currentPage}`;
+                                  prevPageBtn.disabled = currentPage === 1;
+                                  nextPageBtn.disabled =
                                     end >= teachersData.length ||
                                     pageSize === "all";
                                 };
 
-                                // Xử lý sự kiện thay đổi trang
-                                document
-                                  .getElementById("prevPage")
-                                  .addEventListener("click", () => {
-                                    if (currentPage > 1) {
-                                      currentPage--;
-                                      displayTeachers();
-                                    }
-                                  });
+                                const showCoursesPopup = (
+                                  teacherName,
+                                  courses
+                                ) => {
+                                  const existingModal =
+                                    document.getElementById("exampleModal");
+                                  if (existingModal) existingModal.remove();
 
-                                document
-                                  .getElementById("nextPage")
-                                  .addEventListener("click", () => {
-                                    const maxPage = Math.ceil(
-                                      teachersData.length / pageSize
-                                    );
-                                    if (currentPage < maxPage) {
-                                      currentPage++;
-                                      displayTeachers();
-                                    }
-                                  });
+                                  const modalHTML = `
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Danh sách khóa học của ${teacherName}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ${
+                courses && courses.length
+                  ? courses
+                      .map(
+                        (c) =>
+                          `<p><strong>${c.name}</strong>: ${c.describe}</p>`
+                      )
+                      .join("")
+                  : "<p>Giảng viên này chưa có khóa học nào.</p>"
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
 
-                                document
-                                  .getElementById("pageSize")
-                                  .addEventListener("change", (event) => {
+                                  document.body.insertAdjacentHTML(
+                                    "beforeend",
+                                    modalHTML
+                                  );
+                                  const modal = new bootstrap.Modal(
+                                    document.getElementById("exampleModal")
+                                  );
+                                  modal.show();
+                                };
+
+                                // Pagination Controls
+                                prevPageBtn.addEventListener("click", () => {
+                                  if (currentPage > 1) {
+                                    currentPage--;
+                                    displayTeachers();
+                                  }
+                                });
+
+                                nextPageBtn.addEventListener("click", () => {
+                                  const maxPage = Math.ceil(
+                                    teachersData.length / pageSize
+                                  );
+                                  if (currentPage < maxPage) {
+                                    currentPage++;
+                                    displayTeachers();
+                                  }
+                                });
+
+                                pageSizeSelect.addEventListener(
+                                  "change",
+                                  (event) => {
                                     const selectedValue = event.target.value;
                                     pageSize =
                                       selectedValue === "all"
@@ -1016,8 +692,38 @@
                                         : parseInt(selectedValue, 10);
                                     currentPage = 1;
                                     displayTeachers();
-                                  });
+                                  }
+                                );
 
+                                searchInput.addEventListener("input", () => {
+                                  const searchTerm = searchInput.value.trim();
+                                  const searchParams = {};
+                                  if (searchTerm) {
+                                    if (searchTerm.includes("@"))
+                                      searchParams.email = searchTerm;
+                                    else if (/^\d+$/.test(searchTerm))
+                                      searchParams.phone = searchTerm;
+                                    else searchParams.name = searchTerm;
+                                  }
+                                  fetchData(
+                                    "http://localhost:3001/teacher/filter",
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify(searchParams),
+                                    }
+                                  ).then((data) => {
+                                    if (data) {
+                                      teachersData = data;
+                                      currentPage = 1;
+                                      displayTeachers();
+                                    }
+                                  });
+                                });
+
+                                // Initial Fetch
                                 fetchTeachers();
                               }
                             );

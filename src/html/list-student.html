@@ -440,257 +440,49 @@
                                 }
                               }
                             );
-                            document.addEventListener(
-                              "DOMContentLoaded",
-                              function () {
-                                const searchInput =
-                                  document.getElementById("searchInput");
-                                const tableBody =
-                                  document.getElementById("userTableBody");
-
-                                // Hàm hiển thị modal với danh sách khóa học
-                                const showPopup = (courseNames) => {
-                                  const existingModal =
-                                    document.getElementById("courseModal");
-                                  if (existingModal) existingModal.remove();
-
-                                  const modal = document.createElement("div");
-                                  modal.classList.add("modal", "fade");
-                                  modal.id = "courseModal";
-                                  modal.tabIndex = "-1";
-                                  modal.setAttribute(
-                                    "aria-labelledby",
-                                    "courseModalLabel"
-                                  );
-                                  modal.setAttribute("aria-hidden", "true");
-
-                                  modal.innerHTML = `
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="courseModalLabel">Khóa học đã đăng ký</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <ul class="list-group">
-              ${courseNames
-                .map((name) => `<li class="list-group-item">${name}</li>`)
-                .join("")}
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-                                  document.body.appendChild(modal);
-
-                                  const bootstrapModal = new bootstrap.Modal(
-                                    modal
-                                  );
-                                  bootstrapModal.show();
-                                };
-
-                                function updateTable(data) {
-                                  tableBody.innerHTML = "";
-                                  data.forEach((user) => {
-                                    const row = document.createElement("tr");
-
-                                    // Tạo các ô dữ liệu
-                                    const nameCell =
-                                      document.createElement("td");
-                                    const emailCell =
-                                      document.createElement("td");
-                                    const birthDateCell =
-                                      document.createElement("td");
-                                    const phoneCell =
-                                      document.createElement("td");
-                                    const courseCell =
-                                      document.createElement("td");
-                                    const registerDateCell =
-                                      document.createElement("td");
-                                    const actionCell =
-                                      document.createElement("td"); // Thêm ô cho nút "Chi tiết"
-
-                                    // Chuyển đổi định dạng ngày tháng năm
-                                    const formatDate = (dateString) => {
-                                      if (!dateString) return "";
-                                      const date = new Date(dateString);
-                                      const day = String(
-                                        date.getDate()
-                                      ).padStart(2, "0");
-                                      const month = String(
-                                        date.getMonth() + 1
-                                      ).padStart(2, "0");
-                                      const year = date.getFullYear();
-                                      return `${day}-${month}-${year}`;
-                                    };
-
-                                    // Nội dung các ô
-                                    nameCell.innerHTML = user.name || "";
-                                    emailCell.innerHTML = user.email || "";
-                                    birthDateCell.innerHTML = formatDate(
-                                      user.birthday
-                                    );
-                                    phoneCell.innerHTML = user.phone || "";
-                                    courseCell.innerHTML = user.gender || "";
-                                    registerDateCell.innerHTML = formatDate(
-                                      user.createdAt
-                                    );
-
-                                    // Tạo nút "Chi tiết" và thêm vào ô actionCell
-                                    const detailButton =
-                                      document.createElement("button");
-                                    detailButton.classList.add(
-                                      "btn",
-                                      "btn-info",
-                                      "rounded-5",
-                                      "detail-btn"
-                                    );
-                                    detailButton.textContent = "Chi tiết";
-                                    // Khi nhấn nút, gọi hàm showPopup và truyền danh sách khóa học
-                                    detailButton.onclick = () =>
-                                      showPopup(user.courses); // Thêm 'user.courses' hoặc tương tự
-
-                                    actionCell.appendChild(detailButton); // Thêm nút vào ô actionCell
-
-                                    // Thêm các ô vào hàng
-                                    row.appendChild(nameCell);
-                                    row.appendChild(emailCell);
-                                    row.appendChild(birthDateCell);
-                                    row.appendChild(phoneCell);
-                                    row.appendChild(courseCell);
-                                    row.appendChild(registerDateCell);
-                                    row.appendChild(actionCell); // Thêm ô "Chi tiết" vào hàng
-
-                                    // Thêm hàng vào bảng
-                                    tableBody.appendChild(row);
-                                  });
-                                }
-
-                                // Hàm gửi yêu cầu API và cập nhật bảng
-                                function fetchData(searchParams) {
-                                  fetch("http://localhost:3001/user/filter", {
-                                    method: "POST", // Sử dụng POST thay vì GET
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(searchParams), // Gửi dữ liệu tìm kiếm dưới dạng JSON
-                                  })
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
-                                    })
-                                    .catch((error) => {
-                                      console.error(
-                                        "Error fetching data:",
-                                        error
-                                      );
-                                    });
-                                }
-
-                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
-                                searchInput.addEventListener(
-                                  "input",
-                                  function () {
-                                    const searchTerm = searchInput.value.trim();
-
-                                    // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
-                                    const searchParams = {};
-                                    if (searchTerm) {
-                                      if (searchTerm.includes("@")) {
-                                        // Nếu chứa dấu @ thì chắc chắn là email
-                                        searchParams.email = searchTerm;
-                                      } else if (searchTerm.match(/^\d+$/)) {
-                                        // Nếu chỉ chứa số thì là số điện thoại
-                                        searchParams.phone = searchTerm;
-                                      } else {
-                                        // Nếu không thì là tên
-                                        searchParams.name = searchTerm;
-                                      }
-                                    }
-
-                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
-                                  }
-                                );
-
-                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
-                                searchInput.addEventListener(
-                                  "keydown",
-                                  function (event) {
-                                    if (event.key === "Enter") {
-                                      const searchTerm =
-                                        searchInput.value.trim();
-
-                                      // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
-                                      const searchParams = {};
-                                      if (searchTerm) {
-                                        if (searchTerm.includes("@")) {
-                                          // Nếu chứa dấu @ thì chắc chắn là email
-                                          searchParams.email = searchTerm;
-                                        } else if (searchTerm.match(/^\d+$/)) {
-                                          // Nếu chỉ chứa số thì là số điện thoại
-                                          searchParams.phone = searchTerm;
-                                        } else {
-                                          // Nếu không thì là tên
-                                          searchParams.name = searchTerm;
-                                        }
-                                      }
-
-                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
-                                    }
-                                  }
-                                );
-                              }
-                            );
 
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("userTableBody");
+                                const pageSizeSelect =
+                                  document.getElementById("pageSize");
+                                const prevPageBtn =
+                                  document.getElementById("prevPage");
+                                const nextPageBtn =
+                                  document.getElementById("nextPage");
+                                const currentPageSpan =
+                                  document.getElementById("currentPage");
+
                                 let currentPage = 1;
                                 let itemsPerPage = 10;
                                 let totalItems = 0;
                                 let totalPages = 0;
                                 let data = [];
 
-                                // Lấy dữ liệu người dùng từ API
-                                fetch("http://localhost:3001/user/getAll")
-                                  .then((response) => response.json())
-                                  .then((fetchedData) => {
-                                    data = fetchedData;
-                                    totalItems = data.length;
-                                    totalPages = Math.ceil(
-                                      totalItems / itemsPerPage
-                                    );
-
-                                    // Hiển thị người dùng trang đầu tiên
-                                    displayUsers(currentPage);
-                                    updatePaginationControls();
-                                  })
-                                  .catch((error) =>
-                                    console.error("Error fetching data:", error)
+                                const formatDate = (dateString) => {
+                                  if (!dateString) return "";
+                                  const date = new Date(dateString);
+                                  const day = String(date.getDate()).padStart(
+                                    2,
+                                    "0"
                                   );
+                                  const month = String(
+                                    date.getMonth() + 1
+                                  ).padStart(2, "0");
+                                  const year = date.getFullYear();
+                                  return `${day}-${month}-${year}`;
+                                };
 
-                                // Hàm hiển thị người dùng trong bảng
-                                // Hàm hiển thị người dùng trong bảng
-                                const displayUsers = (page) => {
-                                  const tableBody =
-                                    document.getElementById("userTableBody");
+                                const updateTable = (users) => {
+                                  const fragment =
+                                    document.createDocumentFragment();
                                   tableBody.innerHTML = "";
 
-                                  const startIndex = (page - 1) * itemsPerPage;
-                                  const endIndex = Math.min(
-                                    startIndex + itemsPerPage,
-                                    totalItems
-                                  );
-                                  const usersToDisplay = data.slice(
-                                    startIndex,
-                                    endIndex
-                                  );
-
-                                  usersToDisplay.forEach((user) => {
+                                  users.forEach((user) => {
                                     const row = document.createElement("tr");
 
                                     const nameCell =
@@ -706,77 +498,85 @@
                                     const registerDateCell =
                                       document.createElement("td");
                                     const detailButtonCell =
-                                      document.createElement("td"); // Thêm một ô để chứa nút "Chi tiết"
+                                      document.createElement("td");
 
-                                    const formatDate = (dateString) => {
-                                      if (!dateString) return "";
-                                      const date = new Date(dateString);
-                                      const day = String(
-                                        date.getDate()
-                                      ).padStart(2, "0");
-                                      const month = String(
-                                        date.getMonth() + 1
-                                      ).padStart(2, "0");
-                                      const year = date.getFullYear();
-                                      return `${day}-${month}-${year}`;
-                                    };
-
-                                    nameCell.innerHTML = user.name || "";
-                                    nameCell.style.color = "black";
-                                    nameCell.style.cursor = "pointer"; // Thêm con trỏ chuột để chỉ ra có thể click
+                                    nameCell.textContent = user.name || "";
+                                    nameCell.style.cursor = "pointer";
                                     nameCell.onclick = () =>
-                                      fetchAndShowCourses(user._id); // Gọi hàm khi nhấn vào tên
+                                      fetchAndShowCourses(user._id);
 
-                                    emailCell.innerHTML = user.email || "";
-                                    emailCell.style.color = "black";
-                                    birthDateCell.innerHTML = formatDate(
+                                    emailCell.textContent = user.email || "";
+                                    birthDateCell.textContent = formatDate(
                                       user.birthday
                                     );
-                                    birthDateCell.style.color = "black";
-                                    phoneCell.innerHTML = user.phone || "";
-                                    phoneCell.style.color = "black";
-                                    genderCell.innerHTML = user.gender || "";
-                                    genderCell.style.color = "black";
-                                    registerDateCell.innerHTML = formatDate(
+                                    phoneCell.textContent = user.phone || "";
+                                    genderCell.textContent = user.gender || "";
+                                    registerDateCell.textContent = formatDate(
                                       user.createdAt
                                     );
-                                    registerDateCell.style.color = "black";
 
-                                    // Tạo nút "Chi tiết"
                                     const detailButton =
                                       document.createElement("button");
                                     detailButton.classList.add(
                                       "btn",
                                       "btn-info",
-                                      "rounded-5",
-                                      "detail-btn"
+                                      "rounded-5"
                                     );
                                     detailButton.textContent = "Chi tiết";
                                     detailButton.onclick = () =>
-                                      fetchAndShowCourses(user._id); // Hiển thị khóa học khi click vào nút
+                                      fetchAndShowCourses(user._id);
 
-                                    detailButtonCell.appendChild(detailButton); // Thêm nút vào ô chi tiết
+                                    detailButtonCell.appendChild(detailButton);
 
-                                    row.appendChild(nameCell);
-                                    row.appendChild(emailCell);
-                                    row.appendChild(birthDateCell);
-                                    row.appendChild(phoneCell);
-                                    row.appendChild(genderCell);
-                                    row.appendChild(registerDateCell);
-                                    row.appendChild(detailButtonCell); // Thêm ô chứa nút "Chi tiết" vào hàng
+                                    row.append(
+                                      nameCell,
+                                      emailCell,
+                                      birthDateCell,
+                                      phoneCell,
+                                      genderCell,
+                                      registerDateCell,
+                                      detailButtonCell
+                                    );
 
-                                    tableBody.appendChild(row);
+                                    fragment.appendChild(row);
                                   });
+
+                                  tableBody.appendChild(fragment);
                                 };
 
-                                // Hàm lấy danh sách khóa học của người dùng và hiển thị modal
+                                const fetchData = (searchParams = {}) => {
+                                  fetch("http://localhost:3001/user/filter", {
+                                    method: "POST",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(searchParams),
+                                  })
+                                    .then((response) => response.json())
+                                    .then((fetchedData) => {
+                                      data = fetchedData;
+                                      totalItems = data.length;
+                                      totalPages = Math.ceil(
+                                        totalItems / itemsPerPage
+                                      );
+                                      displayUsers(currentPage);
+                                      updatePaginationControls();
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
+                                      )
+                                    );
+                                };
+
                                 const fetchAndShowCourses = (userID) => {
                                   fetch(
                                     `http://localhost:3001/enrollCourse/getCourseUserEnrolled/${userID}`
                                   )
                                     .then((response) => response.json())
-                                    .then((data) => {
-                                      const courseNames = data.map(
+                                    .then((courses) => {
+                                      const courseNames = courses.map(
                                         (item) => item.courseID.name
                                       );
                                       showPopup(courseNames);
@@ -789,7 +589,6 @@
                                     );
                                 };
 
-                                // Hàm hiển thị modal với danh sách khóa học
                                 const showPopup = (courseNames) => {
                                   const existingModal =
                                     document.getElementById("courseModal");
@@ -798,18 +597,12 @@
                                   const modal = document.createElement("div");
                                   modal.classList.add("modal", "fade");
                                   modal.id = "courseModal";
-                                  modal.tabIndex = "-1";
-                                  modal.setAttribute(
-                                    "aria-labelledby",
-                                    "courseModalLabel"
-                                  );
-                                  modal.setAttribute("aria-hidden", "true");
-
+                                  modal.tabIndex = -1;
                                   modal.innerHTML = `
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="courseModalLabel">Khóa học đã đăng ký</h5>
+            <h5 class="modal-title">Khóa học đã đăng ký</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -819,7 +612,6 @@
                 .join("")}
             </ul>
           </div>
-          
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
           </div>
@@ -828,23 +620,27 @@
     `;
 
                                   document.body.appendChild(modal);
-
                                   const bootstrapModal = new bootstrap.Modal(
                                     modal
                                   );
                                   bootstrapModal.show();
                                 };
 
-                                // Cập nhật các điều khiển phân trang
-                                const updatePaginationControls = () => {
-                                  const prevPageBtn =
-                                    document.getElementById("prevPage");
-                                  const nextPageBtn =
-                                    document.getElementById("nextPage");
-                                  const currentPageSpan =
-                                    document.getElementById("currentPage");
+                                const displayUsers = (page) => {
+                                  const startIndex = (page - 1) * itemsPerPage;
+                                  const endIndex = Math.min(
+                                    startIndex + itemsPerPage,
+                                    totalItems
+                                  );
+                                  const usersToDisplay = data.slice(
+                                    startIndex,
+                                    endIndex
+                                  );
+                                  updateTable(usersToDisplay);
+                                };
 
-                                  currentPageSpan.innerText = `Trang ${currentPage}`;
+                                const updatePaginationControls = () => {
+                                  currentPageSpan.textContent = `Trang ${currentPage}`;
                                   prevPageBtn.disabled = currentPage === 1;
                                   nextPageBtn.disabled =
                                     currentPage === totalPages;
@@ -866,22 +662,28 @@
                                   };
                                 };
 
-                                // Xử lý thay đổi số lượng bản ghi mỗi trang
-                                const pageSizeSelect =
-                                  document.getElementById("pageSize");
+                                searchInput.addEventListener("input", () => {
+                                  const searchTerm = searchInput.value.trim();
+                                  const searchParams = {};
+                                  if (searchTerm) {
+                                    if (searchTerm.includes("@")) {
+                                      searchParams.email = searchTerm;
+                                    } else if (/^\d+$/.test(searchTerm)) {
+                                      searchParams.phone = searchTerm;
+                                    } else {
+                                      searchParams.name = searchTerm;
+                                    }
+                                  }
+                                  fetchData(searchParams);
+                                });
+
                                 pageSizeSelect.addEventListener(
                                   "change",
                                   (event) => {
-                                    const selectedValue = event.target.value;
-                                    if (selectedValue === "all") {
-                                      itemsPerPage = totalItems;
-                                    } else {
-                                      itemsPerPage = parseInt(
-                                        selectedValue,
-                                        10
-                                      );
-                                    }
-
+                                    itemsPerPage =
+                                      event.target.value === "all"
+                                        ? totalItems
+                                        : parseInt(event.target.value, 10);
                                     totalPages = Math.ceil(
                                       totalItems / itemsPerPage
                                     );
@@ -890,6 +692,9 @@
                                     updatePaginationControls();
                                   }
                                 );
+
+                                // Fetch initial data
+                                fetchData();
                               }
                             );
                           </script>
