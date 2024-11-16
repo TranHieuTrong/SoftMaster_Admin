@@ -392,8 +392,41 @@
                                 id="phone"
                                 placeholder="Nhập số điện thoại giảng viên"
                                 required
+                                pattern="^0\d{9}$"
+                                title="Số điện thoại phải bắt đầu bằng số 0 và có đủ 10 chữ số"
+                                oninput="validatePhoneInput(event)"
                               />
+                              <div class="invalid-feedback">
+                                Vui lòng nhập đúng số điện thoại Việt Nam (bắt
+                                đầu bằng 0 và có đủ 10 chữ số).
+                              </div>
                             </div>
+                            <script>
+                              // Hàm kiểm tra số điện thoại khi người dùng nhập
+                              function validatePhoneInput(event) {
+                                const input = event.target;
+                                const value = input.value;
+
+                                // Kiểm tra nếu có ký tự không phải số
+                                if (/[^0-9]/.test(value)) {
+                                  input.setCustomValidity(
+                                    "Vui lòng chỉ nhập số"
+                                  );
+                                } else {
+                                  input.setCustomValidity("");
+                                }
+
+                                // Kiểm tra định dạng số điện thoại (10 chữ số, bắt đầu bằng 0)
+                                const phonePattern = /^0\d{9}$/;
+                                if (!phonePattern.test(value)) {
+                                  input.setCustomValidity(
+                                    "Số điện thoại phải bắt đầu bằng 0 và có đủ 10 chữ số"
+                                  );
+                                } else {
+                                  input.setCustomValidity("");
+                                }
+                              }
+                            </script>
                             <div class="mb-3">
                               <label for="avatar" class="form-label"
                                 >Chọn Avatar</label
@@ -578,7 +611,7 @@
                       console.error("Error fetching admin info:", error)
                     );
                 } else {
-                  console.error("Admin ID not found in localStorage.");
+                  console.error("Vui lòng đăng nhập để sử dụng hệ thống");
                 }
 
                 const teacherForm = document.getElementById("teacherForm");

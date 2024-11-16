@@ -410,6 +410,7 @@
                                   data.forEach((teacher) => {
                                     const row = document.createElement("tr");
 
+                                    // Tạo các ô dữ liệu
                                     const nameCell =
                                       document.createElement("td");
                                     const emailCell =
@@ -423,9 +424,9 @@
                                     const genderCell =
                                       document.createElement("td");
                                     const actionCell =
-                                      document.createElement("td"); // Ô để chứa nút Mở/Khóa
+                                      document.createElement("td");
 
-                                    // Nội dung các ô
+                                    // Cập nhật nội dung các ô
                                     nameCell.innerHTML = teacher.name || "";
                                     emailCell.innerHTML = teacher.email || "";
                                     phoneCell.innerHTML = teacher.phone || "";
@@ -434,7 +435,7 @@
                                     sloganCell.innerHTML = teacher.slogan || "";
                                     genderCell.innerHTML = teacher.gender || "";
 
-                                    // Nút "Mở/Khóa"
+                                    // Tạo nút "Mở/Khóa"
                                     const lockButton =
                                       document.createElement("button");
                                     lockButton.classList.add(
@@ -453,6 +454,35 @@
                                       teacher.id
                                     );
 
+                                    // Tạo nút "Chi tiết"
+                                    const detailButton =
+                                      document.createElement("button");
+                                    detailButton.classList.add(
+                                      "btn",
+                                      "btn-info",
+                                      "rounded-5",
+                                      "detail-btn"
+                                    );
+                                    detailButton.textContent = "Chi tiết";
+                                    detailButton.setAttribute(
+                                      "data-teacher-id",
+                                      teacher.id
+                                    );
+
+                                    // Thêm sự kiện click cho nút "Chi tiết"
+                                    detailButton.addEventListener(
+                                      "click",
+                                      async () => {
+                                        const courses = await fetchCourses(
+                                          teacher.id
+                                        ); // Lấy danh sách khóa học của giảng viên
+                                        showCoursesPopup(teacher.name, courses); // Hiển thị modal với danh sách khóa học
+                                      }
+                                    );
+
+                                    // Thêm nút vào ô hành động
+                                    actionCell.appendChild(detailButton);
+
                                     actionCell.appendChild(lockButton);
 
                                     // Thêm các ô vào hàng
@@ -466,9 +496,24 @@
 
                                     // Thêm hàng vào bảng
                                     tableBody.appendChild(row);
+
+                                    // Thêm sự kiện click cho nút "Chi tiết"
+                                    detailButton.addEventListener(
+                                      "click",
+                                      async () => {
+                                        const courses = await fetchCourses(
+                                          teacher.id
+                                        );
+                                        showCoursesPopup(teacher.name, courses);
+                                      }
+                                    );
+
+                                    // Thêm sự kiện cho nút "Mở/Khóa"
+                                    lockButton.addEventListener("click", () => {
+                                      toggleLockStatus(teacher.id);
+                                    });
                                   });
                                 }
-
                                 // Hàm gửi yêu cầu API và cập nhật bảng
                                 function fetchData(searchParams) {
                                   fetch(
@@ -577,7 +622,7 @@
                                     });
                                 } else {
                                   console.error(
-                                    "Admin ID not found in localStorage."
+                                    "Vui lòng đăng nhập để sử dụng hệ thống"
                                   );
                                 }
                               }
@@ -622,6 +667,7 @@
                                 };
 
                                 // Hàm tạo nội dung hàng giảng viên
+
                                 const createTeacherRow = async (teacher) => {
                                   const row = document.createElement("tr");
 
@@ -657,10 +703,10 @@
                                   genderTeacher.innerHTML =
                                     getTeacherGenderMarkup(teacher);
 
-                                  // Lấy tên admin từ creatorID (nếu cần thiết)
-                                  const adminName = await fetchAdminName(
-                                    teacher.creatorID
-                                  );
+                                  // // Lấy tên admin từ creatorID (nếu cần thiết)
+                                  // const adminName = await fetchAdminName(
+                                  //   teacher.creatorID
+                                  // );
                                   // creatorID.innerHTML = adminName || "Unknown";
 
                                   // Thêm các nút hành động (Mở/Khóa)
@@ -692,15 +738,24 @@
                                     }
                                   );
 
-                                  // Sự kiện click cho nút Sửa
-                                  addEditEvent(actionCell, teacher);
-
-                                  // Sự kiện click cho nút Xóa
-                                  addDeleteEvent(actionCell, teacher);
+                                  // Sự kiện click cho nút "Chi tiết"
+                                  const detailButton =
+                                    actionCell.querySelector(".detail-btn");
+                                  detailButton.addEventListener(
+                                    "click",
+                                    async () => {
+                                      const courses = await fetchCourses(
+                                        teacher._id
+                                      );
+                                      showCoursesPopup(teacher.name, courses);
+                                    }
+                                  );
 
                                   // Thêm sự kiện cho nút Mở/Khóa
                                   addLockToggleEvent(actionCell, teacher);
                                 };
+                                // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
+                                // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
                                 // Hàm hiển thị popup với danh sách khóa học (cập nhật modal)
                                 const showCoursesPopup = (
                                   teacherName,
@@ -734,10 +789,10 @@
                   ? courses
                       .map(
                         (course) => `
-                      <div>
-                        <p><strong>${course.name}</strong>: ${course.describe}</p>
-                      </div>
-                    `
+                          <div>
+                            <p><strong>${course.name}</strong>: ${course.describe}</p>
+                          </div>
+                        `
                       )
                       .join("")
                   : "<p>Giảng viên này chưa có khóa học nào.</p>"
@@ -764,7 +819,6 @@
                                   );
                                   modal.show();
                                 };
-
                                 // Hàm lấy các markup HTML cho các ô dữ liệu giảng viên
                                 const getTeacherNameMarkup = (teacher) => `
     <div class="d-flex align-items-center px-2 py-1">
@@ -800,9 +854,12 @@
                                   teacherID
                                 ) => `
   <div class="d-flex justify-content-start">
+    <button class="btn btn-primary rounded-5 detail-btn" type="button" data-teacher-id="${teacherID}">
+      Chi tiết
+    </button>
     <button class="btn ${
       isLocked ? "btn-danger" : "btn-success"
-    } rounded-5 lock-btn" type="button" data-teacher-id="${teacherID}">
+    } rounded-5 lock-btn ms-1" type="button" data-teacher-id="${teacherID}">
       ${isLocked ? "Khóa" : "Mở"}
     </button>
   </div>
@@ -918,6 +975,8 @@
                                   document.getElementById(
                                     "currentPage"
                                   ).innerText = `Trang ${currentPage}`;
+
+                                  // Cập nhật trạng thái của nút phân trang
                                   document.getElementById("prevPage").disabled =
                                     currentPage === 1;
                                   document.getElementById("nextPage").disabled =
@@ -950,7 +1009,11 @@
                                 document
                                   .getElementById("pageSize")
                                   .addEventListener("change", (event) => {
-                                    pageSize = parseInt(event.target.value, 10);
+                                    const selectedValue = event.target.value;
+                                    pageSize =
+                                      selectedValue === "all"
+                                        ? "all"
+                                        : parseInt(selectedValue, 10);
                                     currentPage = 1;
                                     displayTeachers();
                                   });

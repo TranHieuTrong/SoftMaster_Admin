@@ -440,7 +440,7 @@
                                     });
                                 } else {
                                   console.error(
-                                    "Admin ID not found in localStorage."
+                                    "Vui lòng đăng nhập để sử dụng hệ thống"
                                   );
                                 }
                               }
@@ -453,194 +453,18 @@
                                   document.getElementById("searchInput");
                                 const tableBody =
                                   document.getElementById("courseTableBody");
+                                const pageSizeSelector =
+                                  document.getElementById("pageSize");
+                                const prevPageButton =
+                                  document.getElementById("prevPage");
+                                const nextPageButton =
+                                  document.getElementById("nextPage");
+                                const currentPageLabel =
+                                  document.getElementById("currentPage");
 
-                                function updateTable(data) {
-                                  tableBody.innerHTML = ""; // Xóa bảng hiện tại để thay thế bằng dữ liệu mới
-
-                                  data.forEach((course) => {
-                                    const row = document.createElement("tr");
-
-                                    // Tạo các ô dữ liệu cho mỗi cột
-                                    const nameCell =
-                                      document.createElement("td");
-                                    const descriptionCell =
-                                      document.createElement("td");
-                                    const priceCell =
-                                      document.createElement("td");
-                                    const instructorCell =
-                                      document.createElement("td");
-                                    const createdDateCell =
-                                      document.createElement("td");
-                                    const updatedDateCell =
-                                      document.createElement("td");
-                                    const ratingCell =
-                                      document.createElement("td");
-                                    const studentsCountCell =
-                                      document.createElement("td");
-                                    const blockCell =
-                                      document.createElement("td"); // Thêm ô cho nút "Ẩn/Hiện"
-
-                                    // Chuyển đổi định dạng ngày
-                                    const formatDate = (dateString) => {
-                                      if (!dateString) return "";
-                                      const date = new Date(dateString);
-                                      const day = String(
-                                        date.getDate()
-                                      ).padStart(2, "0");
-                                      const month = String(
-                                        date.getMonth() + 1
-                                      ).padStart(2, "0");
-                                      const year = date.getFullYear();
-                                      return `${day}-${month}-${year}`;
-                                    };
-
-                                    // Nội dung các ô và đặt màu chữ đen
-                                    nameCell.innerHTML = course.name || "";
-                                    nameCell.style.color = "#000";
-                                    descriptionCell.innerHTML =
-                                      course.describe || "";
-                                    descriptionCell.style.color = "#000";
-                                    priceCell.innerHTML = course.price
-                                      ? `${course.price.toLocaleString()} VND`
-                                      : "";
-                                    priceCell.style.color = "#000";
-                                    createdDateCell.innerHTML = formatDate(
-                                      course.createdAt
-                                    );
-                                    createdDateCell.style.color = "#000";
-                                    updatedDateCell.innerHTML = formatDate(
-                                      course.updatedAt
-                                    );
-                                    updatedDateCell.style.color = "#000";
-
-                                    // Hiển thị rating với sao
-                                    fetchAverageRating(course._id).then(
-                                      (avgRating) => {
-                                        const stars =
-                                          "★".repeat(Math.round(avgRating)) +
-                                          "☆".repeat(5 - Math.round(avgRating));
-                                        ratingCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${avgRating.toFixed(
-                                          1
-                                        )} ${stars}</span>`;
-                                      }
-                                    );
-
-                                    // Hiển thị số lượng người tham gia
-                                    fetchEnrolledUsersCount(course._id).then(
-                                      (count) => {
-                                        studentsCountCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${count}</span>`;
-                                      }
-                                    );
-
-                                    // Lấy tên giảng viên từ teacherID
-                                    fetchAdminName(course.teacherID).then(
-                                      (adminName) => {
-                                        instructorCell.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${adminName}</span>`;
-                                      }
-                                    );
-
-                                    // Thêm sự kiện cho nút "Ẩn/Hiện"
-                                    const toggleButton =
-                                      document.createElement("button");
-                                    fetch(
-                                      `http://localhost:3001/course/getDetailByCourseID/${course._id}`
-                                    )
-                                      .then((response) => response.json())
-                                      .then((data) => {
-                                        let isBlock = data.isBlock;
-                                        toggleButton.textContent = isBlock
-                                          ? "Ẩn"
-                                          : "Hiện";
-                                        toggleButton.classList.add(
-                                          "btn",
-                                          isBlock ? "btn-danger" : "btn-success"
-                                        );
-
-                                        toggleButton.addEventListener(
-                                          "click",
-                                          () => {
-                                            fetch(
-                                              `http://localhost:3001/course/toggleIsBlock/${course._id}`,
-                                              {
-                                                method: "PUT",
-                                              }
-                                            )
-                                              .then((response) =>
-                                                response.json()
-                                              )
-                                              .then((result) => {
-                                                isBlock = !isBlock;
-                                                toggleButton.textContent =
-                                                  isBlock ? "Ẩn" : "Hiện";
-                                                toggleButton.classList.remove(
-                                                  isBlock
-                                                    ? "btn-success"
-                                                    : "btn-danger"
-                                                );
-                                                toggleButton.classList.add(
-                                                  isBlock
-                                                    ? "btn-danger"
-                                                    : "btn-success"
-                                                );
-
-                                                fetch(
-                                                  `http://localhost:3001/course/getDetailByCourseID/${course._id}`
-                                                )
-                                                  .then((response) =>
-                                                    response.json()
-                                                  )
-                                                  .then((updatedData) => {
-                                                    const updatedIsBlocked =
-                                                      updatedData.isBlock;
-                                                    toggleButton.textContent =
-                                                      updatedIsBlocked
-                                                        ? "Ẩn"
-                                                        : "Hiện";
-                                                    toggleButton.classList.remove(
-                                                      updatedIsBlocked
-                                                        ? "btn-success"
-                                                        : "btn-danger"
-                                                    );
-                                                    toggleButton.classList.add(
-                                                      updatedIsBlocked
-                                                        ? "btn-danger"
-                                                        : "btn-success"
-                                                    );
-                                                  });
-                                              })
-                                              .catch((error) =>
-                                                console.error(
-                                                  "Error toggling block status:",
-                                                  error
-                                                )
-                                              );
-                                          }
-                                        );
-
-                                        blockCell.appendChild(toggleButton); // Thêm nút vào cell
-                                      })
-                                      .catch((error) =>
-                                        console.error(
-                                          "Error fetching course details:",
-                                          error
-                                        )
-                                      );
-
-                                    // Thêm các ô vào hàng
-                                    row.appendChild(nameCell);
-                                    row.appendChild(descriptionCell);
-                                    row.appendChild(priceCell);
-                                    row.appendChild(instructorCell);
-                                    row.appendChild(createdDateCell);
-                                    row.appendChild(updatedDateCell);
-                                    row.appendChild(ratingCell);
-                                    row.appendChild(studentsCountCell);
-                                    row.appendChild(blockCell); // Thêm cell có nút vào dòng
-
-                                    // Thêm hàng vào bảng
-                                    tableBody.appendChild(row);
-                                  });
-                                }
+                                let currentPage = 1;
+                                let pageSize = 10;
+                                let courseData = [];
 
                                 function fetchData(searchParams = null) {
                                   const url = searchParams
@@ -658,7 +482,11 @@
 
                                   fetch(url, options)
                                     .then((response) => response.json())
-                                    .then((data) => updateTable(data))
+                                    .then((data) => {
+                                      courseData = data;
+                                      currentPage = 1;
+                                      displayCourses();
+                                    })
                                     .catch((error) =>
                                       console.error(
                                         "Error fetching data:",
@@ -667,85 +495,249 @@
                                     );
                                 }
 
-                                // Tải toàn bộ dữ liệu khi khởi động
-                                fetchData();
+                                function formatDate(dateString) {
+                                  if (!dateString) return "";
+                                  const date = new Date(dateString);
+                                  const day = String(date.getDate()).padStart(
+                                    2,
+                                    "0"
+                                  );
+                                  const month = String(
+                                    date.getMonth() + 1
+                                  ).padStart(2, "0");
+                                  const year = date.getFullYear();
+                                  return `${day}-${month}-${year}`;
+                                }
 
-                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
-                                searchInput.addEventListener(
-                                  "input",
-                                  function () {
-                                    const searchTerm = searchInput.value.trim();
-                                    if (searchTerm) {
-                                      fetchData({ name: searchTerm });
-                                    } else {
-                                      fetchData();
-                                    }
-                                  }
-                                );
-
-                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
-                                searchInput.addEventListener(
-                                  "keydown",
-                                  function (event) {
-                                    if (event.key === "Enter") {
-                                      const searchTerm =
-                                        searchInput.value.trim();
-                                      if (searchTerm) {
-                                        fetchData({ name: searchTerm });
-                                      } else {
-                                        fetchData();
-                                      }
-                                    }
-                                  }
-                                );
-
-                                // Các hàm bổ trợ
-                                const fetchAdminName = (teacherID) => {
-                                  return fetch(
+                                async function fetchAdminName(teacherID) {
+                                  const response = await fetch(
                                     `http://localhost:3001/teacher/getTeacherByID/${teacherID}`
-                                  )
-                                    .then((response) => response.json())
-                                    .then((adminData) => adminData.name || "");
-                                };
+                                  );
+                                  const data = await response.json();
+                                  return data.name || "";
+                                }
 
-                                const fetchEnrolledUsersCount = (courseID) => {
-                                  return fetch(
+                                async function fetchEnrolledUsersCount(
+                                  courseID
+                                ) {
+                                  const response = await fetch(
                                     `http://localhost:3001/enrollCourse/countEnrolledUsers/${courseID}`
-                                  )
-                                    .then((response) => response.json())
-                                    .then((data) => data.count || 0)
-                                    .catch((error) =>
-                                      console.error(
-                                        "Error fetching enrolled users:",
-                                        error
-                                      )
-                                    );
-                                };
+                                  );
+                                  const data = await response.json();
+                                  return data.count || 0;
+                                }
 
-                                const fetchAverageRating = (courseID) => {
-                                  return fetch(
+                                async function fetchAverageRating(courseID) {
+                                  const response = await fetch(
                                     `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
+                                  );
+                                  const data = await response.json();
+                                  const ratings = data.map(
+                                    (feedback) => feedback.feedbackDetail.rating
+                                  );
+                                  const averageRating =
+                                    ratings.reduce(
+                                      (acc, rating) => acc + rating,
+                                      0
+                                    ) / ratings.length;
+                                  return averageRating || 0;
+                                }
+
+                                function createCourseRow(course) {
+                                  const row = document.createElement("tr");
+
+                                  const nameCell = document.createElement("td");
+                                  const descriptionCell =
+                                    document.createElement("td");
+                                  const priceCell =
+                                    document.createElement("td");
+                                  const instructorCell =
+                                    document.createElement("td");
+                                  const createdDateCell =
+                                    document.createElement("td");
+                                  const updatedDateCell =
+                                    document.createElement("td");
+                                  const ratingCell =
+                                    document.createElement("td");
+                                  const studentsCountCell =
+                                    document.createElement("td");
+                                  const blockCell =
+                                    document.createElement("td");
+
+                                  nameCell.innerText = course.name || "";
+                                  descriptionCell.innerText =
+                                    course.describe || "";
+                                  priceCell.innerText = course.price
+                                    ? `${course.price.toLocaleString()} VND`
+                                    : "";
+                                  createdDateCell.innerText = formatDate(
+                                    course.createdAt
+                                  );
+                                  updatedDateCell.innerText = formatDate(
+                                    course.updatedAt
+                                  );
+
+                                  fetchAdminName(course.teacherID).then(
+                                    (adminName) => {
+                                      instructorCell.innerText = adminName;
+                                    }
+                                  );
+
+                                  fetchEnrolledUsersCount(course._id).then(
+                                    (count) => {
+                                      studentsCountCell.innerText = count;
+                                    }
+                                  );
+
+                                  fetchAverageRating(course._id).then(
+                                    (avgRating) => {
+                                      const stars =
+                                        "★".repeat(Math.round(avgRating)) +
+                                        "☆".repeat(5 - Math.round(avgRating));
+                                      ratingCell.innerHTML = `<span>${avgRating.toFixed(
+                                        1
+                                      )} ${stars}</span>`;
+                                    }
+                                  );
+
+                                  const toggleButton =
+                                    document.createElement("button");
+                                  fetch(
+                                    `http://localhost:3001/course/getDetailByCourseID/${course._id}`
                                   )
                                     .then((response) => response.json())
                                     .then((data) => {
-                                      const ratings = data.map(
-                                        (feedback) =>
-                                          feedback.feedbackDetail.rating
+                                      let isBlock = data.isBlock;
+                                      toggleButton.textContent = isBlock
+                                        ? "Ẩn"
+                                        : "Hiện";
+                                      toggleButton.className = isBlock
+                                        ? "btn btn-danger"
+                                        : "btn btn-success";
+
+                                      toggleButton.addEventListener(
+                                        "click",
+                                        () => {
+                                          fetch(
+                                            `http://localhost:3001/course/toggleIsBlock/${course._id}`,
+                                            { method: "PUT" }
+                                          )
+                                            .then((response) => response.json())
+                                            .then(() => {
+                                              isBlock = !isBlock;
+                                              toggleButton.textContent = isBlock
+                                                ? "Ẩn"
+                                                : "Hiện";
+                                              toggleButton.className = isBlock
+                                                ? "btn btn-danger"
+                                                : "btn btn-success";
+                                            })
+                                            .catch((error) =>
+                                              console.error(
+                                                "Error toggling block status:",
+                                                error
+                                              )
+                                            );
+                                        }
                                       );
-                                      const averageRating =
-                                        ratings.reduce(
-                                          (acc, rating) => acc + rating,
-                                          0
-                                        ) / ratings.length;
-                                      return averageRating || 0;
+
+                                      blockCell.appendChild(toggleButton);
                                     })
                                     .catch((error) =>
                                       console.error(
-                                        "Error fetching feedback:",
+                                        "Error fetching course details:",
                                         error
                                       )
                                     );
-                                };
+
+                                  row.append(
+                                    nameCell,
+                                    descriptionCell,
+                                    priceCell,
+                                    instructorCell,
+                                    createdDateCell,
+                                    updatedDateCell,
+                                    ratingCell,
+                                    studentsCountCell,
+                                    blockCell
+                                  );
+                                  return row;
+                                }
+
+                                function displayCourses() {
+                                  tableBody.innerHTML = "";
+                                  const start = (currentPage - 1) * pageSize;
+                                  const end =
+                                    pageSize === "all"
+                                      ? courseData.length
+                                      : start + pageSize;
+                                  const coursesToDisplay = courseData.slice(
+                                    start,
+                                    end
+                                  );
+
+                                  coursesToDisplay.forEach((course) => {
+                                    const row = createCourseRow(course);
+                                    tableBody.appendChild(row);
+                                  });
+
+                                  currentPageLabel.innerText = `Trang ${currentPage}`;
+                                  prevPageButton.disabled = currentPage === 1;
+                                  nextPageButton.disabled =
+                                    end >= courseData.length ||
+                                    pageSize === "all";
+                                }
+
+                                prevPageButton.addEventListener("click", () => {
+                                  if (currentPage > 1) {
+                                    currentPage--;
+                                    displayCourses();
+                                  }
+                                });
+
+                                nextPageButton.addEventListener("click", () => {
+                                  const maxPage = Math.ceil(
+                                    courseData.length / pageSize
+                                  );
+                                  if (currentPage < maxPage) {
+                                    currentPage++;
+                                    displayCourses();
+                                  }
+                                });
+
+                                pageSizeSelector.addEventListener(
+                                  "change",
+                                  (event) => {
+                                    pageSize =
+                                      event.target.value === "all"
+                                        ? "all"
+                                        : parseInt(event.target.value, 10);
+                                    currentPage = 1;
+                                    displayCourses();
+                                  }
+                                );
+
+                                searchInput.addEventListener("input", () => {
+                                  const searchTerm = searchInput.value.trim();
+                                  fetchData(
+                                    searchTerm ? { name: searchTerm } : null
+                                  );
+                                });
+
+                                searchInput.addEventListener(
+                                  "keydown",
+                                  (event) => {
+                                    if (event.key === "Enter") {
+                                      const searchTerm =
+                                        searchInput.value.trim();
+                                      fetchData(
+                                        searchTerm ? { name: searchTerm } : null
+                                      );
+                                    }
+                                  }
+                                );
+
+                                fetchData();
                               }
                             );
 

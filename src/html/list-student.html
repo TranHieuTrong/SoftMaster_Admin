@@ -435,12 +435,11 @@
                                     });
                                 } else {
                                   console.error(
-                                    "Admin ID not found in localStorage."
+                                    "Vui lòng đăng nhập để sử dụng hệ thống"
                                   );
                                 }
                               }
                             );
-
                             document.addEventListener(
                               "DOMContentLoaded",
                               function () {
@@ -448,6 +447,51 @@
                                   document.getElementById("searchInput");
                                 const tableBody =
                                   document.getElementById("userTableBody");
+
+                                // Hàm hiển thị modal với danh sách khóa học
+                                const showPopup = (courseNames) => {
+                                  const existingModal =
+                                    document.getElementById("courseModal");
+                                  if (existingModal) existingModal.remove();
+
+                                  const modal = document.createElement("div");
+                                  modal.classList.add("modal", "fade");
+                                  modal.id = "courseModal";
+                                  modal.tabIndex = "-1";
+                                  modal.setAttribute(
+                                    "aria-labelledby",
+                                    "courseModalLabel"
+                                  );
+                                  modal.setAttribute("aria-hidden", "true");
+
+                                  modal.innerHTML = `
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="courseModalLabel">Khóa học đã đăng ký</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              ${courseNames
+                .map((name) => `<li class="list-group-item">${name}</li>`)
+                .join("")}
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+                                  document.body.appendChild(modal);
+
+                                  const bootstrapModal = new bootstrap.Modal(
+                                    modal
+                                  );
+                                  bootstrapModal.show();
+                                };
 
                                 function updateTable(data) {
                                   tableBody.innerHTML = "";
@@ -468,7 +512,7 @@
                                     const registerDateCell =
                                       document.createElement("td");
                                     const actionCell =
-                                      document.createElement("td");
+                                      document.createElement("td"); // Thêm ô cho nút "Chi tiết"
 
                                     // Chuyển đổi định dạng ngày tháng năm
                                     const formatDate = (dateString) => {
@@ -496,6 +540,22 @@
                                       user.createdAt
                                     );
 
+                                    // Tạo nút "Chi tiết" và thêm vào ô actionCell
+                                    const detailButton =
+                                      document.createElement("button");
+                                    detailButton.classList.add(
+                                      "btn",
+                                      "btn-info",
+                                      "rounded-5",
+                                      "detail-btn"
+                                    );
+                                    detailButton.textContent = "Chi tiết";
+                                    // Khi nhấn nút, gọi hàm showPopup và truyền danh sách khóa học
+                                    detailButton.onclick = () =>
+                                      showPopup(user.courses); // Thêm 'user.courses' hoặc tương tự
+
+                                    actionCell.appendChild(detailButton); // Thêm nút vào ô actionCell
+
                                     // Thêm các ô vào hàng
                                     row.appendChild(nameCell);
                                     row.appendChild(emailCell);
@@ -503,7 +563,7 @@
                                     row.appendChild(phoneCell);
                                     row.appendChild(courseCell);
                                     row.appendChild(registerDateCell);
-                                    row.appendChild(actionCell);
+                                    row.appendChild(actionCell); // Thêm ô "Chi tiết" vào hàng
 
                                     // Thêm hàng vào bảng
                                     tableBody.appendChild(row);
@@ -614,6 +674,7 @@
                                   );
 
                                 // Hàm hiển thị người dùng trong bảng
+                                // Hàm hiển thị người dùng trong bảng
                                 const displayUsers = (page) => {
                                   const tableBody =
                                     document.getElementById("userTableBody");
@@ -644,6 +705,8 @@
                                       document.createElement("td");
                                     const registerDateCell =
                                       document.createElement("td");
+                                    const detailButtonCell =
+                                      document.createElement("td"); // Thêm một ô để chứa nút "Chi tiết"
 
                                     const formatDate = (dateString) => {
                                       if (!dateString) return "";
@@ -679,12 +742,28 @@
                                     );
                                     registerDateCell.style.color = "black";
 
+                                    // Tạo nút "Chi tiết"
+                                    const detailButton =
+                                      document.createElement("button");
+                                    detailButton.classList.add(
+                                      "btn",
+                                      "btn-info",
+                                      "rounded-5",
+                                      "detail-btn"
+                                    );
+                                    detailButton.textContent = "Chi tiết";
+                                    detailButton.onclick = () =>
+                                      fetchAndShowCourses(user._id); // Hiển thị khóa học khi click vào nút
+
+                                    detailButtonCell.appendChild(detailButton); // Thêm nút vào ô chi tiết
+
                                     row.appendChild(nameCell);
                                     row.appendChild(emailCell);
                                     row.appendChild(birthDateCell);
                                     row.appendChild(phoneCell);
                                     row.appendChild(genderCell);
                                     row.appendChild(registerDateCell);
+                                    row.appendChild(detailButtonCell); // Thêm ô chứa nút "Chi tiết" vào hàng
 
                                     tableBody.appendChild(row);
                                   });
