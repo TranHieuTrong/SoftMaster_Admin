@@ -529,144 +529,6 @@
                           <script>
                             document.addEventListener(
                               "DOMContentLoaded",
-                              function () {
-                                const searchInput =
-                                  document.getElementById("searchInput");
-                                const tableBody =
-                                  document.getElementById("adminTableBody");
-
-                                // Hàm để cập nhật bảng với dữ liệu
-                                function updateTable(data) {
-                                  tableBody.innerHTML = ""; // Xóa nội dung hiện tại trong bảng
-                                  data.forEach((admin) => {
-                                    const row = document.createElement("tr");
-
-                                    // Tạo các ô dữ liệu
-                                    // const avatarCell =
-                                    //   document.createElement("td");
-                                    const nameCell =
-                                      document.createElement("td");
-                                    const emailCell =
-                                      document.createElement("td");
-                                    const phoneCell =
-                                      document.createElement("td");
-                                    const roleCell =
-                                      document.createElement("td");
-                                    // const sloganCell =
-                                    //   document.createElement("td");
-                                    const genderCell =
-                                      document.createElement("td");
-                                    const creatorIDCell =
-                                      document.createElement("td");
-
-                                    // Nội dung các ô
-                                    // Thêm avatar
-                                    // const avatarImg =
-                                    //   document.createElement("img");
-                                    // avatarImg.src =
-                                    //   admin.avatar ||
-                                    //   "path/to/default-avatar.jpg"; // Dùng đường dẫn avatar nếu có, nếu không dùng ảnh mặc định
-                                    // avatarImg.alt = "Avatar";
-                                    // avatarImg.style.width = "40px";
-                                    // avatarImg.style.height = "40px";
-                                    // avatarImg.style.borderRadius = "50%"; // Làm avatar thành hình tròn
-                                    // avatarCell.appendChild(avatarImg);
-
-                                    nameCell.innerHTML = admin.name || "";
-                                    emailCell.innerHTML = admin.email || "";
-                                    phoneCell.innerHTML = admin.phone || "";
-                                    // roleCell.innerHTML = admin.role || "";
-                                    // sloganCell.innerHTML = admin.slogan || "";
-                                    genderCell.innerHTML = admin.gender || "";
-                                    creatorIDCell.innerHTML =
-                                      admin.creatorID || "";
-
-                                    // Thêm các ô vào hàng
-                                    // row.appendChild(avatarCell);
-                                    row.appendChild(nameCell);
-                                    row.appendChild(emailCell);
-                                    row.appendChild(phoneCell);
-                                    // row.appendChild(roleCell);
-                                    // row.appendChild(sloganCell);
-                                    row.appendChild(genderCell);
-                                    row.appendChild(creatorIDCell);
-
-                                    // Thêm hàng vào bảng
-                                    tableBody.appendChild(row);
-                                  });
-                                }
-
-                                // Hàm gửi yêu cầu API và cập nhật bảng
-                                function fetchData(searchParams) {
-                                  fetch("http://localhost:3001/admin/filter", {
-                                    method: "POST", // Sử dụng POST thay vì GET
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(searchParams), // Gửi dữ liệu tìm kiếm dưới dạng JSON
-                                  })
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                      updateTable(data); // Cập nhật bảng với dữ liệu tìm được
-                                    })
-                                    .catch((error) => {
-                                      console.error(
-                                        "Error fetching data:",
-                                        error
-                                      );
-                                    });
-                                }
-
-                                // Lắng nghe sự kiện 'input' để tự động tìm kiếm
-                                searchInput.addEventListener(
-                                  "input",
-                                  function () {
-                                    const searchTerm = searchInput.value.trim();
-
-                                    // Tạo đối tượng tìm kiếm dựa trên giá trị nhập vào
-                                    const searchParams = {};
-                                    if (searchTerm) {
-                                      if (searchTerm.includes("@")) {
-                                        searchParams.email = searchTerm;
-                                      } else if (searchTerm.match(/^\d+$/)) {
-                                        searchParams.phone = searchTerm;
-                                      } else {
-                                        searchParams.name = searchTerm;
-                                      }
-                                    }
-
-                                    fetchData(searchParams); // Gửi yêu cầu tìm kiếm mỗi khi thay đổi giá trị
-                                  }
-                                );
-
-                                // Lắng nghe sự kiện 'keydown' để tìm kiếm khi nhấn Enter
-                                searchInput.addEventListener(
-                                  "keydown",
-                                  function (event) {
-                                    if (event.key === "Enter") {
-                                      const searchTerm =
-                                        searchInput.value.trim();
-
-                                      const searchParams = {};
-                                      if (searchTerm) {
-                                        if (searchTerm.includes("@")) {
-                                          searchParams.email = searchTerm;
-                                        } else if (searchTerm.match(/^\d+$/)) {
-                                          searchParams.phone = searchTerm;
-                                        } else {
-                                          searchParams.name = searchTerm;
-                                        }
-                                      }
-
-                                      fetchData(searchParams); // Gửi yêu cầu tìm kiếm khi nhấn Enter
-                                    }
-                                  }
-                                );
-                              }
-                            );
-
-                            document.addEventListener(
-                              "DOMContentLoaded",
                               () => {
                                 const admin = JSON.parse(
                                   localStorage.getItem("admin")
@@ -709,163 +571,169 @@
                                 }
                               }
                             );
+
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
-                                fetch("http://localhost:3001/admin/getAll")
-                                  .then((response) => response.json())
-                                  .then((data) => {
-                                    const tableBody =
-                                      document.getElementById("adminTableBody");
-                                    tableBody.innerHTML = ""; // Xóa nội dung hiện tại của bảng
-                                    data.forEach((admin) => {
-                                      const row = document.createElement("tr");
-                                      // Tạo các ô dữ liệu
-                                      const nameAdmin =
-                                        document.createElement("td");
-                                      const emailAdmin =
-                                        document.createElement("td");
-                                      const phoneAdmin =
-                                        document.createElement("td");
-                                      // const positionAdmin =
-                                      //   document.createElement("td");
-                                      const genderAdmin =
-                                        document.createElement("td");
-                                      const actionCell =
-                                        document.createElement("td");
-                                      // Nội dung các ô
-                                      nameAdmin.innerHTML = `
-                          <div class="d-flex align-items-center px-2 py-1">
-        <div class="d-flex flex-column justify-content-center">
-          <h6 class="mb-0 text-sm">${admin.name || ""}</h6>
-        </div>
-      </div>
-      `;
-                                      emailAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        admin.email || ""
-                                      }</span>`;
-                                      phoneAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        admin.phone || ""
-                                      }</span>`;
-                                      // positionAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                      //   admin.position || ""
-                                      // }</span>`;
-                                      // sloganTeacher.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                      //   teacher.slogan || ""
-                                      // }</span>`;
-                                      genderAdmin.innerHTML = `<span style="color: #202224" class="text-xs font-weight-bold">${
-                                        admin.gender || ""
-                                      }</span>`;
-                                      // Thêm các nút hành động
-                                      // actionCell.innerHTML = `
-                                      //   <div class="d-flex justify-content-start">
-                                      //     <button class="btn btn-primary rounded-5 edit-btn" type="button">Sửa</button>
-                                      //     <button class="btn btn-danger rounded-5 ms-2 delete-btn" type="button">Xóa</button>
-                                      //   </div>
-                                      // `;
-                                      row.appendChild(nameAdmin);
-                                      row.appendChild(emailAdmin);
-                                      row.appendChild(phoneAdmin);
-                                      // row.appendChild(positionAdmin);
-                                      row.appendChild(genderAdmin);
-                                      // row.appendChild(actionCell);
-                                      tableBody.appendChild(row);
-                                      // const editBtn =
-                                      //   actionCell.querySelector(".edit-btn");
-                                      // editBtn.addEventListener("click", () =>
-                                      //   openEditPopup(admin)
-                                      // );
-                                      // const deleteBtn =
-                                      //   actionCell.querySelector(".delete-btn");
-                                      // deleteBtn.addEventListener("click", () =>
-                                      //   deleteAdmin(admin._id)
-                                      // );
-                                    });
-                                  })
-                                  .catch((error) =>
-                                    console.error("Error fetching data:", error)
+                                const searchInput =
+                                  document.getElementById("searchInput");
+                                const tableBody =
+                                  document.getElementById("adminTableBody");
+                                const pageSizeSelect =
+                                  document.getElementById("pageSize");
+                                const nextPageBtn =
+                                  document.getElementById("nextPage");
+                                const prevPageBtn =
+                                  document.getElementById("prevPage");
+                                const currentPageSpan =
+                                  document.getElementById("currentPage");
+
+                                let currentPage = 1;
+                                let itemsPerPage = parseInt(
+                                  pageSizeSelect.value,
+                                  10
+                                );
+                                let adminData = []; // Dữ liệu admin tải từ server
+
+                                // Hàm cập nhật bảng với dữ liệu phân trang
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa bảng cũ
+                                  const startIndex =
+                                    (currentPage - 1) * itemsPerPage;
+                                  const endIndex =
+                                    itemsPerPage === "all"
+                                      ? data.length
+                                      : startIndex + itemsPerPage;
+                                  const paginatedData = data.slice(
+                                    startIndex,
+                                    endIndex
                                   );
+
+                                  paginatedData.forEach((admin) => {
+                                    const row = document.createElement("tr");
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const emailCell =
+                                      document.createElement("td");
+                                    const phoneCell =
+                                      document.createElement("td");
+                                    const genderCell =
+                                      document.createElement("td");
+
+                                    // Nội dung ô
+                                    nameCell.textContent = admin.name || "";
+                                    emailCell.textContent = admin.email || "";
+                                    phoneCell.textContent = admin.phone || "";
+                                    genderCell.textContent = admin.gender || "";
+
+                                    // Cài đặt màu chữ
+                                    nameCell.style.color = "black";
+                                    emailCell.style.color = "black";
+                                    phoneCell.style.color = "black";
+                                    genderCell.style.color = "black";
+
+                                    // Thêm ô vào hàng
+                                    row.appendChild(nameCell);
+                                    row.appendChild(emailCell);
+                                    row.appendChild(phoneCell);
+                                    row.appendChild(genderCell);
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+
+                                  updatePagination(data.length); // Cập nhật nút phân trang
+                                }
+
+                                // Hàm cập nhật trạng thái nút phân trang
+                                function updatePagination(totalItems) {
+                                  const totalPages =
+                                    itemsPerPage === "all"
+                                      ? 1
+                                      : Math.ceil(totalItems / itemsPerPage);
+                                  currentPageSpan.textContent = `Trang ${currentPage} / ${totalPages}`;
+                                  prevPageBtn.disabled = currentPage === 1; // Vô hiệu hóa nút "Trang trước" nếu ở trang đầu
+                                  nextPageBtn.disabled =
+                                    currentPage >= totalPages; // Vô hiệu hóa nút "Trang sau" nếu ở trang cuối
+                                }
+
+                                // Xử lý khi nhấn nút "Trang trước"
+                                prevPageBtn.addEventListener("click", () => {
+                                  if (currentPage > 1) {
+                                    currentPage--;
+                                    updateTable(adminData);
+                                  }
+                                });
+
+                                // Xử lý khi nhấn nút "Trang sau"
+                                nextPageBtn.addEventListener("click", () => {
+                                  const totalPages =
+                                    itemsPerPage === "all"
+                                      ? 1
+                                      : Math.ceil(
+                                          adminData.length / itemsPerPage
+                                        );
+                                  if (currentPage < totalPages) {
+                                    currentPage++;
+                                    updateTable(adminData);
+                                  }
+                                });
+
+                                // Xử lý thay đổi số mục trên mỗi trang
+                                pageSizeSelect.addEventListener(
+                                  "change",
+                                  (event) => {
+                                    itemsPerPage =
+                                      event.target.value === "all"
+                                        ? adminData.length
+                                        : parseInt(event.target.value, 10);
+                                    currentPage = 1; // Reset về trang đầu
+                                    updateTable(adminData);
+                                  }
+                                );
+
+                                // Xử lý tìm kiếm
+                                searchInput.addEventListener("input", () => {
+                                  const searchTerm = searchInput.value
+                                    .trim()
+                                    .toLowerCase();
+                                  const filteredData = adminData.filter(
+                                    (admin) => {
+                                      return (
+                                        admin.name
+                                          ?.toLowerCase()
+                                          .includes(searchTerm) ||
+                                        admin.email
+                                          ?.toLowerCase()
+                                          .includes(searchTerm) ||
+                                        admin.phone?.includes(searchTerm)
+                                      );
+                                    }
+                                  );
+                                  currentPage = 1; // Reset về trang đầu
+                                  updateTable(filteredData);
+                                });
+
+                                // Tải dữ liệu ban đầu
+                                function loadData() {
+                                  fetch("http://localhost:3001/admin/getAll")
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      adminData = data; // Lưu dữ liệu
+                                      currentPage = 1; // Reset về trang đầu
+                                      updateTable(adminData); // Hiển thị lần đầu
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching admin data:",
+                                        error
+                                      )
+                                    );
+                                }
+
+                                loadData(); // Gọi hàm load dữ liệu khi trang được tải
                               }
                             );
-
-                            function deleteAdmin(adminID) {
-                              if (
-                                confirm(
-                                  "Bạn có chắc chắn muốn xóa admin này không?"
-                                )
-                              ) {
-                                fetch(
-                                  `http://localhost:3001/admin/delete/${adminID}`,
-                                  {
-                                    method: "DELETE",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                  }
-                                )
-                                  .then((response) => response.json())
-                                  .then((result) => {
-                                    alert("Xóa thành công!");
-                                    location.reload();
-                                  })
-                                  .catch((error) => {
-                                    console.error(
-                                      "Error deleting admin:",
-                                      error
-                                    );
-                                  });
-                              }
-                            }
-
-                            function openEditPopup(admin) {
-                              const popup =
-                                document.getElementById("editPopup");
-                              const form = document.getElementById("editForm");
-                              form.name.value = admin.name || "";
-                              form.phone.value = admin.phone || "";
-                              // form.avatar.value = admin.avatar || "";
-                              form.position.value = admin.position || "";
-                              form.gender.value = admin.gender || "Nam";
-                              popup.style.display = "flex";
-                              const cancelBtn =
-                                document.getElementById("cancelBtn");
-                              cancelBtn.onclick = function () {
-                                popup.style.display = "none";
-                              };
-                              form.onsubmit = (e) => {
-                                e.preventDefault();
-                                const updatedData = {
-                                  name: form.name.value,
-                                  phone: form.phone.value,
-                                  // avatar: form.avatar.value,
-                                  position: form.position.value,
-                                  password: form.password.value,
-                                  gender: form.gender.value,
-                                };
-                                fetch(
-                                  `http://localhost:3001/admin/update/${admin._id}`,
-                                  {
-                                    method: "PUT",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(updatedData),
-                                  }
-                                )
-                                  .then((response) => response.json())
-                                  .then((result) => {
-                                    alert("Cập nhật thành công!");
-                                    popup.style.display = "none";
-                                    location.reload();
-                                  })
-                                  .catch((error) => {
-                                    console.error(
-                                      "Error updating data:",
-                                      error
-                                    );
-                                  });
-                              };
-                            }
                           </script>
                         </div>
                       </div>

@@ -399,10 +399,11 @@
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
+                                // Lấy thông tin admin từ LocalStorage
                                 const admin = JSON.parse(
                                   localStorage.getItem("admin")
                                 );
-                                const adminId = admin ? admin.id : null; // Lấy adminId
+                                const adminId = admin ? admin.id : null;
                                 const currentAvatarContainer =
                                   document.getElementById(
                                     "currentAvatarContainer"
@@ -410,26 +411,25 @@
                                 const currentAvatar =
                                   document.getElementById("currentAvatar");
 
+                                // Kiểm tra adminId để hiển thị thông tin avatar
                                 if (adminId) {
-                                  // Gửi yêu cầu lấy thông tin admin từ API
                                   fetch(
                                     `http://localhost:3001/admin/getAdminByID/${adminId}`
                                   )
                                     .then((response) => response.json())
                                     .then((adminData) => {
-                                      // Lấy avatar của admin và hiển thị
                                       if (adminData.avatar) {
-                                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                                        currentAvatar.src = adminData.avatar; // Hiển thị avatar
                                         currentAvatarContainer.style.display =
-                                          "block"; // Hiển thị phần tử chứa avatar
+                                          "block"; // Hiển thị container chứa avatar
                                       } else {
                                         currentAvatarContainer.style.display =
-                                          "none"; // Ẩn phần tử nếu không có avatar
+                                          "none"; // Ẩn container nếu không có avatar
                                       }
                                     })
                                     .catch((error) => {
                                       console.error(
-                                        "Error fetching admin info:",
+                                        "Lỗi khi lấy thông tin admin:",
                                         error
                                       );
                                     });
@@ -438,13 +438,8 @@
                                     "Vui lòng đăng nhập để sử dụng hệ thống"
                                   );
                                 }
-                              }
-                            );
 
-                            document.addEventListener(
-                              "DOMContentLoaded",
-                              () => {
-                                // Elements
+                                // Các phần tử DOM liên quan đến bảng và phân trang
                                 const searchInput =
                                   document.getElementById("searchInput");
                                 const tableBody =
@@ -458,36 +453,37 @@
                                 const pageSizeSelect =
                                   document.getElementById("pageSize");
 
-                                // Constants & Variables
-                                let teachersData = [];
-                                let currentPage = 1;
-                                let pageSize = 10;
+                                // Biến toàn cục và cấu hình phân trang
+                                let teachersData = []; // Danh sách giảng viên
+                                let currentPage = 1; // Trang hiện tại
+                                let pageSize = 10; // Số lượng bản ghi mỗi trang
 
-                                // Utilities
+                                // Hàm định dạng ngày thành dạng 'dd/MM/yyyy'
                                 const formatDate = (dateString) => {
                                   if (!dateString) return "";
                                   const date = new Date(dateString);
-                                  return date.toLocaleDateString("vi-VN");
+                                  return date.toLocaleDateString("vi-VN"); // Trả về ngày tháng năm theo định dạng tiếng Việt
                                 };
 
+                                // Hàm gọi API chung
                                 const fetchData = async (url, options = {}) => {
                                   try {
                                     const response = await fetch(url, options);
                                     if (!response.ok)
                                       throw new Error(
-                                        `HTTP error! Status: ${response.status}`
+                                        `Lỗi HTTP! Mã trạng thái: ${response.status}`
                                       );
                                     return await response.json();
                                   } catch (error) {
                                     console.error(
-                                      `Error fetching data from ${url}:`,
+                                      `Lỗi khi gọi API từ ${url}:`,
                                       error
                                     );
                                     return null;
                                   }
                                 };
 
-                                // API Calls
+                                // Lấy danh sách giảng viên từ API và sắp xếp theo ngày tạo mới nhất
                                 const fetchTeachers = async () => {
                                   const data = await fetchData(
                                     "http://localhost:3001/teacher/getAll"
@@ -496,12 +492,13 @@
                                     teachersData = data.sort(
                                       (a, b) =>
                                         new Date(b.createdAt) -
-                                        new Date(a.createdAt)
+                                        new Date(a.createdAt) // Sắp xếp giảm dần theo ngày tạo
                                     );
-                                    displayTeachers();
+                                    displayTeachers(); // Hiển thị danh sách giảng viên
                                   }
                                 };
 
+                                // Đổi trạng thái khóa/mở giảng viên
                                 const toggleLockStatus = async (
                                   teacherID,
                                   button
@@ -511,7 +508,7 @@
                                   );
                                   if (!teacher) return;
 
-                                  const newStatus = !teacher.isLocked;
+                                  const newStatus = !teacher.isLocked; // Trạng thái mới (đổi trạng thái hiện tại)
                                   const result = await fetchData(
                                     `http://localhost:3001/teacher/change-status/${teacherID}`,
                                     {
@@ -526,10 +523,10 @@
                                   );
 
                                   if (result) {
-                                    teacher.isLocked = newStatus;
+                                    teacher.isLocked = newStatus; // Cập nhật trạng thái trong danh sách
                                     button.textContent = newStatus
                                       ? "Khóa"
-                                      : "Mở";
+                                      : "Mở"; // Cập nhật nội dung nút
                                     button.classList.toggle(
                                       "btn-danger",
                                       newStatus
@@ -541,36 +538,37 @@
                                   }
                                 };
 
+                                // Lấy danh sách khóa học của giảng viên
                                 const fetchCourses = async (teacherID) => {
                                   return await fetchData(
                                     `http://localhost:3001/course/getCourseByTeacherID/${teacherID}`
                                   );
                                 };
 
-                                // Rendering
+                                // Tạo hàng hiển thị cho từng giảng viên
                                 const createTeacherRow = async (teacher) => {
                                   const row = document.createElement("tr");
 
                                   row.innerHTML = `
-      <td>${teacher.name || ""}</td>
-      <td>${teacher.email || ""}</td>
-      <td>${teacher.phone || ""}</td>
-      <td>${teacher.major || ""}</td>
-      <td>${teacher.slogan || ""}</td>
-      <td>${teacher.gender || ""}</td>
-      <td>
-        <button class="btn btn-info rounded-5 detail-btn" data-teacher-id="${
-          teacher._id
-        }">Chi tiết</button>
-        <button class="btn ${
-          teacher.isLocked ? "btn-danger" : "btn-success"
-        } rounded-5 lock-btn" data-teacher-id="${teacher._id}">${
-                                    teacher.isLocked ? "Khóa" : "Mở"
-                                  }</button>
-      </td>
-    `;
+    <td style="color: black;">${teacher.name || ""}</td>
+    <td style="color: black;">${teacher.email || ""}</td>
+    <td style="color: black;">${teacher.phone || ""}</td>
+    <td style="color: black;">${teacher.major || ""}</td>
+    <td style="color: black;">${teacher.slogan || ""}</td>
+    <td style="color: black;">${teacher.gender || ""}</td>
+    <td>
+      <button class="btn btn-info rounded-5 detail-btn" data-teacher-id="${
+        teacher._id
+      }">Chi tiết</button>
+      <button class="btn ${
+        teacher.isLocked ? "btn-danger" : "btn-success"
+      } rounded-5 lock-btn" data-teacher-id="${teacher._id}">
+        ${teacher.isLocked ? "Khóa" : "Mở"}
+      </button>
+    </td>
+  `;
 
-                                  // Add event listeners for buttons
+                                  // Xử lý sự kiện
                                   const detailButton =
                                     row.querySelector(".detail-btn");
                                   detailButton.addEventListener(
@@ -592,6 +590,7 @@
                                   return row;
                                 };
 
+                                // Hiển thị danh sách giảng viên theo phân trang
                                 const displayTeachers = async () => {
                                   tableBody.innerHTML = "";
                                   const start = (currentPage - 1) * pageSize;
@@ -611,6 +610,7 @@
                                   }
                                   tableBody.appendChild(fragment);
 
+                                  // Cập nhật trạng thái nút phân trang
                                   currentPageSpan.textContent = `Trang ${currentPage}`;
                                   prevPageBtn.disabled = currentPage === 1;
                                   nextPageBtn.disabled =
@@ -618,6 +618,7 @@
                                     pageSize === "all";
                                 };
 
+                                // Hiển thị popup danh sách khóa học
                                 const showCoursesPopup = (
                                   teacherName,
                                   courses
@@ -627,32 +628,32 @@
                                   if (existingModal) existingModal.remove();
 
                                   const modalHTML = `
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Danh sách khóa học của ${teacherName}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              ${
-                courses && courses.length
-                  ? courses
-                      .map(
-                        (c) =>
-                          `<p><strong>${c.name}</strong>: ${c.describe}</p>`
-                      )
-                      .join("")
-                  : "<p>Giảng viên này chưa có khóa học nào.</p>"
-              }
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
+                                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title">Danh sách khóa học của ${teacherName}</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          ${
+                                            courses && courses.length
+                                              ? courses
+                                                  .map(
+                                                    (c) =>
+                                                      `<p><strong>${c.name}</strong>: ${c.describe}</p>`
+                                                  )
+                                                  .join("")
+                                              : "<p>Giảng viên này chưa có khóa học nào.</p>"
+                                          }
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                `;
 
                                   document.body.insertAdjacentHTML(
                                     "beforeend",
@@ -664,7 +665,7 @@
                                   modal.show();
                                 };
 
-                                // Pagination Controls
+                                // Điều khiển phân trang
                                 prevPageBtn.addEventListener("click", () => {
                                   if (currentPage > 1) {
                                     currentPage--;
@@ -695,6 +696,7 @@
                                   }
                                 );
 
+                                // Xử lý tìm kiếm theo tên, email, hoặc số điện thoại
                                 searchInput.addEventListener("input", () => {
                                   const searchTerm = searchInput.value.trim();
                                   const searchParams = {};
@@ -723,7 +725,7 @@
                                   });
                                 });
 
-                                // Initial Fetch
+                                // Khởi tạo và tải dữ liệu ban đầu
                                 fetchTeachers();
                               }
                             );

@@ -856,43 +856,48 @@
 
                                     // Hàm lấy thông tin phản hồi
                                     const fetchFeedback = (courseID) => {
+                                      const feedbackContainer =
+                                        document.getElementById(
+                                          "popupFeedback"
+                                        );
+
                                       return fetch(
                                         `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
                                       )
                                         .then((response) => response.json())
                                         .then((feedbackData) => {
+                                          // Xóa các phản hồi cũ
+                                          feedbackContainer.innerHTML = "";
+
                                           // Tạo danh sách phản hồi
-                                          popupFeedback.innerHTML = ""; // Xóa các phản hồi cũ
                                           feedbackData.forEach((feedback) => {
-                                            fetch(
-                                              `http://localhost:3001/user/getUserByID/${feedback.userID}`
-                                            )
-                                              .then((userResponse) =>
-                                                userResponse.json()
-                                              )
-                                              .then((userData) => {
-                                                const feedbackItem =
-                                                  document.createElement("div");
-                                                feedbackItem.style.marginBottom =
-                                                  "10px";
-                                                feedbackItem.innerHTML = `
-                    <strong>Tên: ${userData.name || "Unknown"}</strong><br>
-                    Đánh giá: ${feedback.feedbackDetail.rating} <br>
-                    Mô tả: ${feedback.feedbackDetail.content} <br>
-                    Viết vào lúc: ${new Date(
-                      feedback.feedbackDetail.createdAt
-                    ).toLocaleString()}<br>
-                  `;
-                                                popupFeedback.appendChild(
-                                                  feedbackItem
-                                                );
-                                              })
-                                              .catch((error) => {
-                                                console.error(
-                                                  "Error fetching user data:",
-                                                  error
-                                                );
-                                              });
+                                            const feedbackItem =
+                                              document.createElement("div");
+                                            feedbackItem.style.marginBottom =
+                                              "10px";
+
+                                            const userName =
+                                              feedback.userID?.name ||
+                                              "Unknown";
+                                            const rating =
+                                              feedback.feedbackDetail.rating ||
+                                              0;
+                                            const content =
+                                              feedback.feedbackDetail.content ||
+                                              "Không có nội dung";
+                                            const createdAt = new Date(
+                                              feedback.feedbackDetail.createdAt
+                                            ).toLocaleString();
+
+                                            feedbackItem.innerHTML = `
+          <strong>Tên: ${userName}</strong><br>
+          Đánh giá: ${rating} ★<br>
+          Mô tả: ${content}<br>
+          Viết vào lúc: ${createdAt}<br>
+        `;
+                                            feedbackContainer.appendChild(
+                                              feedbackItem
+                                            );
                                           });
                                         })
                                         .catch((error) => {
@@ -900,6 +905,8 @@
                                             "Error fetching feedback:",
                                             error
                                           );
+                                          feedbackContainer.innerHTML =
+                                            "<p>Không thể tải phản hồi.</p>";
                                         });
                                     };
 

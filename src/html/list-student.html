@@ -385,6 +385,7 @@
                                   Ngày đăng kí
                                 </th>
                                 <th class="text-secondary opacity-7"></th>
+                                <th class="text-secondary opacity-7"></th>
                               </tr>
                             </thead>
                             <tbody id="userTableBody">
@@ -402,7 +403,7 @@
                                 const admin = JSON.parse(
                                   localStorage.getItem("admin")
                                 );
-                                const adminId = admin ? admin.id : null; // Lấy adminId
+                                const adminId = admin ? admin.id : null;
                                 const currentAvatarContainer =
                                   document.getElementById(
                                     "currentAvatarContainer"
@@ -411,20 +412,18 @@
                                   document.getElementById("currentAvatar");
 
                                 if (adminId) {
-                                  // Gửi yêu cầu lấy thông tin admin từ API
                                   fetch(
                                     `http://localhost:3001/admin/getAdminByID/${adminId}`
                                   )
                                     .then((response) => response.json())
                                     .then((adminData) => {
-                                      // Lấy avatar của admin và hiển thị
                                       if (adminData.avatar) {
-                                        currentAvatar.src = adminData.avatar; // Gán URL avatar vào thẻ img
+                                        currentAvatar.src = adminData.avatar;
                                         currentAvatarContainer.style.display =
-                                          "block"; // Hiển thị phần tử chứa avatar
+                                          "block";
                                       } else {
                                         currentAvatarContainer.style.display =
-                                          "none"; // Ẩn phần tử nếu không có avatar
+                                          "none";
                                       }
                                     })
                                     .catch((error) => {
@@ -438,12 +437,7 @@
                                     "Vui lòng đăng nhập để sử dụng hệ thống"
                                   );
                                 }
-                              }
-                            );
 
-                            document.addEventListener(
-                              "DOMContentLoaded",
-                              () => {
                                 const searchInput =
                                   document.getElementById("searchInput");
                                 const tableBody =
@@ -466,15 +460,13 @@
                                 const formatDate = (dateString) => {
                                   if (!dateString) return "";
                                   const date = new Date(dateString);
-                                  const day = String(date.getDate()).padStart(
+                                  return `${String(date.getDate()).padStart(
                                     2,
                                     "0"
-                                  );
-                                  const month = String(
-                                    date.getMonth() + 1
-                                  ).padStart(2, "0");
-                                  const year = date.getFullYear();
-                                  return `${day}-${month}-${year}`;
+                                  )}-${String(date.getMonth() + 1).padStart(
+                                    2,
+                                    "0"
+                                  )}-${date.getFullYear()}`;
                                 };
 
                                 const updateTable = (users) => {
@@ -499,21 +491,25 @@
                                       document.createElement("td");
                                     const detailButtonCell =
                                       document.createElement("td");
+                                    const viewScoreButtonCell =
+                                      document.createElement("td");
 
                                     nameCell.textContent = user.name || "";
-                                    nameCell.style.cursor = "pointer";
-                                    nameCell.onclick = () =>
-                                      fetchAndShowCourses(user._id);
-
+                                    nameCell.style.color = "black"; // Thêm màu chữ đen
                                     emailCell.textContent = user.email || "";
+                                    emailCell.style.color = "black"; // Thêm màu chữ đen
                                     birthDateCell.textContent = formatDate(
                                       user.birthday
                                     );
+                                    birthDateCell.style.color = "black"; // Thêm màu chữ đen
                                     phoneCell.textContent = user.phone || "";
+                                    phoneCell.style.color = "black"; // Thêm màu chữ đen
                                     genderCell.textContent = user.gender || "";
+                                    genderCell.style.color = "black"; // Thêm màu chữ đen
                                     registerDateCell.textContent = formatDate(
                                       user.createdAt
                                     );
+                                    registerDateCell.style.color = "black"; // Thêm màu chữ đen
 
                                     const detailButton =
                                       document.createElement("button");
@@ -526,7 +522,21 @@
                                     detailButton.onclick = () =>
                                       fetchAndShowCourses(user._id);
 
+                                    const viewScoreButton =
+                                      document.createElement("button");
+                                    viewScoreButton.classList.add(
+                                      "btn",
+                                      "btn-warning",
+                                      "rounded-5"
+                                    );
+                                    viewScoreButton.textContent = "Xem điểm";
+                                    viewScoreButton.onclick = () =>
+                                      fetchAndShowScores(user._id);
+
                                     detailButtonCell.appendChild(detailButton);
+                                    viewScoreButtonCell.appendChild(
+                                      viewScoreButton
+                                    );
 
                                     row.append(
                                       nameCell,
@@ -535,13 +545,188 @@
                                       phoneCell,
                                       genderCell,
                                       registerDateCell,
-                                      detailButtonCell
+                                      detailButtonCell,
+                                      viewScoreButtonCell
                                     );
 
                                     fragment.appendChild(row);
                                   });
 
                                   tableBody.appendChild(fragment);
+                                };
+                                const fetchAndShowCourses = (userID) => {
+                                  // Fetch thông tin người dùng để lấy tên
+                                  fetch(
+                                    `http://localhost:3001/user/getUserByID/${userID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((userData) => {
+                                      const userName =
+                                        userData.name || "Người dùng";
+
+                                      // Fetch danh sách khóa học
+                                      fetch(
+                                        `http://localhost:3001/enrollCourse/getCourseUserEnrolled/${userID}`
+                                      )
+                                        .then((response) => response.json())
+                                        .then((courses) => {
+                                          const courseNames =
+                                            courses.length > 0
+                                              ? courses.map(
+                                                  (item) => item.courseID.name
+                                                )
+                                              : ["Chưa đăng ký khóa học nào."];
+
+                                          // Hiển thị popup với tên người dùng
+                                          showPopup(
+                                            `Khóa học đã đăng ký - ${userName}`,
+                                            courseNames
+                                          );
+                                        })
+                                        .catch((error) =>
+                                          console.error(
+                                            "Error fetching courses:",
+                                            error
+                                          )
+                                        );
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching user data:",
+                                        error
+                                      )
+                                    );
+                                };
+
+                                const fetchAndShowScores = (userID) => {
+                                  // Fetch thông tin người dùng để lấy tên
+                                  fetch(
+                                    `http://localhost:3001/user/getUserByID/${userID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((userData) => {
+                                      const userName =
+                                        userData.name || "Người dùng";
+
+                                      // Fetch điểm số
+                                      fetch(
+                                        `http://localhost:3001/score/getScoreByUserID/${userID}`
+                                      )
+                                        .then((response) => response.json())
+                                        .then((scoreData) => {
+                                          if (
+                                            scoreData.scores &&
+                                            scoreData.scores.length > 0
+                                          ) {
+                                            const { score, createdAt, testID } =
+                                              scoreData.scores[0];
+
+                                            if (testID && testID._id) {
+                                              fetch(
+                                                `http://localhost:3001/score/getPointByTestIDAndUserID/${userID}/${testID._id}`
+                                              )
+                                                .then((response) =>
+                                                  response.json()
+                                                )
+                                                .then((pointData) => {
+                                                  if (
+                                                    pointData.scores &&
+                                                    pointData.scores.length > 0
+                                                  ) {
+                                                    const { title } =
+                                                      pointData.scores[0]
+                                                        .testID;
+                                                    showPopup(
+                                                      `Thông tin điểm số - ${userName}`,
+                                                      [
+                                                        `Bài test: ${title}`,
+                                                        `Điểm: ${score}`,
+                                                        `Thời gian làm bài: ${formatDate(
+                                                          createdAt
+                                                        )}`,
+                                                      ]
+                                                    );
+                                                  } else {
+                                                    showPopup(
+                                                      `Thông tin điểm số - ${userName}`,
+                                                      [
+                                                        "Không tìm thấy bài test.",
+                                                      ]
+                                                    );
+                                                  }
+                                                })
+                                                .catch((error) =>
+                                                  console.error(
+                                                    "Error fetching test details:",
+                                                    error
+                                                  )
+                                                );
+                                            } else {
+                                              showPopup(
+                                                `Thông tin điểm số - ${userName}`,
+                                                ["Chưa làm bài test."]
+                                              );
+                                            }
+                                          } else {
+                                            showPopup(
+                                              `Thông tin điểm số - ${userName}`,
+                                              ["Chưa làm bài test."]
+                                            );
+                                          }
+                                        })
+                                        .catch((error) =>
+                                          console.error(
+                                            "Error fetching scores:",
+                                            error
+                                          )
+                                        );
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching user data:",
+                                        error
+                                      )
+                                    );
+                                };
+
+                                const showPopup = (title, items) => {
+                                  const existingModal =
+                                    document.getElementById("dataModal");
+                                  if (existingModal) existingModal.remove();
+
+                                  const modal = document.createElement("div");
+                                  modal.classList.add("modal", "fade");
+                                  modal.id = "dataModal";
+                                  modal.tabIndex = -1;
+                                  modal.innerHTML = `
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title">${title}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <ul class="list-group">
+                                          ${items
+                                            .map(
+                                              (item) =>
+                                                `<li class="list-group-item">${item}</li>`
+                                            )
+                                            .join("")}
+                                        </ul>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                `;
+
+                                  document.body.appendChild(modal);
+                                  const bootstrapModal = new bootstrap.Modal(
+                                    modal
+                                  );
+                                  bootstrapModal.show();
                                 };
 
                                 const fetchData = (searchParams = {}) => {
@@ -554,7 +739,13 @@
                                   })
                                     .then((response) => response.json())
                                     .then((fetchedData) => {
-                                      data = fetchedData;
+                                      // Sắp xếp dữ liệu theo createdAt giảm dần
+                                      data = fetchedData.sort(
+                                        (a, b) =>
+                                          new Date(b.createdAt) -
+                                          new Date(a.createdAt)
+                                      );
+
                                       totalItems = data.length;
                                       totalPages = Math.ceil(
                                         totalItems / itemsPerPage
@@ -568,62 +759,6 @@
                                         error
                                       )
                                     );
-                                };
-
-                                const fetchAndShowCourses = (userID) => {
-                                  fetch(
-                                    `http://localhost:3001/enrollCourse/getCourseUserEnrolled/${userID}`
-                                  )
-                                    .then((response) => response.json())
-                                    .then((courses) => {
-                                      const courseNames = courses.map(
-                                        (item) => item.courseID.name
-                                      );
-                                      showPopup(courseNames);
-                                    })
-                                    .catch((error) =>
-                                      console.error(
-                                        "Error fetching courses:",
-                                        error
-                                      )
-                                    );
-                                };
-
-                                const showPopup = (courseNames) => {
-                                  const existingModal =
-                                    document.getElementById("courseModal");
-                                  if (existingModal) existingModal.remove();
-
-                                  const modal = document.createElement("div");
-                                  modal.classList.add("modal", "fade");
-                                  modal.id = "courseModal";
-                                  modal.tabIndex = -1;
-                                  modal.innerHTML = `
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Khóa học đã đăng ký</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <ul class="list-group">
-              ${courseNames
-                .map((name) => `<li class="list-group-item">${name}</li>`)
-                .join("")}
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-                                  document.body.appendChild(modal);
-                                  const bootstrapModal = new bootstrap.Modal(
-                                    modal
-                                  );
-                                  bootstrapModal.show();
                                 };
 
                                 const displayUsers = (page) => {
@@ -693,7 +828,6 @@
                                   }
                                 );
 
-                                // Fetch initial data
                                 fetchData();
                               }
                             );
