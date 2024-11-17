@@ -283,9 +283,26 @@
           <div>
             <div class="text-start">
               <span style="font-size: 32px; font-weight: 700; color: #202224"
-                >Quản lí Admin</span
+                >Quản lí Admin /
+              </span>
+              <span style="font-size: 32px; font-weight: 700; color: #202224"
+                >Tên Admin</span
               >
             </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const admin = JSON.parse(localStorage.getItem("admin"));
+                const adminNameElement = document.querySelector(
+                  ".text-start span:nth-child(2)"
+                );
+
+                if (admin && admin.name) {
+                  adminNameElement.textContent = admin.name; // Hiển thị tên admin vào phần tử span
+                } else {
+                  adminNameElement.textContent = "Tên Admin"; // Nếu không có tên admin thì hiển thị mặc định
+                }
+              });
+            </script>
             <div class="py-4">
               <div class="row">
                 <div class="col-12">

@@ -299,7 +299,6 @@
                     />
                   </div>
                   <!-- Phân trang -->
-                  <!-- Phân trang -->
                   <div
                     class="pagination-controls"
                     style="
@@ -492,8 +491,8 @@
                                     teachersData = data.sort(
                                       (a, b) =>
                                         new Date(b.createdAt) -
-                                        new Date(a.createdAt) // Sắp xếp giảm dần theo ngày tạo
-                                    );
+                                        new Date(a.createdAt)
+                                    ); // Sắp xếp giảm dần theo ngày tạo
                                     displayTeachers(); // Hiển thị danh sách giảng viên
                                   }
                                 };
@@ -550,23 +549,23 @@
                                   const row = document.createElement("tr");
 
                                   row.innerHTML = `
-    <td style="color: black;">${teacher.name || ""}</td>
-    <td style="color: black;">${teacher.email || ""}</td>
-    <td style="color: black;">${teacher.phone || ""}</td>
-    <td style="color: black;">${teacher.major || ""}</td>
-    <td style="color: black;">${teacher.slogan || ""}</td>
-    <td style="color: black;">${teacher.gender || ""}</td>
-    <td>
-      <button class="btn btn-info rounded-5 detail-btn" data-teacher-id="${
-        teacher._id
-      }">Chi tiết</button>
-      <button class="btn ${
-        teacher.isLocked ? "btn-danger" : "btn-success"
-      } rounded-5 lock-btn" data-teacher-id="${teacher._id}">
-        ${teacher.isLocked ? "Khóa" : "Mở"}
-      </button>
-    </td>
-  `;
+      <td style="color: black;">${teacher.name || ""}</td>
+      <td style="color: black;">${teacher.email || ""}</td>
+      <td style="color: black;">${teacher.phone || ""}</td>
+      <td style="color: black;">${teacher.major || ""}</td>
+      <td style="color: black;">${teacher.slogan || ""}</td>
+      <td style="color: black;">${teacher.gender || ""}</td>
+      <td>
+        <button class="btn btn-info rounded-5 detail-btn" data-teacher-id="${
+          teacher._id
+        }">Chi tiết</button>
+        <button class="btn ${
+          teacher.isLocked ? "btn-danger" : "btn-success"
+        } rounded-5 lock-btn" data-teacher-id="${teacher._id}">
+          ${teacher.isLocked ? "Khóa" : "Mở"}
+        </button>
+      </td>
+    `;
 
                                   // Xử lý sự kiện
                                   const detailButton =
@@ -628,37 +627,57 @@
                                   if (existingModal) existingModal.remove();
 
                                   const modalHTML = `
-                                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                      <div class="modal-content">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title">Danh sách khóa học của ${teacherName}</h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                          ${
-                                            courses && courses.length
-                                              ? courses
-                                                  .map(
-                                                    (c) =>
-                                                      `<p><strong>${c.name}</strong>: ${c.describe}</p>`
-                                                  )
-                                                  .join("")
-                                              : "<p>Giảng viên này chưa có khóa học nào.</p>"
-                                          }
-                                        </div>
-                                        <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                `;
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="max-width: 40%;"> <!-- Style chiều rộng trực tiếp tại đây -->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Danh sách khóa học của ${teacherName}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+            ${
+              courses && courses.length
+                ? courses
+                    .map(
+                      (c) =>
+                        `<div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
+                          <h5 style="color: #000;">${c.name}</h5>
+                          <p style="color: #555;">${c.describe}</p>
+                          <img src="${
+                            c.img
+                          }" alt="Course Image" style="max-width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px; border-radius: 10px;" /> <!-- Bo góc ảnh -->
+                          <p><strong>Giá: </strong><span style="color: #000;">${c.price.toLocaleString()} VND</span></p>
+                          <p><strong>Ngày tạo: </strong><span style="color: #000;">${formatDate(
+                            c.createdAt
+                          )}</span></p>
+                        </div>`
+                    )
+                    .join("")
+                : "<p>Giảng viên này chưa có khóa học nào.</p>"
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 
                                   document.body.insertAdjacentHTML(
                                     "beforeend",
                                     modalHTML
                                   );
+
+                                  // Ẩn thanh cuộn
+                                  const style = document.createElement("style");
+                                  style.innerHTML = `
+    #exampleModal .modal-body::-webkit-scrollbar {
+      display: none;
+    }
+  `;
+                                  document.head.appendChild(style);
+
                                   const modal = new bootstrap.Modal(
                                     document.getElementById("exampleModal")
                                   );

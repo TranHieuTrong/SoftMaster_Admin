@@ -346,11 +346,21 @@
                                   Tên khóa học
                                 </th>
                                 <th
-                                  style="color: #202224"
+                                  style="
+                                    color: #202224;
+                                    width: 400px; /* Giới hạn chiều rộng */
+                                    max-height: 50px; /* Giới hạn chiều cao */
+                                    overflow-y: auto; /* Thêm thanh cuộn dọc nếu cần */
+                                    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+                                    white-space: normal; /* Cho phép xuống dòng */
+                                    word-break: break-word; /* Chia từ nếu dài quá */
+                                    text-overflow: ellipsis; /* Thêm dấu ba chấm nếu nội dung dài */
+                                  "
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
                                 >
                                   Mô tả
                                 </th>
+
                                 <th
                                   style="color: #202224"
                                   class="text-uppercase text-xxs font-weight-bolder opacity-7"
@@ -401,6 +411,388 @@
                           </table>
 
                           <script>
+                            document.addEventListener(
+                              "DOMContentLoaded",
+                              () => {
+                                let currentPage = 1; // Trang hiện tại
+                                let pageSize = 10; // Số lượng bản ghi mỗi trang (mặc định)
+                                let coursesData = []; // Dữ liệu toàn bộ khóa học
+
+                                const prevPageBtn =
+                                  document.getElementById("prevPage");
+                                const nextPageBtn =
+                                  document.getElementById("nextPage");
+                                const currentPageSpan =
+                                  document.getElementById("currentPage");
+                                const pageSizeSelect =
+                                  document.getElementById("pageSize");
+                                const tableBody =
+                                  document.getElementById("courseTableBody");
+
+                                // Hàm hiển thị bảng dữ liệu theo trang
+                                function renderTable() {
+                                  let pageData;
+                                  if (pageSize === "all") {
+                                    pageData = coursesData; // Hiển thị tất cả dữ liệu
+                                  } else {
+                                    const start = (currentPage - 1) * pageSize;
+                                    const end = start + pageSize;
+                                    pageData = coursesData.slice(start, end); // Hiển thị dữ liệu theo trang
+                                  }
+
+                                  updateTable(pageData);
+
+                                  // Cập nhật giao diện phân trang
+                                  updatePaginationControls();
+                                }
+
+                                // Hàm cập nhật dữ liệu bảng
+                                function updateTable(data) {
+                                  tableBody.innerHTML = ""; // Xóa bảng hiện tại để thay thế bằng dữ liệu mới
+
+                                  data.forEach((course) => {
+                                    const row = document.createElement("tr");
+
+                                    // Tạo các ô dữ liệu cho mỗi cột
+                                    const nameCell =
+                                      document.createElement("td");
+                                    const descriptionCell =
+                                      document.createElement("td");
+                                    const priceCell =
+                                      document.createElement("td");
+                                    const teacherNameCell =
+                                      document.createElement("td");
+                                    const createdDateCell =
+                                      document.createElement("td");
+                                    const updatedDateCell =
+                                      document.createElement("td");
+                                    const ratingCell =
+                                      document.createElement("td");
+                                    const studentsCountCell =
+                                      document.createElement("td");
+                                    const blockCell =
+                                      document.createElement("td");
+
+                                    // Chuyển đổi định dạng ngày
+                                    const formatDate = (dateString) => {
+                                      if (!dateString) return "";
+                                      const date = new Date(dateString);
+                                      const day = String(
+                                        date.getDate()
+                                      ).padStart(2, "0");
+                                      const month = String(
+                                        date.getMonth() + 1
+                                      ).padStart(2, "0");
+                                      const year = date.getFullYear();
+                                      return `${day}-${month}-${year}`;
+                                    };
+
+                                    // Nội dung các ô và đặt màu chữ đen cho tất cả các ô
+                                    nameCell.innerHTML = `<span style="cursor: pointer; color: #000; font-weight: 500;">${
+                                      course.name || "Không có tên"
+                                    }</span>`;
+
+                                    descriptionCell.textContent =
+                                      course.describe || "Không có mô tả";
+                                    priceCell.textContent = course.price
+                                      ? `${course.price.toLocaleString()} VND`
+                                      : "Không có giá";
+                                    teacherNameCell.textContent =
+                                      course.teacherID?.name ||
+                                      "Không có giảng viên";
+                                    createdDateCell.textContent = formatDate(
+                                      course.createdAt
+                                    );
+                                    updatedDateCell.textContent = formatDate(
+                                      course.updatedAt
+                                    );
+
+                                    // Gán màu đen cho tất cả các ô
+                                    nameCell.style.color =
+                                      descriptionCell.style.color =
+                                      priceCell.style.color =
+                                      teacherNameCell.style.color =
+                                      createdDateCell.style.color =
+                                      updatedDateCell.style.color =
+                                        "#000";
+
+                                    // Hiển thị đánh giá trung bình
+                                    fetchAverageRating(course._id).then(
+                                      (avgRating) => {
+                                        const stars =
+                                          "★".repeat(Math.round(avgRating)) +
+                                          "☆".repeat(5 - Math.round(avgRating));
+                                        ratingCell.innerHTML = `<span>${avgRating.toFixed(
+                                          1
+                                        )} ${stars}</span>`;
+                                        ratingCell.style.color = "#000"; // Đặt màu đen cho ô đánh giá
+                                      }
+                                    );
+
+                                    // Hiển thị số lượng học sinh đã tham gia
+                                    fetchEnrolledUsersCount(course._id).then(
+                                      (count) => {
+                                        studentsCountCell.textContent = count;
+                                        studentsCountCell.style.color = "#000"; // Đặt màu đen cho ô số học sinh
+                                      }
+                                    );
+
+                                    // Tạo nút "Ẩn/Hiện"
+                                    const toggleButton =
+                                      document.createElement("button");
+                                    toggleButton.textContent = course.isBlock
+                                      ? "Ẩn"
+                                      : "Hiện";
+                                    toggleButton.className = course.isBlock
+                                      ? "btn btn-danger"
+                                      : "btn btn-success";
+
+                                    toggleButton.addEventListener(
+                                      "click",
+                                      () => {
+                                        fetch(
+                                          `http://localhost:3001/course/toggleIsBlock/${course._id}`,
+                                          {
+                                            method: "PUT",
+                                          }
+                                        )
+                                          .then((response) => response.json())
+                                          .then(() => {
+                                            course.isBlock = !course.isBlock; // Cập nhật trạng thái khóa học
+                                            toggleButton.textContent =
+                                              course.isBlock ? "Ẩn" : "Hiện";
+                                            toggleButton.className =
+                                              course.isBlock
+                                                ? "btn btn-danger"
+                                                : "btn btn-success";
+                                          })
+                                          .catch((error) =>
+                                            console.error(
+                                              "Error toggling block status:",
+                                              error
+                                            )
+                                          );
+                                      }
+                                    );
+                                    blockCell.appendChild(toggleButton);
+                                    blockCell.style.color = "#000"; // Đặt màu đen cho ô "Ẩn/Hiện"
+
+                                    // Xử lý sự kiện click vào tên khóa học để hiển thị popup
+                                    nameCell.addEventListener("click", () => {
+                                      showCourseDetails(course);
+                                    });
+
+                                    // Thêm các ô vào hàng
+                                    row.appendChild(nameCell);
+                                    row.appendChild(descriptionCell);
+                                    row.appendChild(priceCell);
+                                    row.appendChild(teacherNameCell);
+                                    row.appendChild(createdDateCell);
+                                    row.appendChild(updatedDateCell);
+                                    row.appendChild(ratingCell);
+                                    row.appendChild(studentsCountCell);
+                                    row.appendChild(blockCell);
+
+                                    // Thêm hàng vào bảng
+                                    tableBody.appendChild(row);
+                                  });
+                                }
+
+                                // Hàm cập nhật giao diện phân trang
+                                function updatePaginationControls() {
+                                  if (pageSize === "all") {
+                                    currentPageSpan.textContent =
+                                      "Hiển thị tất cả";
+                                    prevPageBtn.disabled = true;
+                                    nextPageBtn.disabled = true;
+                                  } else {
+                                    currentPageSpan.textContent = `Trang ${currentPage}`;
+                                    prevPageBtn.disabled = currentPage === 1;
+                                    nextPageBtn.disabled =
+                                      currentPage * pageSize >=
+                                      coursesData.length;
+                                  }
+                                }
+
+                                // Sự kiện nút "Trang trước"
+                                prevPageBtn.addEventListener("click", () => {
+                                  if (currentPage > 1) {
+                                    currentPage--;
+                                    renderTable();
+                                  }
+                                });
+
+                                // Sự kiện nút "Trang sau"
+                                nextPageBtn.addEventListener("click", () => {
+                                  if (
+                                    currentPage * pageSize <
+                                    coursesData.length
+                                  ) {
+                                    currentPage++;
+                                    renderTable();
+                                  }
+                                });
+
+                                // Sự kiện thay đổi số lượng bản ghi mỗi trang
+                                pageSizeSelect.addEventListener(
+                                  "change",
+                                  () => {
+                                    const selectedValue = pageSizeSelect.value;
+                                    pageSize =
+                                      selectedValue === "all"
+                                        ? "all"
+                                        : parseInt(selectedValue, 10);
+                                    currentPage = 1; // Quay về trang đầu tiên
+                                    renderTable();
+                                  }
+                                );
+
+                                // Hàm hiển thị chi tiết khóa học trong popup
+                                function showCourseDetails(course) {
+                                  const popupCourseName =
+                                    document.getElementById("popupCourseName");
+                                  const popupCourseDesc =
+                                    document.getElementById("popupCourseDesc");
+                                  const popupCoursePrice =
+                                    document.getElementById("popupCoursePrice");
+                                  const popupTeacherName =
+                                    document.getElementById("popupTeacherName");
+                                  const popupAvgRating =
+                                    document.getElementById("popupAvgRating");
+                                  const popupEnrolledUsers =
+                                    document.getElementById(
+                                      "popupEnrolledUsers"
+                                    );
+
+                                  popupCourseName.textContent = course.name;
+                                  popupCourseDesc.textContent = course.describe;
+                                  popupCoursePrice.textContent = `${course.price.toLocaleString()} VND`;
+                                  popupTeacherName.textContent = `Giảng viên: ${
+                                    course.teacherID?.name ||
+                                    "Không có giảng viên"
+                                  }`;
+
+                                  fetchAverageRating(course._id).then(
+                                    (avgRating) => {
+                                      popupAvgRating.textContent = `Đánh giá: ${avgRating.toFixed(
+                                        1
+                                      )}`;
+                                    }
+                                  );
+
+                                  fetchEnrolledUsersCount(course._id).then(
+                                    (count) => {
+                                      popupEnrolledUsers.textContent = `Người tham gia: ${count}`;
+                                    }
+                                  );
+
+                                  // Lấy lại feedback khi nhấn vào tên khóa học
+                                  fetchFeedback(course._id);
+
+                                  new bootstrap.Modal(
+                                    document.getElementById(
+                                      "courseDetailsModal"
+                                    )
+                                  ).show();
+                                }
+
+                                // Hàm lấy feedback của khóa học
+                                const fetchFeedback = (courseID) =>
+                                  fetch(
+                                    `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      const feedbackContainer =
+                                        document.getElementById(
+                                          "popupFeedback"
+                                        );
+                                      feedbackContainer.innerHTML = ""; // Clear previous feedback
+
+                                      data.forEach((feedback) => {
+                                        const feedbackItem =
+                                          document.createElement("div");
+                                        feedbackItem.style.marginBottom =
+                                          "10px";
+
+                                        const userName =
+                                          feedback.userID?.name || "Unknown";
+                                        const rating =
+                                          feedback.feedbackDetail.rating || 0;
+                                        const content =
+                                          feedback.feedbackDetail.content ||
+                                          "Không có nội dung";
+                                        const createdAt = new Date(
+                                          feedback.feedbackDetail.createdAt
+                                        ).toLocaleString();
+
+                                        feedbackItem.innerHTML = `
+            <strong>Tên: ${userName}</strong><br>
+            Đánh giá: ${rating} ★<br>
+            Mô tả: ${content}<br>
+            Viết vào lúc: ${createdAt}<br>
+          `;
+                                        feedbackContainer.appendChild(
+                                          feedbackItem
+                                        );
+                                      });
+                                    })
+                                    .catch(() => {
+                                      const feedbackContainer =
+                                        document.getElementById(
+                                          "popupFeedback"
+                                        );
+                                      feedbackContainer.innerHTML =
+                                        "<p>Chưa có FeedBack.</p>";
+                                    });
+
+                                // Hàm lấy đánh giá trung bình
+                                const fetchAverageRating = (courseID) =>
+                                  fetch(
+                                    `http://localhost:3001/feedbackCourse/getFeedbackByCourseID/${courseID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then(
+                                      (data) =>
+                                        data.reduce(
+                                          (acc, feedback) =>
+                                            acc +
+                                            feedback.feedbackDetail.rating,
+                                          0
+                                        ) / data.length
+                                    )
+                                    .catch(() => 0);
+
+                                // Hàm lấy số lượng học sinh tham gia
+                                const fetchEnrolledUsersCount = (courseID) =>
+                                  fetch(
+                                    `http://localhost:3001/enrollCourse/countEnrolledUsers/${courseID}`
+                                  )
+                                    .then((response) => response.json())
+                                    .then((data) => data.count || 0)
+                                    .catch(() => 0);
+
+                                // Lấy dữ liệu khóa học từ API
+                                function fetchData() {
+                                  fetch("http://localhost:3001/course/getAll")
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      coursesData = data; // Lưu toàn bộ dữ liệu
+                                      renderTable(); // Hiển thị dữ liệu trang đầu tiên
+                                    })
+                                    .catch((error) =>
+                                      console.error(
+                                        "Error fetching data:",
+                                        error
+                                      )
+                                    );
+                                }
+
+                                // Tải dữ liệu khi khởi động
+                                fetchData();
+                              }
+                            );
+
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
@@ -906,7 +1298,7 @@
                                             error
                                           );
                                           feedbackContainer.innerHTML =
-                                            "<p>Không thể tải phản hồi.</p>";
+                                            "<p>Chưa có FeedBack.</p>";
                                         });
                                     };
 
