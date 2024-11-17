@@ -570,17 +570,24 @@
                                       )
                                         .then((response) => response.json())
                                         .then((courses) => {
-                                          const courseNames =
+                                          const courseDetails =
                                             courses.length > 0
                                               ? courses.map(
-                                                  (item) => item.courseID.name
+                                                  (item) =>
+                                                    `${
+                                                      item.courseID.name
+                                                    } - Ngày tham gia: ${new Date(
+                                                      item.createdAt
+                                                    ).toLocaleDateString(
+                                                      "vi-VN"
+                                                    )}`
                                                 )
                                               : ["Chưa đăng ký khóa học nào."];
 
                                           // Hiển thị popup với tên người dùng
                                           showPopup(
                                             `Khóa học đã đăng ký - ${userName}`,
-                                            courseNames
+                                            courseDetails
                                           );
                                         })
                                         .catch((error) =>
