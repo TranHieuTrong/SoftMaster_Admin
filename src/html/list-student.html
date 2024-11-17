@@ -757,6 +757,8 @@
                                       totalPages = Math.ceil(
                                         totalItems / itemsPerPage
                                       );
+
+                                      currentPage = 1; // Reset về trang đầu
                                       displayUsers(currentPage);
                                       updatePaginationControls();
                                     })
@@ -807,6 +809,7 @@
                                 searchInput.addEventListener("input", () => {
                                   const searchTerm = searchInput.value.trim();
                                   const searchParams = {};
+
                                   if (searchTerm) {
                                     if (searchTerm.includes("@")) {
                                       searchParams.email = searchTerm;
@@ -816,7 +819,8 @@
                                       searchParams.name = searchTerm;
                                     }
                                   }
-                                  fetchData(searchParams);
+
+                                  fetchData(searchParams); // Lấy dữ liệu mới dựa trên tìm kiếm
                                 });
 
                                 pageSizeSelect.addEventListener(
