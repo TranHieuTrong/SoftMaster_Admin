@@ -65,18 +65,40 @@
                         Xác nhận
                     </button>
                 </form>
+                <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="notificationModalLabel"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body" id="notificationModalBody"></div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <script>
+                  // Hàm hiển thị modal
+                  function showNotificationModal(title, message) {
+                      document.getElementById('notificationModalLabel').textContent = title;
+                      document.getElementById('notificationModalBody').textContent = message;
+                      const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+                      notificationModal.show();
+                  }
+              
                   document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
                       e.preventDefault();
-          
+              
                       const newPassword = document.getElementById('inputNewPass').value;
                       const adminID = localStorage.getItem('adminID');
-          
+              
                       if (!adminID) {
-                          alert('Không tìm thấy adminID, vui lòng thử lại!');
+                          showNotificationModal('Lỗi', 'Không tìm thấy adminID, vui lòng thử lại!');
                           return;
                       }
-          
+              
                       fetch(`http://localhost:3001/admin/reset-password/${adminID}`, {
                           method: 'POST',
                           headers: {
@@ -93,18 +115,21 @@
                       .then(data => {
                           console.log(data); // Kiểm tra dữ liệu trả về
                           if (data.message === "Mật khẩu đã được cập nhật thành công") {
-                              alert('Đổi mật khẩu thành công!');
-                              window.location.href = './index.html'; // Điều hướng đến trang dashboard
+                              showNotificationModal('Thành công', 'Đổi mật khẩu thành công!');
+                              setTimeout(() => {
+                                  window.location.href = './index.html'; // Điều hướng đến trang dashboard
+                              }, 2000); // Đợi 2 giây trước khi điều hướng
                           } else {
-                              alert('Đổi mật khẩu thất bại!'); // Thông báo thất bại nếu không có thông báo thành công
+                              showNotificationModal('Thất bại', 'Đổi mật khẩu thất bại!');
                           }
                       })
                       .catch(error => {
                           console.error('Lỗi đổi mật khẩu:', error);
-                          alert('Có lỗi xảy ra, vui lòng thử lại!');
+                          showNotificationModal('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
                       });
                   });
               </script>
+              
                 </div>
               </div>
             </div>
