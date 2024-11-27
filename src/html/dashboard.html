@@ -181,19 +181,25 @@
                     aria-expanded="false"
                   >
                     <img
+                      id="currentFlag"
                       src="https://flagcdn.com/w20/vn.png"
                       alt="Vietnamese Flag"
                       class="me-2 rounded-2"
                       style="width: 45px; height: 35px"
                     />
-                    <span class="d-none d-sm-inline">Việt Nam</span>
+                    <span id="currentLanguage" class="d-none d-sm-inline"
+                      >Việt Nam</span
+                    >
                   </a>
                   <ul
                     class="dropdown-menu dropdown-menu-end"
                     aria-labelledby="languageDropdown"
                   >
                     <li>
-                      <a class="dropdown-item" href="#"
+                      <a
+                        class="dropdown-item language-option"
+                        data-lang="en"
+                        href="#"
                         ><img
                           src="https://flagcdn.com/w20/us.png"
                           alt="English Flag"
@@ -204,7 +210,10 @@
                       >
                     </li>
                     <li>
-                      <a class="dropdown-item" href="#"
+                      <a
+                        class="dropdown-item language-option"
+                        data-lang="fr"
+                        href="#"
                         ><img
                           src="https://flagcdn.com/w20/fr.png"
                           alt="French Flag"
@@ -217,6 +226,7 @@
                     <!-- Thêm các ngôn ngữ khác tại đây -->
                   </ul>
                 </li>
+                <script></script>
                 <li class="nav-item dropdown">
                   <a
                     class="nav-link nav-icon-hover"

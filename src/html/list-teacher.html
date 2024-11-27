@@ -393,6 +393,59 @@
                           <div id="paginationContainer">
                             <!-- Các nút phân trang sẽ được thêm vào đây -->
                           </div>
+                          <!-- Modal Nhập Lý Do -->
+                          <div
+                            class="modal fade"
+                            id="reasonModal"
+                            tabindex="-1"
+                            aria-labelledby="reasonModalLabel"
+                            aria-hidden="true"
+                          >
+                            <div class="modal-dialog" style="max-width: 40%">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="reasonModalLabel">
+                                    Nhập lý do thay đổi trạng thái
+                                  </h5>
+                                  <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                  ></button>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="mb-3">
+                                    <label for="reasonInput" class="form-label"
+                                      >Lý do</label
+                                    >
+                                    <textarea
+                                      class="form-control"
+                                      id="reasonInput"
+                                      rows="3"
+                                      placeholder="Nhập lý do..."
+                                    ></textarea>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Hủy
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    id="submitReason"
+                                  >
+                                    Xác nhận
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
                           <script>
                             document.addEventListener(
@@ -498,44 +551,78 @@
                                 };
 
                                 // Đổi trạng thái khóa/mở giảng viên
-                                const toggleLockStatus = async (
+                                let selectedTeacherID = null;
+                                let selectedButton = null;
+
+                                const toggleLockStatus = (
                                   teacherID,
                                   button
                                 ) => {
-                                  const teacher = teachersData.find(
-                                    (t) => t._id === teacherID
-                                  );
-                                  if (!teacher) return;
-
-                                  const newStatus = !teacher.isLocked; // Trạng thái mới (đổi trạng thái hiện tại)
-                                  const result = await fetchData(
-                                    `http://localhost:3001/teacher/change-status/${teacherID}`,
+                                  selectedTeacherID = teacherID;
+                                  selectedButton = button;
+                                  const reasonModal = new bootstrap.Modal(
+                                    document.getElementById("reasonModal"),
                                     {
-                                      method: "PUT",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify({
-                                        isLocked: newStatus,
-                                      }),
+                                      backdrop: false, // Vô hiệu hoá backdrop
                                     }
                                   );
 
-                                  if (result) {
-                                    teacher.isLocked = newStatus; // Cập nhật trạng thái trong danh sách
-                                    button.textContent = newStatus
-                                      ? "Khóa"
-                                      : "Mở"; // Cập nhật nội dung nút
-                                    button.classList.toggle(
-                                      "btn-danger",
-                                      newStatus
-                                    );
-                                    button.classList.toggle(
-                                      "btn-success",
-                                      !newStatus
-                                    );
-                                  }
+                                  reasonModal.show();
                                 };
+
+                                document
+                                  .getElementById("submitReason")
+                                  .addEventListener("click", async () => {
+                                    const reason = document
+                                      .getElementById("reasonInput")
+                                      .value.trim();
+
+                                    if (!reason) {
+                                      alert("Lý do không được để trống!");
+                                      return;
+                                    }
+
+                                    const newStatus = !teachersData.find(
+                                      (t) => t._id === selectedTeacherID
+                                    ).isLocked;
+
+                                    const result = await fetchData(
+                                      `http://localhost:3001/teacher/change-status/${selectedTeacherID}`,
+                                      {
+                                        method: "POST",
+                                        headers: {
+                                          "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                          isLocked: newStatus,
+                                          reason: reason,
+                                        }),
+                                      }
+                                    );
+
+                                    if (result) {
+                                      const teacher = teachersData.find(
+                                        (t) => t._id === selectedTeacherID
+                                      );
+                                      teacher.isLocked = newStatus;
+                                      selectedButton.textContent = newStatus
+                                        ? "Khóa"
+                                        : "Mở";
+                                      selectedButton.classList.toggle(
+                                        "btn-danger",
+                                        newStatus
+                                      );
+                                      selectedButton.classList.toggle(
+                                        "btn-success",
+                                        !newStatus
+                                      );
+                                    }
+
+                                    // Đóng modal sau khi gửi
+                                    bootstrap.Modal.getInstance(
+                                      document.getElementById("reasonModal")
+                                    ).hide();
+                                  });
 
                                 // Lấy danh sách khóa học của giảng viên
                                 const fetchCourses = async (teacherID) => {

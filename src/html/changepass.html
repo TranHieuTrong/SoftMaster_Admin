@@ -467,6 +467,41 @@
                 Cập nhật thông tin
               </button>
             </form>
+            <!-- Modal Thông báo -->
+            <div
+              class="modal fade"
+              id="notificationModal"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">
+                      Thông báo
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body" id="notificationModalBody">
+                    <!-- Nội dung thông báo sẽ được chèn ở đây -->
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-dismiss="modal"
+                    >
+                      Đóng
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <script>
               document.addEventListener("DOMContentLoaded", () => {
@@ -559,26 +594,47 @@
 
                 // Cập nhật dữ liệu admin khi submit form
                 const form = document.getElementById("adminForm");
+                // Hàm hiển thị modal thông báo
+                function showNotification(message, isSuccess = true) {
+                  const modalLabel = document.getElementById(
+                    "notificationModalLabel"
+                  );
+                  const modalBody = document.getElementById(
+                    "notificationModalBody"
+                  );
+
+                  modalLabel.textContent = isSuccess ? "Thành công" : "Lỗi";
+                  modalBody.textContent = message;
+
+                  // Khởi tạo modal với backdrop bị tắt
+                  const modal = new bootstrap.Modal(
+                    document.getElementById("notificationModal"),
+                    {
+                      backdrop: false, // Tắt backdrop
+                    }
+                  );
+
+                  modal.show();
+                }
+
+                // Thay thế các alert bằng showNotification
                 form.addEventListener("submit", (event) => {
                   event.preventDefault();
 
-                  // Nếu người dùng không thay đổi avatar, sử dụng avatar hiện tại
                   const updatedData = {
                     name: form.name.value,
                     phone: form.phone.value,
                     avatar:
                       adminAvatarInput.getAttribute("data-upload-url") ||
-                      currentAvatarUrl, // Nếu không thay đổi avatar, giữ avatar cũ
+                      currentAvatarUrl,
                     position: form.position.value,
                     gender: form.gender.value,
                   };
 
-                  // Nếu người dùng nhập mật khẩu mới, thêm mật khẩu vào updatedData
                   if (form.password.value) {
-                    updatedData.password = form.password.value; // Nếu có thay đổi mật khẩu
+                    updatedData.password = form.password.value;
                   }
 
-                  // Gửi yêu cầu cập nhật dữ liệu admin
                   fetch(`http://localhost:3001/admin/update/${adminId}`, {
                     method: "PUT",
                     headers: {
@@ -588,12 +644,15 @@
                   })
                     .then((response) => response.json())
                     .then((result) => {
-                      alert("Cập nhật thành công!");
-                      location.reload();
+                      showNotification("Cập nhật thành công!", true);
+                      setTimeout(() => location.reload(), 2000);
                     })
                     .catch((error) => {
                       console.error("Error updating data:", error);
-                      alert("Lỗi cập nhật thông tin. Vui lòng thử lại.");
+                      showNotification(
+                        "Lỗi cập nhật thông tin. Vui lòng thử lại.",
+                        false
+                      );
                     });
                 });
               });
