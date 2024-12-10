@@ -534,6 +534,41 @@
                 </div>
               </div>
             </div>
+            <!-- Modal Thông báo -->
+            <div
+              class="modal fade"
+              id="notificationModal"
+              tabindex="-1"
+              aria-labelledby="notificationModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">
+                      Thông Báo
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body" id="notificationMessage"></div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Đóng
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <script>
               let avatarUrl = ""; // Biến để lưu URL của ảnh đã upload
 
@@ -643,13 +678,44 @@
                         return response.json();
                       })
                       .then((result) => {
-                        alert("Giảng viên đã được thêm thành công!");
-                        teacherForm.reset();
-                        location.reload();
+                        // Show success modal
+                        document.getElementById(
+                          "notificationMessage"
+                        ).textContent = "Giảng viên đã được thêm thành công!";
+                        var myModal = new bootstrap.Modal(
+                          document.getElementById("notificationModal"),
+                          {
+                            backdrop: false, // Disable backdrop
+                          }
+                        );
+
+                        // Show modal and reload the page after modal is closed
+                        myModal.show();
+
+                        // Add event listener to close modal and reload page
+                        document
+                          .getElementById("notificationModal")
+                          .addEventListener("hidden.bs.modal", function () {
+                            teacherForm.reset();
+                            location.reload(); // Reload after the modal is closed
+                          });
                       })
-                      .catch((error) =>
-                        console.error("Error adding teacher:", error)
-                      );
+                      .catch((error) => {
+                        // Show error modal
+                        document.getElementById(
+                          "notificationMessage"
+                        ).textContent =
+                          "Email giảng viên này đã đăng kí tài khoản.";
+                        var myModal = new bootstrap.Modal(
+                          document.getElementById("notificationModal"),
+                          {
+                            backdrop: false, // Disable backdrop
+                          }
+                        );
+
+                        // Show modal for error
+                        myModal.show();
+                      });
                   } else {
                     alert("Không thể thêm giảng viên. Admin ID không hợp lệ.");
                   }
