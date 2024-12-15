@@ -7,7 +7,7 @@
     <link
       rel="shortcut icon"
       type="image/png"
-      href="../assets/images/logos/favicon.png"
+      href="../assets/images/logos/logo.png"
     />
     <link rel="stylesheet" href="../assets/css/styles.min.css" />
     <link
@@ -495,21 +495,21 @@
                                       document.createElement("td");
 
                                     nameCell.textContent = user.name || "";
-                                    nameCell.style.color = "black"; // Thêm màu chữ đen
+                                    nameCell.style.color = "black";
                                     emailCell.textContent = user.email || "";
-                                    emailCell.style.color = "black"; // Thêm màu chữ đen
+                                    emailCell.style.color = "black";
                                     birthDateCell.textContent = formatDate(
                                       user.birthday
                                     );
-                                    birthDateCell.style.color = "black"; // Thêm màu chữ đen
+                                    birthDateCell.style.color = "black";
                                     phoneCell.textContent = user.phone || "";
-                                    phoneCell.style.color = "black"; // Thêm màu chữ đen
+                                    phoneCell.style.color = "black";
                                     genderCell.textContent = user.gender || "";
-                                    genderCell.style.color = "black"; // Thêm màu chữ đen
+                                    genderCell.style.color = "black";
                                     registerDateCell.textContent = formatDate(
                                       user.createdAt
                                     );
-                                    registerDateCell.style.color = "black"; // Thêm màu chữ đen
+                                    registerDateCell.style.color = "black";
 
                                     const detailButton =
                                       document.createElement("button");
@@ -555,7 +555,7 @@
                                   tableBody.appendChild(fragment);
                                 };
                                 const fetchAndShowCourses = (userID) => {
-                                  // Fetch thông tin người dùng để lấy tên
+                                  //lấy thông tin người dùng từ api để lấy tên
                                   fetch(
                                     `http://localhost:3001/user/getUserByID/${userID}`
                                   )
@@ -564,7 +564,7 @@
                                       const userName =
                                         userData.name || "Người dùng";
 
-                                      // Fetch danh sách khóa học
+                                      // lấy danh sách khóa học theo id sinh viên
                                       fetch(
                                         `http://localhost:3001/enrollCourse/getCourseUserEnrolled/${userID}`
                                       )
@@ -584,7 +584,6 @@
                                                 )
                                               : ["Chưa đăng ký khóa học nào."];
 
-                                          // Hiển thị popup với tên người dùng
                                           showPopup(
                                             `Khóa học đã đăng ký - ${userName}`,
                                             courseDetails
@@ -606,7 +605,7 @@
                                 };
 
                                 const fetchAndShowScores = (userID) => {
-                                  // Fetch thông tin người dùng để lấy tên
+                                  //lấy thông tin người dùng để lấy tên
                                   fetch(
                                     `http://localhost:3001/user/getUserByID/${userID}`
                                   )
@@ -615,7 +614,7 @@
                                       const userName =
                                         userData.name || "Người dùng";
 
-                                      // Fetch điểm số
+                                      //lấy điểm sinh viên theo id
                                       fetch(
                                         `http://localhost:3001/score/getScoreByUserID/${userID}`
                                       )
@@ -746,7 +745,7 @@
                                   })
                                     .then((response) => response.json())
                                     .then((fetchedData) => {
-                                      // Sắp xếp dữ liệu theo createdAt giảm dần
+                                      //sắp xếp dữ liệu sinh viên tạo mới nhất lên đầu tiên
                                       data = fetchedData.sort(
                                         (a, b) =>
                                           new Date(b.createdAt) -
@@ -758,7 +757,7 @@
                                         totalItems / itemsPerPage
                                       );
 
-                                      currentPage = 1; // Reset về trang đầu
+                                      currentPage = 1;
                                       displayUsers(currentPage);
                                       updatePaginationControls();
                                     })

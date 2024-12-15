@@ -7,7 +7,7 @@
     <link
       rel="shortcut icon"
       type="image/png"
-      href="../assets/images/logos/favicon.png"
+      href="../assets/images/logos/logo.png"
     />
     <link rel="stylesheet" href="../assets/css/styles.min.css" />
     <link
@@ -570,7 +570,8 @@
             </div>
 
             <script>
-              let avatarUrl = ""; // Biến để lưu URL của ảnh đã upload
+              //biến lưu url avatar
+              let avatarUrl = "";
 
               document
                 .getElementById("avatar")
@@ -581,12 +582,12 @@
                     return;
                   }
 
-                  // Chuyển đổi file ảnh thành base64
+                  // chuyển đổi file ảnh thành base64
                   const reader = new FileReader();
                   reader.onload = async () => {
                     const base64Image = reader.result.split(",")[1];
 
-                    // Gửi ảnh đến API ImgBB
+                    // Up ảnh lên APi của imgbb
                     const formData = new FormData();
                     formData.append("image", base64Image);
 
@@ -601,11 +602,10 @@
                       const result = await response.json();
 
                       if (result.success) {
-                        // Lấy URL của ảnh và lưu vào biến avatarUrl
+                        // lấy url của ảnh vừa tải lên lưu vô avatarUrl
                         avatarUrl = result.data.url;
                         console.log("URL của avatar:", avatarUrl);
 
-                        // Cập nhật thông báo thành công
                         document.getElementById(
                           "avatarHelp"
                         ).innerText = `Avatar đã được upload và URL đã lưu: ${avatarUrl}`;
@@ -625,7 +625,7 @@
                 const adminId = admin ? admin.id : null;
 
                 if (adminId) {
-                  // Gửi yêu cầu lấy thông tin admin từ API
+                  //lấy thông tin admin từ API
                   fetch(`http://localhost:3001/admin/getAdminByID/${adminId}`)
                     .then((response) => response.json())
                     .then((adminData) => {
@@ -636,7 +636,7 @@
                           "currentAvatarContainer"
                         ).style.display = "block";
                       }
-                      // Hiển thị tên của admin lên input adminName
+                      // lấy tên của admin gán vào adminName
                       if (adminData.name) {
                         document.getElementById("adminName").value =
                           adminData.name;
@@ -658,7 +658,7 @@
                     email: document.getElementById("email").value,
                     phone: document.getElementById("phone").value,
                     password: "trong123",
-                    avatar: avatarUrl, // Gán URL đã upload vào avatar
+                    avatar: avatarUrl,
                     major: document.getElementById("major").value,
                     slogan: document.getElementById("slogan").value,
                     gender: document.getElementById("gender").value,
@@ -678,30 +678,25 @@
                         return response.json();
                       })
                       .then((result) => {
-                        // Show success modal
                         document.getElementById(
                           "notificationMessage"
                         ).textContent = "Giảng viên đã được thêm thành công!";
                         var myModal = new bootstrap.Modal(
                           document.getElementById("notificationModal"),
                           {
-                            backdrop: false, // Disable backdrop
+                            backdrop: false,
                           }
                         );
 
-                        // Show modal and reload the page after modal is closed
                         myModal.show();
-
-                        // Add event listener to close modal and reload page
                         document
                           .getElementById("notificationModal")
                           .addEventListener("hidden.bs.modal", function () {
                             teacherForm.reset();
-                            location.reload(); // Reload after the modal is closed
+                            location.reload();
                           });
                       })
                       .catch((error) => {
-                        // Show error modal
                         document.getElementById(
                           "notificationMessage"
                         ).textContent =
@@ -709,11 +704,10 @@
                         var myModal = new bootstrap.Modal(
                           document.getElementById("notificationModal"),
                           {
-                            backdrop: false, // Disable backdrop
+                            backdrop: false,
                           }
                         );
 
-                        // Show modal for error
                         myModal.show();
                       });
                   } else {

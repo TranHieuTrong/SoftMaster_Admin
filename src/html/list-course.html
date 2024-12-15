@@ -7,7 +7,7 @@
     <link
       rel="shortcut icon"
       type="image/png"
-      href="../assets/images/logos/favicon.png"
+      href="../assets/images/logos/logo.png"
     />
     <link rel="stylesheet" href="../assets/css/styles.min.css" />
     <link
@@ -414,9 +414,9 @@
                             document.addEventListener(
                               "DOMContentLoaded",
                               () => {
-                                let currentPage = 1; // Trang hiện tại
-                                let pageSize = 10; // Số lượng bản ghi mỗi trang (mặc định)
-                                let coursesData = []; // Dữ liệu toàn bộ khóa học
+                                let currentPage = 1; // trang hiện tại
+                                let pageSize = 10; // số lượng dữ liệu mỗi trang
+                                let coursesData = []; //tất cả dữ liệu
 
                                 const prevPageBtn =
                                   document.getElementById("prevPage");
@@ -429,31 +429,31 @@
                                 const tableBody =
                                   document.getElementById("courseTableBody");
 
-                                // Hàm hiển thị bảng dữ liệu theo trang
+                                //hiển thị dữ liệu theo bảng
                                 function renderTable() {
                                   let pageData;
                                   if (pageSize === "all") {
-                                    pageData = coursesData; // Hiển thị tất cả dữ liệu
+                                    pageData = coursesData; //hiển thị tất cả dữ liệu
                                   } else {
                                     const start = (currentPage - 1) * pageSize;
                                     const end = start + pageSize;
-                                    pageData = coursesData.slice(start, end); // Hiển thị dữ liệu theo trang
+                                    pageData = coursesData.slice(start, end); //load dữ liệu theo trang
                                   }
 
                                   updateTable(pageData);
 
-                                  // Cập nhật giao diện phân trang
+                                  //load giao diện phân trang
                                   updatePaginationControls();
                                 }
 
-                                // Hàm cập nhật dữ liệu bảng
+                                //cập nhật dữ liệu của bảng
                                 function updateTable(data) {
-                                  tableBody.innerHTML = ""; // Xóa bảng hiện tại để thay thế bằng dữ liệu mới
+                                  tableBody.innerHTML = ""; //xóa bảng hiện tại rồi tải bảng mới
 
                                   data.forEach((course) => {
                                     const row = document.createElement("tr");
 
-                                    // Tạo các ô dữ liệu cho mỗi cột
+                                    //tạo các ô dữ liệu cho mỗi cột
                                     const nameCell =
                                       document.createElement("td");
                                     const descriptionCell =
@@ -473,7 +473,7 @@
                                     const blockCell =
                                       document.createElement("td");
 
-                                    // Chuyển đổi định dạng ngày
+                                    //đổi định dạng ngày tháng
                                     const formatDate = (dateString) => {
                                       if (!dateString) return "";
                                       const date = new Date(dateString);
@@ -487,7 +487,6 @@
                                       return `${day}-${month}-${year}`;
                                     };
 
-                                    // Nội dung các ô và đặt màu chữ đen cho tất cả các ô
                                     nameCell.innerHTML = `<span style="cursor: pointer; color: #000; font-weight: 500;">${
                                       course.name || "Không có tên"
                                     }</span>`;
@@ -772,13 +771,19 @@
                                     .then((data) => data.count || 0)
                                     .catch(() => 0);
 
-                                // Lấy dữ liệu khóa học từ API
+                                // Lấy dữ liệu khóa học từ API và sắp xếp theo ngày tạo mới nhất
                                 function fetchData() {
                                   fetch("http://localhost:3001/course/getAll")
                                     .then((response) => response.json())
                                     .then((data) => {
-                                      coursesData = data; // Lưu toàn bộ dữ liệu
-                                      renderTable(); // Hiển thị dữ liệu trang đầu tiên
+                                      // Sắp xếp dữ liệu theo ngày tạo (createdAt) mới nhất lên đầu tiên
+                                      coursesData = data.sort(
+                                        (a, b) =>
+                                          new Date(b.createdAt) -
+                                          new Date(a.createdAt)
+                                      );
+
+                                      renderTable(); // Hiển thị dữ liệu đã sắp xếp
                                     })
                                     .catch((error) =>
                                       console.error(
@@ -1042,7 +1047,15 @@
 
                                   fetch(url, options)
                                     .then((response) => response.json())
-                                    .then((data) => updateTable(data))
+                                    .then((data) => {
+                                      // Sắp xếp dữ liệu theo createAt, mới nhất lên đầu
+                                      const sortedData = data.sort(
+                                        (a, b) =>
+                                          new Date(b.createAt) -
+                                          new Date(a.createAt)
+                                      );
+                                      updateTable(sortedData);
+                                    })
                                     .catch((error) =>
                                       console.error(
                                         "Error fetching data:",
@@ -1184,6 +1197,12 @@
                                 fetch("http://localhost:3001/course/getAll")
                                   .then((response) => response.json())
                                   .then((data) => {
+                                    const sortedData = data.sort(
+                                      (a, b) =>
+                                        new Date(b.createdAt) -
+                                        new Date(a.createdAt)
+                                    );
+
                                     const tableBody =
                                       document.getElementById(
                                         "courseTableBody"
